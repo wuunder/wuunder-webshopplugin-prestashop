@@ -3,18 +3,19 @@
 if (!defined('_PS_VERSION_'))
     exit;
 
-class AdminWuunderConnector extends AdminTab
+//use AdminTab;
+
+class AdminWuunderConnectorController extends ModuleAdminController
 {
 
     public function __construct()
     {
+        parent::__construct();
         $this->name = 'wuunder';
         $this->logger = new FileLogger(0); //0 == debug level, logDebug() won’t work without this.
-        $this->logger->setFilename(_PS_ROOT_DIR_ . "/log/wuunder.log");
+        $this->logger->setFilename(_PS_ROOT_DIR_ . "/app/logs/wuunder.log");
         $this->bootstrap = true;
-
-        parent::__construct();
-
+        $this->override_folder = "";
     }
 
     /* Get all orders but statuses cancelled, delivered, error */
@@ -119,7 +120,8 @@ class AdminWuunderConnector extends AdminTab
         return Db::getInstance()->ExecuteS($sql)[0];
     }
 
-    private function getOrderProductDetails($product_id) {
+    private function getOrderProductDetails($product_id)
+    {
         $fieldlist = array('width, height, depth');
 
         $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
@@ -128,7 +130,8 @@ class AdminWuunderConnector extends AdminTab
         return Db::getInstance()->ExecuteS($sql)[0];
     }
 
-    public function getOrderState($params, $_) {
+    public function getOrderState($params, $_)
+    {
         $order_state_id = $params['state_id'];
         if (!$order_state_id)
             return false;
@@ -219,13 +222,13 @@ class AdminWuunderConnector extends AdminTab
 
         // Load product image for first ordered item
         $image = null;
-        if (file_exists('../img/p/'.$order_info['id_product'].'/'.$order_info['id_product'].'-home_default.jpg')) {
-            $image = base64_encode(file_get_contents('../img/p/'.$order_info['id_product'].'/'.$order_info['id_product'].'-home_default.jpg'));
+        if (file_exists('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg')) {
+            $image = base64_encode(file_get_contents('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg'));
         }
 
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
         $product_length = ($product_data['depth'] > 0) ? round($product_data['depth']) : null;
-        $product_width= ($product_data['width'] > 0) ? round($product_data['width']) : null;
+        $product_width = ($product_data['width'] > 0) ? round($product_data['width']) : null;
         $product_height = ($product_data['height'] > 0) ? round($product_data['height']) : null;
 
         return array(
@@ -304,8 +307,19 @@ class AdminWuunderConnector extends AdminTab
         }
     }
 
-    public function display()
+    public function setTemplate($template, $params = array(), $locale = null)
     {
+        if (strpos($template, 'module:') === 0) {
+            $this->template = $template;
+        } else {
+            parent::setTemplate($template, $params, $locale);
+        }
+    }
+
+    public function initContent()
+    {
+        echo $this->override_folder;
+
         $current_shop = (int)Tools::substr(Context::getContext()->cookie->shopContext, 2);
         $orders = $this->getAllOrders($current_shop);
         $order_info = $this->getOrdersInfo($orders);
@@ -321,6 +335,7 @@ class AdminWuunderConnector extends AdminTab
             'order_info' => $order_info,
             'admin_url' => _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" . $link->getAdminLink('AdminWuunderConnector', true),
         ));
-        echo Context::getContext()->smarty->fetch(dirname(__FILE__) . '/views/templates/admin/' . 'AdminWuunderConnector' . '.tpl');
+        $this->setTemplate('AdminWuunderConnector.tpl');
+        parent::initContent();
     }
 }
