@@ -52,38 +52,23 @@ class WuunderConnector extends Module
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
     {
-//        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
-//            return false;
-//        }
-//        $tab = new Tab();
-//
-//        $languages = Language::getLanguages(false);
-//        foreach ($languages as $language) {
-//            $tab->name[$language['id_lang']] = $tab_name;
-//        }
-//        $tab->class_name = $tab_class;
-//        $tab->module = $this->name;
-//        $tab->id_parent = $id_tab_parent;
-//
-//        if (!$tab->save()) {
-//            return false;
-//        }
-//        return true;
+        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
+            return false;
+        }
         $tab = new Tab();
-        $tab->active = 1;
-        $tab->class_name = $tab_class;
-        $tab->name = array();
 
-        foreach (Language::getLanguages(true) as $lang) {
-            $tab->name[$lang['id_lang']] = $tab_name;
+        $languages = Language::getLanguages(false);
+        foreach ($languages as $language) {
+            $tab->name[$language['id_lang']] = $tab_name;
         }
-        if ($id_tab_parent) {
-            $tab->id_parent = (int) Tab::getIdFromClassName($id_tab_parent);
-        } else {
-            $tab->id_parent = 0;
-        }
+        $tab->class_name = $tab_class;
         $tab->module = $this->name;
-        return $tab->add();
+        $tab->id_parent = $id_tab_parent;
+
+        if (!$tab->save()) {
+            return false;
+        }
+        return true;
     }
 
     private function uninstallModuleTab($tab_class)
@@ -91,7 +76,8 @@ class WuunderConnector extends Module
         $id_tab = Tab::getIdFromClassName($tab_class);
         if ($id_tab != 0) {
             $tab = new Tab($id_tab);
-            return $tab->delete();
+            $tab->delete();
+            return true;
         }
         return false;
     }
@@ -104,7 +90,7 @@ class WuunderConnector extends Module
         $this->installDB();
 
         if (!parent::install() ||
-            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', 'AdminParentShipping')
+            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', Tab::getIdFromClassName('AdminShipping'))
         )
             return false;
 
