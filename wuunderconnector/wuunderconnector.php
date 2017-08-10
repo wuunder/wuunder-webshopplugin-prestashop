@@ -104,7 +104,7 @@ class WuunderConnector extends Module
         $this->installDB();
 
         if (!parent::install() ||
-            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', 'AdminParentShipping')
+            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
         )
             return false;
 
@@ -142,7 +142,8 @@ class WuunderConnector extends Module
             "housenumber",
             "zipcode",
             "city",
-            "country"
+            "country",
+            "postbookingstatus"
         );
 
         if (Tools::isSubmit('submit' . $this->name)) {
@@ -270,6 +271,18 @@ function displayForm()
                 'label' => $this->l('Country code'),
                 'name' => "country",
                 'required' => true
+            ),
+
+            array(
+                'type' => 'select',
+                'label' => $this->l('Order status after booking'),
+                'name' => "postbookingstatus",
+                'options' => array(
+                    'query' => OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile),
+                    'id' => 'id_order_state',
+                    'name' => 'name'
+                ),
+                'required' => true
             )
         ),
         'submit' => array(
@@ -324,7 +337,8 @@ function displayForm()
         "housenumber",
         "zipcode",
         "city",
-        "country"
+        "country",
+        "postbookingstatus"
     );
 
     foreach ($fields as $field) {

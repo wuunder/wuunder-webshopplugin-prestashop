@@ -13,7 +13,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         parent::__construct();
         $this->name = 'wuunder';
         $this->logger = new FileLogger(0); //0 == debug level, logDebug() won’t work without this.
-        $this->logger->setFilename(_PS_ROOT_DIR_ . "/app/logs/wuunder.log");
+        $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
     }
@@ -227,6 +227,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         }
 
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
+
         $product_length = ($product_data['depth'] > 0) ? round($product_data['depth']) : null;
         $product_width = ($product_data['width'] > 0) ? round($product_data['width']) : null;
         $product_height = ($product_data['height'] > 0) ? round($product_data['height']) : null;
@@ -261,7 +262,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $test_mode = Configuration::get('testmode');
             $booking_token = uniqid();
             $link = new Link();
-            $redirect_url = urlencode(_PS_BASE_URL_ . __PS_BASE_URI__ . end(explode('/', _PS_ADMIN_DIR_)) . "/" . $link->getAdminLink('AdminWuunderConnector', true));
+            $path = explode('/', _PS_ADMIN_DIR_);
+            $redirect_url = urlencode(((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true));
             $webhook_url = urlencode(_PS_BASE_URL_ . __PS_BASE_URI__ . "index.php?fc=module&module=wuunderconnector&controller=wuunderwebhook&orderid=" . $order_id . "&wtoken=" . $booking_token);
 
             if ($test_mode == 1) {
@@ -318,7 +320,10 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     public function initContent()
     {
-        echo $this->override_folder;
+//        echo "<pre>";
+//        var_dump(OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile));
+//        echo "</pre>";
+
 
         $current_shop = (int)Tools::substr(Context::getContext()->cookie->shopContext, 2);
         $orders = $this->getAllOrders($current_shop);
@@ -333,7 +338,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         Context::getContext()->smarty->registerPlugin("function", "order_state", array($this, 'getOrderState'));
         Context::getContext()->smarty->assign(array(
             'order_info' => $order_info,
-            'admin_url' => _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" . $link->getAdminLink('AdminWuunderConnector', true),
+            'admin_url' => ((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true),
         ));
         $this->setTemplate('AdminWuunderConnector.tpl');
         parent::initContent();

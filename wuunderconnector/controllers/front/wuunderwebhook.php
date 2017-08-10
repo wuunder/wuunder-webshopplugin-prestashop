@@ -11,7 +11,7 @@ class wuunderconnectorwuunderwebhookModuleFrontController extends ModuleFrontCon
         $this->context = Context::getContext();
         $this->ssl = false;
         $this->logger = new FileLogger(0); //0 == debug level, logDebug() won’t work without this.
-        $this->logger->setFilename(_PS_ROOT_DIR_ . "/log/wuunder.log");
+        $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
     }
 
     /**
@@ -28,7 +28,7 @@ class wuunderconnectorwuunderwebhookModuleFrontController extends ModuleFrontCon
             if ($this->updateLabelUrl($_REQUEST['orderid'], $_REQUEST['wtoken'], $result['id'], $result['label_url'], $result['track_and_trace_url'])) {
                 $history = new OrderHistory();
                 $history->id_order = (int)$_REQUEST['orderid'];
-                $history->changeIdOrderState(4, (int)$_REQUEST['orderid']);
+                $history->changeIdOrderState(Configuration::get('postbookingstatus'), (int)$_REQUEST['orderid']);
             }
         }
         exit;
