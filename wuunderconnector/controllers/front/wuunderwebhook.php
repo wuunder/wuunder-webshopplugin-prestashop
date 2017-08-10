@@ -22,8 +22,7 @@ class wuunderconnectorwuunderwebhookModuleFrontController extends ModuleFrontCon
         parent::initContent();
         $this->logger->logDebug("Webhook incoming");
         $result = json_decode(file_get_contents('php://input'), true)['shipment'];
-        $this->logger->logDebug("Webhook Data:");
-        $this->logger->logDebug($result);
+        $this->logger->logDebug("Webhook Data received");
         if (isset($_REQUEST['orderid']) && isset($_REQUEST['wtoken'])) {
             if ($this->updateLabelUrl($_REQUEST['orderid'], $_REQUEST['wtoken'], $result['id'], $result['label_url'], $result['track_and_trace_url'])) {
                 $history = new OrderHistory();
