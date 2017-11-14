@@ -52,23 +52,38 @@ class WuunderConnector extends Module
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
     {
-        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
-            return false;
-        }
+//        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
+//            return false;
+//        }
+//        $tab = new Tab();
+//
+//        $languages = Language::getLanguages(false);
+//        foreach ($languages as $language) {
+//            $tab->name[$language['id_lang']] = $tab_name;
+//        }
+//        $tab->class_name = $tab_class;
+//        $tab->module = $this->name;
+//        $tab->id_parent = $id_tab_parent;
+//
+//        if (!$tab->save()) {
+//            return false;
+//        }
+//        return true;
         $tab = new Tab();
-
-        $languages = Language::getLanguages(false);
-        foreach ($languages as $language) {
-            $tab->name[$language['id_lang']] = $tab_name;
-        }
+        $tab->active = 1;
         $tab->class_name = $tab_class;
-        $tab->module = $this->name;
-        $tab->id_parent = $id_tab_parent;
+        $tab->name = array();
 
-        if (!$tab->save()) {
-            return false;
+        foreach (Language::getLanguages(true) as $lang) {
+            $tab->name[$lang['id_lang']] = $tab_name;
         }
-        return true;
+        if ($id_tab_parent) {
+            $tab->id_parent = (int) Tab::getIdFromClassName($id_tab_parent);
+        } else {
+            $tab->id_parent = 0;
+        }
+        $tab->module = $this->name;
+        return $tab->add();
     }
 
     private function uninstallModuleTab($tab_class)
@@ -76,8 +91,7 @@ class WuunderConnector extends Module
         $id_tab = Tab::getIdFromClassName($tab_class);
         if ($id_tab != 0) {
             $tab = new Tab($id_tab);
-            $tab->delete();
-            return true;
+            return $tab->delete();
         }
         return false;
     }
@@ -90,7 +104,7 @@ class WuunderConnector extends Module
         $this->installDB();
 
         if (!parent::install() ||
-            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', Tab::getIdFromClassName('AdminShipping'))
+            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
         )
             return false;
 
@@ -128,7 +142,8 @@ class WuunderConnector extends Module
             "housenumber",
             "zipcode",
             "city",
-            "country"
+            "country",
+            "postbookingstatus"
         );
 
         if (Tools::isSubmit('submit' . $this->name)) {
@@ -256,6 +271,18 @@ function displayForm()
                 'label' => $this->l('Country code'),
                 'name' => "country",
                 'required' => true
+            ),
+
+            array(
+                'type' => 'select',
+                'label' => $this->l('Order status after booking'),
+                'name' => "postbookingstatus",
+                'options' => array(
+                    'query' => OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile),
+                    'id' => 'id_order_state',
+                    'name' => 'name'
+                ),
+                'required' => true
             )
         ),
         'submit' => array(
@@ -310,7 +337,8 @@ function displayForm()
         "housenumber",
         "zipcode",
         "city",
-        "country"
+        "country",
+        "postbookingstatus"
     );
 
     foreach ($fields as $field) {
