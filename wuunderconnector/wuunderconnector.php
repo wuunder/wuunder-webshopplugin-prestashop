@@ -9,7 +9,7 @@ class WuunderConnector extends Module
     {
         $this->name = 'wuunderconnector';
         $this->tab = 'wuunder';
-        $this->version = '1.0.0';
+        $this->version = '1.2.0';
         $this->author = 'Wuunder';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -143,7 +143,15 @@ class WuunderConnector extends Module
             "zipcode",
             "city",
             "country",
-            "postbookingstatus"
+            "postbookingstatus",
+            "wuunderfilter1carrier",
+            "wuunderfilter1filter",
+            "wuunderfilter2carrier",
+            "wuunderfilter2filter",
+            "wuunderfilter3carrier",
+            "wuunderfilter3filter",
+            "wuunderfilter4carrier",
+            "wuunderfilter4filter"
         );
 
         if (Tools::isSubmit('submit' . $this->name)) {
@@ -153,7 +161,11 @@ class WuunderConnector extends Module
                     || empty($field_name)
                     || !Validate::isGenericName($field_name))
                     && ($field !== "live_api_key"
-                    && $field !== "test_api_key")
+                    && $field !== "test_api_key"
+                    && $field !== "wuunderfilter1filter"
+                    && $field !== "wuunderfilter2filter"
+                    && $field !== "wuunderfilter3filter"
+                    && $field !== "wuunderfilter4filter")
                 )
                     $output .= $this->displayError($this->l('Invalid Configuration value: '.$field));
                 else {
@@ -283,6 +295,75 @@ function displayForm()
                     'name' => 'name'
                 ),
                 'required' => true
+            ),
+
+            array(
+                'type' => 'select',
+                'label' => $this->l('Wuunder filter: #1 Carrier'),
+                'name' => "wuunderfilter1carrier",
+                'options' => array(
+                    'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                    'id' => 'id_carrier',
+                    'name' => 'name'
+                ),
+                'required' => false
+            ),
+            array(
+                'type' => 'text',
+                'label' => $this->l('Wuunder filter: #1 Filter'),
+                'name' => "wuunderfilter1filter",
+                'required' => false
+            ),
+            array(
+                'type' => 'select',
+                'label' => $this->l('Wuunder filter: #2 Carrier'),
+                'name' => "wuunderfilter2carrier",
+                'options' => array(
+                    'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                    'id' => 'id_carrier',
+                    'name' => 'name'
+                ),
+                'required' => false
+            ),
+            array(
+                'type' => 'text',
+                'label' => $this->l('Wuunder filter: #2 Filter'),
+                'name' => "wuunderfilter2filter",
+                'required' => false
+            ),
+            array(
+                'type' => 'select',
+                'label' => $this->l('Wuunder filter: #3 Carrier'),
+                'name' => "wuunderfilter3carrier",
+                'options' => array(
+                    'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                    'id' => 'id_carrier',
+                    'name' => 'name'
+                ),
+                'required' => false
+            ),
+            array(
+                'type' => 'text',
+                'label' => $this->l('Wuunder filter: #3 Filter'),
+                'name' => "wuunderfilter3filter",
+                'required' => false
+            ),
+            array(
+                'type' => 'select',
+                'label' => $this->l('Wuunder filter: #4 Carrier'),
+                'name' => "wuunderfilter4carrier",
+                'options' => array(
+                    'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                    'id' => 'id_carrier',
+                    'name' => 'name'
+                ),
+                'required' => false
+            ),
+            array(
+                'type' => 'text',
+                'label' => $this->l('Wuunder filter: #4 Filter'),
+                'name' => "wuunderfilter4filter",
+                'required' => false
             )
         ),
         'submit' => array(
@@ -338,7 +419,15 @@ function displayForm()
         "zipcode",
         "city",
         "country",
-        "postbookingstatus"
+        "postbookingstatus",
+        "wuunderfilter1carrier",
+        "wuunderfilter1filter",
+        "wuunderfilter2carrier",
+        "wuunderfilter2filter",
+        "wuunderfilter3carrier",
+        "wuunderfilter3filter",
+        "wuunderfilter4carrier",
+        "wuunderfilter4filter"
     );
 
     foreach ($fields as $field) {

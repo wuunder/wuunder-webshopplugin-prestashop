@@ -16,6 +16,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
+        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.2.0", "plugin" => "1.0"));
     }
 
     /* Get all orders but statuses cancelled, delivered, error */
@@ -100,7 +101,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getOrderInfo($order_id)
     {
-//        $fieldlist = array('O.`id_order`', 'O.`id_cart`', 'AD.`lastname`', 'AD.`firstname`', 'AD.`postcode`', 'AD.`city`', 'CL.`iso_code`', 'C.`email`', 'CA.`name`');
         $fieldlist = array('O.`*`', 'AD.*', 'CL.iso_code', 'C.email', 'SUM(OD.product_weight) as weight', 'MIN(OD.product_id) as id_product', 'GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description');
 
         $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
@@ -182,6 +182,10 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function buildWuunderData($order_info)
     {
+//        echo "<pre>";
+//        var_dump($order_info);
+//        echo "</pre>";
+//        exit;
         $shippingAddress = new Address(intval($order_info['id_address_delivery']));
 
         // Get full address, strip enters/newlines etc
@@ -232,6 +236,15 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $product_width = ($product_data['width'] > 0) ? round($product_data['width']) : null;
         $product_height = ($product_data['height'] > 0) ? round($product_data['height']) : null;
 
+        $preferredServiceLevel = "";
+
+        for ($i = 1; $i < 5; $i++) {
+            if (Configuration::get('wuunderfilter' . $i . 'carrier') == $order_info['id_carrier']) {
+                $preferredServiceLevel = Configuration::get('wuunderfilter' . $i . 'filter');
+                break;
+            }
+        }
+
         return array(
             'description' => $order_info['description'],
             'personal_message' => "",
@@ -246,7 +259,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
             'weight' => intval($order_info['weight']),
             'delivery_address' => $customerAdr,
             'pickup_address' => $webshopAdr,
-            'preferred_service_level' => ""
+            'preferred_service_level' => $preferredServiceLevel,
+            'source' => $this->sourceObj
         );
     }
 
@@ -321,9 +335,9 @@ class AdminWuunderConnectorController extends ModuleAdminController
     public function initContent()
     {
 //        echo "<pre>";
-//        var_dump(OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile));
+////        var_dump(OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile));
+//        var_dump(Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE));
 //        echo "</pre>";
-
 
         $current_shop = (int)Tools::substr(Context::getContext()->cookie->shopContext, 2);
         $orders = $this->getAllOrders($current_shop);
