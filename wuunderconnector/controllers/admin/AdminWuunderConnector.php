@@ -84,7 +84,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
     private function getOrdersInfo()
     {
 //        $fieldlist = array('O.`id_order`', 'O.`id_cart`', 'AD.`lastname`', 'AD.`firstname`', 'AD.`postcode`', 'AD.`city`', 'CL.`iso_code`', 'C.`email`', 'CA.`name`');
-        $fieldlist = array('O.`*`', 'AD.*', 'CL.iso_code', 'WS.label_url', 'WS.booking_url', 'WS.label_tt_url');
+        $fieldlist = array('O.*', 'AD.*', 'CL.iso_code', 'WS.label_url', 'WS.booking_url', 'WS.label_tt_url');
 
         $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
                     FROM    ' . _DB_PREFIX_ . 'orders AS O LEFT JOIN ' . _DB_PREFIX_ . 'wuunder_shipments AS WS ON O.id_order = WS.order_id, 
