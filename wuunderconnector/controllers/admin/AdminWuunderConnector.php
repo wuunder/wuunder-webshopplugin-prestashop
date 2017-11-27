@@ -97,8 +97,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
                             CL.id_country=AD.id_country AND 
                             CA.id_carrier=O.id_carrier
                     ORDER BY id_order DESC';
-        Logger::addLog($sql, 1);
-        Logger::addLog(json_encode(Db::getInstance()->ExecuteS($sql)), 1);
         return Db::getInstance()->ExecuteS($sql);
     }
 
