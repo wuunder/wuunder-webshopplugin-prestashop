@@ -56,7 +56,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
                 $orders[] = (int)$order['id_order'];
             }
         }
-        return $orders;
+//        return $orders;
+        return array();
     }
 
     private function setBookingToken($order_id, $booking_url, $booking_token)
@@ -96,6 +97,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
                             CL.id_country=AD.id_country AND 
                             CA.id_carrier=O.id_carrier
                     ORDER BY id_order DESC';
+        Logger::addLog($sql, 1);
+        Logger::addLog(json_encode(Db::getInstance()->ExecuteS($sql)), 1);
         return Db::getInstance()->ExecuteS($sql);
     }
 
@@ -334,14 +337,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     public function initContent()
     {
-//        echo "<pre>";
-////        var_dump(OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile));
-//        var_dump(Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE));
-//        echo "</pre>";
-
-        $current_shop = (int)Tools::substr(Context::getContext()->cookie->shopContext, 2);
-        $orders = $this->getAllOrders($current_shop);
-        $order_info = $this->getOrdersInfo($orders);
+        $order_info = $this->getOrdersInfo();
 
         if (isset($_REQUEST['processLabelForOrder'])) {
             $this->requestBookingUrl($_REQUEST['processLabelForOrder']);
