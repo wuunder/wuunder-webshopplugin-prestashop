@@ -16,7 +16,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
-        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.2.0", "plugin" => "1.0"));
+        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.2.1", "plugin" => "1.0"));
     }
 
     /* Get all orders but statuses cancelled, delivered, error */

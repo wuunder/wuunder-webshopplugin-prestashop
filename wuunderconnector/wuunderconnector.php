@@ -9,7 +9,7 @@ class WuunderConnector extends Module
     {
         $this->name = 'wuunderconnector';
         $this->tab = 'wuunder';
-        $this->version = '1.2.0';
+        $this->version = '1.2.1';
         $this->author = 'Wuunder';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
