@@ -17,8 +17,8 @@ class WuunderConnector extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->l('WuunderConnector');
-        $this->description = $this->l('Wuunder connector');
+        $this->displayName = $this->l('Wuunder verzendmodule');
+        $this->description = $this->l('Verstuur al je zendingen makkelijk, persoonlijk en efficient. Wij volgen elke zending op de voet en nemen alle communicatie met de vervoerders van je over.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
