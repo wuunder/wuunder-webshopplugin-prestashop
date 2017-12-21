@@ -9,7 +9,7 @@ class WuunderConnector extends Module
     {
         $this->name = 'wuunderconnector';
         $this->tab = 'wuunder';
-        $this->version = '1.2.4';
+        $this->version = '1.2.5';
         $this->author = 'Wuunder';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -162,6 +162,7 @@ class WuunderConnector extends Module
                     || !Validate::isGenericName($field_name))
                     && ($field !== "live_api_key"
                     && $field !== "test_api_key"
+                    && $field !== "testmode"
                     && $field !== "wuunderfilter1filter"
                     && $field !== "wuunderfilter2filter"
                     && $field !== "wuunderfilter3filter"
