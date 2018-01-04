@@ -19,47 +19,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.2.5", "plugin" => "1.0"));
     }
 
-    /* Get all orders but statuses cancelled, delivered, error */
-    public function getAllOrders($id_shop)
-    {
-        if ($id_shop == 0) {
-            $id_shop = 'LIKE "%"';
-        } else {
-            $id_shop = '= ' . (int)$id_shop;
-        }
-        $sql14 = '    SELECT id_order
-                    FROM ' . _DB_PREFIX_ . 'orders O
-                    WHERE (
-                        SELECT id_order_state
-                        FROM   ' . _DB_PREFIX_ . 'order_history OH
-                        WHERE  OH.id_order = O.id_order
-                        ORDER  BY date_add DESC, id_order_history DESC
-                        LIMIT  1)
-                    NOT IN (' . (int)Configuration::get('DPDFRANCE_ETAPE_LIVRE', null, null, (int)$id_shop) . ',0,5,6,7,8)
-                    ORDER BY id_order DESC
-                    LIMIT 500';
-
-        $sql15 = '    SELECT id_order
-                    FROM ' . _DB_PREFIX_ . 'orders O
-                    WHERE `current_state` NOT IN(' . (int)Configuration::get('DPDFRANCE_ETAPE_LIVRE', null, null, (int)$id_shop) . ',0,5,6,7,8) AND O.id_shop ' . $id_shop . '
-                    ORDER BY id_order DESC
-                    LIMIT 500';
-
-        if (_PS_VERSION_ < '1.5') {
-            $result = Db::getInstance()->ExecuteS($sql14);
-        } else {
-            $result = Db::getInstance()->ExecuteS($sql15);
-        }
-        $orders = array();
-        if (!empty($result)) {
-            foreach ($result as $order) {
-                $orders[] = (int)$order['id_order'];
-            }
-        }
-//        return $orders;
-        return array();
-    }
-
     private function setBookingToken($order_id, $booking_url, $booking_token)
     {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'wuunder_shipments (order_id, booking_url, booking_token)
@@ -96,6 +55,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
                             C.id_customer=O.id_customer AND 
                             CL.id_country=AD.id_country AND 
                             CA.id_carrier=O.id_carrier
+                    GROUP BY O.id_order
                     ORDER BY id_order DESC';
         return Db::getInstance()->ExecuteS($sql);
     }
@@ -232,10 +192,31 @@ class AdminWuunderConnectorController extends ModuleAdminController
         }
 
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
+        $length = round($product_data['depth']);
+        $width = round($product_data['width']);
+        $height = round($product_data['height']);
 
-        $product_length = ($product_data['depth'] > 0) ? round($product_data['depth']) : null;
-        $product_width = ($product_data['width'] > 0) ? round($product_data['width']) : null;
-        $product_height = ($product_data['height'] > 0) ? round($product_data['height']) : null;
+        switch (Configuration::get('PS_DIMENSION_UNI')) {
+            case "mm":
+                $dimension_product_factor = 10;
+                break;
+            case "cm":
+                $dimension_product_factor = 1;
+                break;
+            case "dm":
+                $dimension_product_factor = 0.1;
+                break;
+            case "m":
+                $dimension_product_factor = 0.01;
+                break;
+            default:
+                $dimension_product_factor = 1;
+                break;
+        }
+
+        $product_length = ($length > 0) ? round($length * $dimension_product_factor) : null;
+        $product_width = ($width > 0) ? round($width * $dimension_product_factor) : null;
+        $product_height = ($height > 0) ? round($height *$dimension_product_factor) : null;
 
         $preferredServiceLevel = "";
 
