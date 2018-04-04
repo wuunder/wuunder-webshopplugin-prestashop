@@ -21,13 +21,18 @@ class wuunderconnectorwuunderwebhookModuleFrontController extends ModuleFrontCon
     {
         parent::initContent();
         $this->logger->logDebug("Webhook incoming");
-        $result = json_decode(file_get_contents('php://input'), true)['shipment'];
+        $result = json_decode(file_get_contents('php://input'), true);
         $this->logger->logDebug("Webhook Data received");
         if (isset($_REQUEST['orderid']) && isset($_REQUEST['wtoken'])) {
-            if ($this->updateLabelUrl($_REQUEST['orderid'], $_REQUEST['wtoken'], $result['id'], $result['label_url'], $result['track_and_trace_url'])) {
-                $history = new OrderHistory();
-                $history->id_order = (int)$_REQUEST['orderid'];
-                $history->changeIdOrderState(Configuration::get('postbookingstatus'), (int)$_REQUEST['orderid']);
+          $this->logger->logDebug(json_encode($result));
+            if($result['action'] === "shipment_booked") {
+                $result = $result['shipment'];
+                $this->logger->logDebug("1st webhook received");
+                if ($this->updateLabelUrl($_REQUEST['orderid'], $_REQUEST['wtoken'], $result['id'], $result['label_url'], $result['track_and_trace_url'])) {
+                    $history = new OrderHistory();
+                    $history->id_order = (int)$_REQUEST['orderid'];
+                    $history->changeIdOrderState(Configuration::get('postbookingstatus'), (int)$_REQUEST['orderid']);
+                }
             }
         }
         exit;
