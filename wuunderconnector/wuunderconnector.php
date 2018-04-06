@@ -281,7 +281,7 @@ function displayForm()
 
             array(
                 'type' => 'text',
-                'label' => $this->l('Country code'),
+                'label' => $this->l('Country code (E.g. NL)'),
                 'name' => "country",
                 'required' => true
             ),
@@ -293,6 +293,18 @@ function displayForm()
                 'options' => array(
                     'query' => OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile),
                     'id' => 'id_order_state',
+                    'name' => 'name'
+                ),
+                'required' => true
+            ),
+
+            array(
+                'type' => 'select',
+                'label' => $this->l('Weight units shop'),
+                'name' => "weightunit",
+                'options' => array(
+                    'query' => array(array("id" => 'kg', "name" => "KG"), array("id" => 'gram', "name" => "Gram")),
+                    'id' => 'id_weight_unit',
                     'name' => 'name'
                 ),
                 'required' => true
