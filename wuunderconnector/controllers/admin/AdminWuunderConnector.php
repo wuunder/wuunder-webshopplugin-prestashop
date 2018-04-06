@@ -214,9 +214,10 @@ class AdminWuunderConnectorController extends ModuleAdminController
                 break;
         }
 
-        $weight = intval($order_info['weight']);
         if (Configuration::get('weightunit') === 'kg') {
-          $weight *= 1000;
+          $weight = intval($order_info['weight']* 1000) ;
+        } else {
+          $weight = intval($order_info['weight']);
         }
 
         $product_length = ($length > 0) ? round($length * $dimension_product_factor) : null;
