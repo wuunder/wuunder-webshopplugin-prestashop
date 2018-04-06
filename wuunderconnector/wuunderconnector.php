@@ -305,7 +305,7 @@ function displayForm()
                 'name' => "weightunit",
                 'options' => array(
                     'query' => array(array("id" => 'kg', "name" => "KG"), array("id" => 'gram', "name" => "Gram")),
-                    'id' => 'id_weight_unit',
+                    'id' => 'id',
                     'name' => 'name'
                 ),
                 'required' => true
