@@ -3,6 +3,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once 'vendor/autoload.php';
+
 class WuunderConnector extends Module
 {
     public function __construct()

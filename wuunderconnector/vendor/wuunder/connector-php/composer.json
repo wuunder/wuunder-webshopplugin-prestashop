@@ -1,0 +1,44 @@
+{
+  "name": "wuunder/connector-php",
+  "type": "library",
+  "description": "PHP connector for Wuunder API's",
+  "keywords": [
+    "wuunder",
+    "php",
+    "connector",
+    "api",
+    "parcelshop"
+  ],
+  "homepage": "https://github.com/wuunder/connector-php",
+  "license": "Apache-2.0",
+  "support": {
+    "source": "https://github.com/wuunder/connector-php",
+    "issues": "https://github.com/wuunder/connector-php/issues"
+  },
+  "authors": [
+    {
+      "name": "Wuunder",
+      "email": "info@wearewuunder.com",
+      "homepage": "https://wearewuunder.com/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Wuunder\\": "src/Wuunder"
+    }
+  },
+  "archive": {
+    "exclude": [
+      "tests/",
+      "build/",
+      "/.travis.yml",
+      "/build.xml",
+      "phpunit.xml.dist",
+      "libphonenumber-for-php.spec",
+      "/.styleci.yml"
+    ]
+  },
+  "require": {
+    "php": ">=5.3.2"
+  }
+}
