@@ -9,7 +9,7 @@ class WuunderConnector extends Module
     {
         $this->name = 'wuunderconnector';
         $this->tab = 'wuunder';
-        $this->version = '1.2.6';
+        $this->version = '1.2.7';
         $this->author = 'Wuunder';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -41,6 +41,16 @@ class WuunderConnector extends Module
                         )
                         ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
             ');
+        addIndexToOrderId();
+    }
+
+    private function addIndexToOrderId(){
+
+        Db::getInstance()->execute('
+                    CREATE INDEX `' . _DB_PREFIX_ . 'order_id`
+                    ON `wuunder_shipments` (`order_id`);
+        
+            ')
     }
 
     private function uninstallDB()
