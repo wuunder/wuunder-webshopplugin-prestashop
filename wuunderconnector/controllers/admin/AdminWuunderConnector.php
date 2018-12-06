@@ -157,31 +157,31 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $streetName = $addressParts['streetName'];
         $houseNumber = $addressParts['houseNumber'] . $addressParts['houseNumberSuffix'];
 
-        $customerAdr = array(
-            'business' => $shippingAddress->company,
-            'email_address' => $order_info['email'],
-            'family_name' => $shippingAddress->lastname,
-            'given_name' => $shippingAddress->firstname,
-            'locality' => $shippingAddress->city,
-            'phone_number' => $shippingAddress->phone,
-            'street_name' => $streetName,
-            'house_number' => $houseNumber,
-            'zip_code' => $shippingAddress->postcode,
-            'country' => $order_info['iso_code']
-        );
 
-        $webshopAdr = array(
-            'business' => Configuration::get('company_name'),
-            'email_address' => Configuration::get('email'),
-            'family_name' => Configuration::get('lastname'),
-            'given_name' => Configuration::get('firstname'),
-            'locality' => Configuration::get('city'),
-            'phone_number' => Configuration::get('phonenumber'),
-            'street_name' => Configuration::get('streetname'),
-            'house_number' => Configuration::get('housenumber'),
-            'zip_code' => Configuration::get('zipcode'),
-            'country' => Configuration::get('country')
-        );
+        $customerAdr = new \Wuunder\Api\Config\AddressConfig();
+
+        $customerAdr->setEmailAddress($order_info['email']);
+        $customerAdr->setFamilyName($shippingAddress->lastname);
+        $customerAdr->setGivenName($shippingAddress->firstname);
+        $customerAdr->setLocality($shippingAddress->city);
+        $customerAdr->setStreetName($streetName);
+        $customerAdr->setHouseNumber($houseNumber);
+        $customerAdr->setZipCode($shippingAddress->postcode);
+        $customerAdr->setPhoneNumber($shippingAddress->phone);
+        $customerAdr->setCountry($order_info['iso_code']);
+
+        $webshopAdr = new \Wuunder\Api\Config\AddressConfig();
+
+        $webshopAdr->setEmailAddress(Configuration::get('email'));
+        $webshopAdr->setFamilyName(Configuration::get('lastname'));
+        $webshopAdr->setGivenName(Configuration::get('firstname'));
+        $webshopAdr->setLocality(Configuration::get('city'));
+        $webshopAdr->setStreetName(Configuration::get('streetname'));
+        $webshopAdr->setHouseNumber(Configuration::get('housenumber'));
+        $webshopAdr->setZipCode(Configuration::get('zipcode'));
+        $webshopAdr->setPhoneNumber(Configuration::get('phonenumber'));
+        $webshopAdr->setCountry(Configuration::get('country'));
+        $webshopAdr->setBusiness(Configuration::get('company_name'));
 
         $orderAmountExclVat = intval($order_info['total_products'] * 100);
 
@@ -227,23 +227,23 @@ class AdminWuunderConnectorController extends ModuleAdminController
             }
         }
 
-        return array(
-            'description' => $order_info['description'],
-            'personal_message' => "",
-            'picture' => $image,
-            'customer_reference' => $order_info['id_order'],
-            'packing_type' => "",
-            'value' => $orderAmountExclVat,
-            'kind' => null,
-            'length' => $product_length,
-            'width' => $product_width,
-            'height' => $product_height,
-            'weight' => intval($order_info['weight']),
-            'delivery_address' => $customerAdr,
-            'pickup_address' => $webshopAdr,
-            'preferred_service_level' => $preferredServiceLevel,
-            'source' => $this->sourceObj
-        );
+        $bookingConfig = new Wuunder\Api\Config\BookingConfig();
+
+        $bookingConfig->setDescription($order_info['description']);
+        $bookingConfig->setPicture($image);
+        $bookingConfig->setKind(null);
+        $bookingConfig->setValue($orderAmountExclVat);
+        $bookingConfig->setLength($product_length);
+        $bookingConfig->setWidth($product_width);
+        $bookingConfig->setHeight($product_height);
+        $bookingConfig->setWeight(intval($order_info['weight']));
+        $bookingConfig->setCustomerReference($order_info['id_order']);
+        $bookingConfig->setPreferredServiceLevel($preferredServiceLevel);
+        $bookingConfig->setSource($this->sourceObj); 
+        $bookingConfig->setcustomerAdr($customerAdr);
+        $bookingConfig->setwebshopAdr($webshopAdr);
+
+        return $bookingConfig;
     }
 
     private function requestBookingUrl($order_id)
@@ -263,42 +263,34 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $webhook_url = urlencode(_PS_BASE_URL_ . __PS_BASE_URI__ . "index.php?fc=module&module=wuunderconnector&controller=wuunderwebhook&orderid=" . $order_id . "&wtoken=" . $booking_token);
 
             if ($test_mode == 1) {
-                $apiUrl = 'https://api-staging.wuunder.co/api/bookings?redirect_url=' . $redirect_url . '&webhook_url=' . $webhook_url;
                 $apiKey = Configuration::get('test_api_key');
             } else {
-                $apiUrl = 'https://api.wuunder.co/api/bookings?redirect_url=' . $redirect_url . '&webhook_url=' . $webhook_url;
                 $apiKey = Configuration::get('live_api_key');
             }
 
             // Combine wuunder info and order data
-            $wuunderData = $this->buildWuunderData($order);
-            // Encode variables
-            $json = json_encode($wuunderData);
-            // Setup API connection
-            $cc = curl_init($apiUrl);
+            $bookingConfig = $this->buildWuunderData($order);
+            $bookingConfig->setWebhookUrl($webhook_url);
+            $bookingConfig->setRedirectUrl($redirect_url);
 
-            curl_setopt($cc, CURLOPT_HTTPHEADER, array('Authorization: Bearer ' . $apiKey, 'Content-type: application/json'));
-            curl_setopt($cc, CURLOPT_POST, 1);
-            curl_setopt($cc, CURLOPT_POSTFIELDS, $json);
-            curl_setopt($cc, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($cc, CURLOPT_VERBOSE, 1);
-            curl_setopt($cc, CURLOPT_HEADER, 1);
+            $connector = new Wuunder\Connector($apiKey, $test_mode === 1);
+            $booking = $connector->createBooking();
+            $bookingConfig = $this->setBookingConfig($order_id);
 
-            // Don't log base64 image string
-            $wuunderData['picture'] = 'base64 string removed for logging';
+            if ($bookingConfig->validate()) {
+                $booking->setConfig($bookingConfig);
+                log('info', "Going to fire for bookingurl");
+                if ($booking->fire()) {
+                    $url = $booking->getBookingResponse()->getBookingUrl();
+                } else {
+                    log('error', $booking->getBookingResponse()->getError());
+                }
+            } else {
+                log('error', "Bookingconfig not complete");
+            }
 
-            // Execute the cURL, fetch the XML
-            $result = curl_exec($cc);
-            $header_size = curl_getinfo($cc, CURLINFO_HEADER_SIZE);
-            $header = substr($result, 0, $header_size);
-            preg_match("!\r\n(?:Location|URI): *(.*?) *\r\n!i", $header, $matches);
-            $url = $matches[1];
+            log('info', "Handling response");
 
-            // Close connection
-            curl_close($cc);
-
-            $infoArray['booking_url'] = $url;
-            $this->setBookingToken($order_id, $url, $booking_token);
             Tools::redirect($url);
         } else {
             Tools::redirect($booking_url);
