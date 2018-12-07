@@ -240,8 +240,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $bookingConfig->setCustomerReference($order_info['id_order']);
         $bookingConfig->setPreferredServiceLevel($preferredServiceLevel);
         $bookingConfig->setSource($this->sourceObj); 
-        $bookingConfig->setcustomerAdr($customerAdr);
-        $bookingConfig->setwebshopAdr($webshopAdr);
+        $bookingConfig->setDeliveryAddress($customerAdr);
+        $bookingConfig->setPickupAddress($webshopAdr);
 
         return $bookingConfig;
     }
@@ -259,8 +259,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $booking_token = uniqid();
             $link = new Link();
             $path = explode('/', _PS_ADMIN_DIR_);
-            $redirect_url = urlencode(((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true));
-            $webhook_url = urlencode(_PS_BASE_URL_ . __PS_BASE_URI__ . "index.php?fc=module&module=wuunderconnector&controller=wuunderwebhook&orderid=" . $order_id . "&wtoken=" . $booking_token);
+            $redirect_url = ((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true);
+            $webhook_url = _PS_BASE_URL_ . __PS_BASE_URI__ . "index.php?fc=module&module=wuunderconnector&controller=wuunderwebhook&orderid=" . $order_id . "&wtoken=" . $booking_token;
 
             if ($test_mode == 1) {
                 $apiKey = Configuration::get('test_api_key');
@@ -273,26 +273,26 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $bookingConfig->setWebhookUrl($webhook_url);
             $bookingConfig->setRedirectUrl($redirect_url);
 
-            $connector = new Wuunder\Connector($apiKey, $test_mode === 1);
+            $connector = new Wuunder\Connector($apiKey, $test_mode == 1);
             $booking = $connector->createBooking();
-            $bookingConfig = $this->setBookingConfig($order_id);
-
+            //$booking->setBookingConfig($bookingConfig);
+            $this->logger->logDebug($apiKey." ".$test_mode);
             if ($bookingConfig->validate()) {
                 $booking->setConfig($bookingConfig);
-                log('info', "Going to fire for bookingurl");
+                $this->logger->logDebug("Going to fire for bookingurl");
                 if ($booking->fire()) {
                     $url = $booking->getBookingResponse()->getBookingUrl();
                 } else {
-                    log('error', $booking->getBookingResponse()->getError());
+                    $this->logger->logDebug($booking->getBookingResponse()->getError());
                 }
             } else {
-                log('error', "Bookingconfig not complete");
+                $this->logger->logDebug("Bookingconfig not complete");
             }
-
-            log('info', "Handling response");
-
+            $this->logger->logDebug("Handling response");
+            $this->setBookingToken($order_id, $url, $booking_token);
             Tools::redirect($url);
         } else {
+            $this->logger->logDebug("I'm in the else".$booking_url);
             Tools::redirect($booking_url);
         }
     }
