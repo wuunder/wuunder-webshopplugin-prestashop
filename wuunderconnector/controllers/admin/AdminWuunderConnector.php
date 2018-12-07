@@ -1,7 +1,8 @@
 <?php
 
-if (!defined('_PS_VERSION_'))
+if (!defined('_PS_VERSION_')) {
     exit;
+}
 
 //use AdminTab;
 
@@ -46,14 +47,14 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $fieldlist = array('O.*', 'AD.*', 'CL.iso_code', 'WS.label_url', 'WS.booking_url', 'WS.label_tt_url');
 
         $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
-                    FROM    ' . _DB_PREFIX_ . 'orders AS O LEFT JOIN ' . _DB_PREFIX_ . 'wuunder_shipments AS WS ON O.id_order = WS.order_id, 
-                            ' . _DB_PREFIX_ . 'carrier AS CA, 
-                            ' . _DB_PREFIX_ . 'customer AS C, 
-                            ' . _DB_PREFIX_ . 'address AS AD, 
+                    FROM    ' . _DB_PREFIX_ . 'orders AS O LEFT JOIN ' . _DB_PREFIX_ . 'wuunder_shipments AS WS ON O.id_order = WS.order_id,
+                            ' . _DB_PREFIX_ . 'carrier AS CA,
+                            ' . _DB_PREFIX_ . 'customer AS C,
+                            ' . _DB_PREFIX_ . 'address AS AD,
                             ' . _DB_PREFIX_ . 'country AS CL
                     WHERE   O.id_address_delivery=AD.id_address AND
-                            C.id_customer=O.id_customer AND 
-                            CL.id_country=AD.id_country AND 
+                            C.id_customer=O.id_customer AND
+                            CL.id_country=AD.id_country AND
                             CA.id_carrier=O.id_carrier
                     GROUP BY O.id_order
                     ORDER BY id_order DESC';
@@ -65,15 +66,15 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $fieldlist = array('O.*', 'AD.*', 'CL.iso_code', 'C.email', 'SUM(OD.product_weight) as weight', 'MIN(OD.product_id) as id_product', 'GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description');
 
         $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
-                    FROM    ' . _DB_PREFIX_ . 'orders AS O, 
-                            ' . _DB_PREFIX_ . 'carrier AS CA, 
-                            ' . _DB_PREFIX_ . 'customer AS C, 
-                            ' . _DB_PREFIX_ . 'address AS AD, 
+                    FROM    ' . _DB_PREFIX_ . 'orders AS O,
+                            ' . _DB_PREFIX_ . 'carrier AS CA,
+                            ' . _DB_PREFIX_ . 'customer AS C,
+                            ' . _DB_PREFIX_ . 'address AS AD,
                             ' . _DB_PREFIX_ . 'country AS CL,
                             ' . _DB_PREFIX_ . 'order_detail AS OD
                     WHERE   O.id_address_delivery=AD.id_address AND
-                            C.id_customer=O.id_customer AND 
-                            CL.id_country=AD.id_country AND 
+                            C.id_customer=O.id_customer AND
+                            CL.id_country=AD.id_country AND
                             CA.id_carrier=O.id_carrier AND
                             O.id_order=OD.id_order AND
                             O.id_order=' . $order_id . '
@@ -94,8 +95,10 @@ class AdminWuunderConnectorController extends ModuleAdminController
     public function getOrderState($params, $_)
     {
         $order_state_id = $params['state_id'];
-        if (!$order_state_id)
+        if (!$order_state_id) {
             return false;
+        }
+
         // else, returns an OrderState object
         return (new OrderState($order_state_id, Configuration::get('PS_LANG_DEFAULT')))->name;
     }
@@ -144,9 +147,9 @@ class AdminWuunderConnectorController extends ModuleAdminController
     private function buildWuunderData($order_info)
     {
 //        echo "<pre>";
-//        var_dump($order_info);
-//        echo "</pre>";
-//        exit;
+        //        var_dump($order_info);
+        //        echo "</pre>";
+        //        exit;
         $shippingAddress = new Address(intval($order_info['id_address_delivery']));
 
         // Get full address, strip enters/newlines etc
@@ -156,7 +159,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $addressParts = $this->addressSplitter($addressLine);
         $streetName = $addressParts['streetName'];
         $houseNumber = $addressParts['houseNumber'] . $addressParts['houseNumberSuffix'];
-
 
         $customerAdr = new \Wuunder\Api\Config\AddressConfig();
 
@@ -216,7 +218,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
         $product_length = ($length > 0) ? round($length * $dimension_product_factor) : null;
         $product_width = ($width > 0) ? round($width * $dimension_product_factor) : null;
-        $product_height = ($height > 0) ? round($height *$dimension_product_factor) : null;
+        $product_height = ($height > 0) ? round($height * $dimension_product_factor) : null;
 
         $preferredServiceLevel = "";
 
@@ -239,7 +241,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $bookingConfig->setWeight(intval($order_info['weight']));
         $bookingConfig->setCustomerReference($order_info['id_order']);
         $bookingConfig->setPreferredServiceLevel($preferredServiceLevel);
-        $bookingConfig->setSource($this->sourceObj); 
+        $bookingConfig->setSource($this->sourceObj);
         $bookingConfig->setDeliveryAddress($customerAdr);
         $bookingConfig->setPickupAddress($webshopAdr);
 
@@ -276,7 +278,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $connector = new Wuunder\Connector($apiKey, $test_mode == 1);
             $booking = $connector->createBooking();
             //$booking->setBookingConfig($bookingConfig);
-            $this->logger->logDebug($apiKey." ".$test_mode);
+            $this->logger->logDebug($apiKey . " " . $test_mode);
             if ($bookingConfig->validate()) {
                 $booking->setConfig($bookingConfig);
                 $this->logger->logDebug("Going to fire for bookingurl");
@@ -292,7 +294,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $this->setBookingToken($order_id, $url, $booking_token);
             Tools::redirect($url);
         } else {
-            $this->logger->logDebug("I'm in the else".$booking_url);
+            $this->logger->logDebug("I'm in the else" . $booking_url);
             Tools::redirect($booking_url);
         }
     }
