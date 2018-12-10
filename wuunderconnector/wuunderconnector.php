@@ -7,6 +7,13 @@ require_once 'vendor/autoload.php';
 
 class WuunderConnector extends Module
 {
+
+    private $hooks = array(
+        'displayCarrierList',
+        'actionCarrierProcess',
+        'displayCarrierExtraContent'
+    );
+
     public function __construct()
     {
         $this->name = 'wuunderconnector';
@@ -26,6 +33,7 @@ class WuunderConnector extends Module
 
         if (!Configuration::get($this->name))
             $this->warning = $this->l('No name provided');
+                    
     }
 
     private function installDB()
@@ -105,6 +113,15 @@ class WuunderConnector extends Module
 
         $this->installDB();
 
+        foreach($this->hooks as $hookName){
+            if(!$this->registerHook($hookName)) {
+            return false;
+            }
+        }
+        
+        $this->registerHook('displayLinkToParcelshoppicker');
+
+
         if (!parent::install() ||
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
         )
@@ -126,6 +143,13 @@ class WuunderConnector extends Module
             return false;
 
         return true;
+    }
+
+    public function hookDisplayCarrierList($params)
+    {
+        Logger::addLog('Hook fired', 1);
+        var_dump($params);
+        return "hoi";
     }
 
     public function getContent()
