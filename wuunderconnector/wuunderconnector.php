@@ -123,7 +123,8 @@ class WuunderConnector extends Module
 
         if (!parent::install() ||
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping') ||
-            !$this->registerHook('displayCarrierList')
+            !$this->registerHook('displayCarrierList') ||
+            !$this->registerHook('displayHeader')
         )
             return false;
 
@@ -147,17 +148,52 @@ class WuunderConnector extends Module
         return true;
     }
 
+    public function hookDisplayHeader($params)
+    {
+        Logger::addLog($this->_path . 'views/css/admin/parcelshop.css', 1);
+        $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
+
+    }
+
     public function hookDisplayCarrierList($params)
     {
-        
+        echo json_encode($params['cart']);
+        $pickerData = $this->parcelshop_urls();
         Logger::addLog('Hook fired', 1);
-        //var_dump($params);
         $this->context->smarty->assign(
             array(
-            'carrier_id' => Configuration::get('MYCARRIER1_CARRIER_ID')
+            'carrier_id'        => Configuration::get('MYCARRIER1_CARRIER_ID'),
+            'baseApiUrl'        => $pickerData['baseApiUrl'],
+            'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
+            'baseUrl'           => $pickerData['baseUrl'],
+            'addressId'         => $params['cart']->id_address_delivery,
+            'cookieParcelshopId'=> $this->context->cookie->parcelshopId
             )
         );
         return $this->display(__FILE__, 'checkoutparcelshop.tpl');
+    }
+
+    public function parcelshop_urls()
+    {
+        // $pluginPath = dirname(plugin_dir_url(__FILE__));
+        // $pluginPathJS = $pluginPath . "/assets/js/parcelshop.js";
+
+        $tmpEnvironment = new \Wuunder\Api\Environment(Configuration::get('testmode') === 1 ? 'staging' : 'production');
+
+        $baseApiUrl = substr($tmpEnvironment->getStageBaseUrl(), 0, -3);
+        //$availableCarriers = implode(',', get_option('woocommerce_wuunder_parcelshop_settings')['select_carriers']);
+
+        // echo <<<EOT
+        //     <script type="text/javascript" data-cfasync="false" src="$pluginPathJS"></script>
+        //     <script type="text/javascript">
+        //         initParcelshopLocator("$baseWebshopUrl", "$baseApiUrl", "$availableCarriers");
+        //     </script>
+        // EOT;
+        return $pickerData = array(
+            'baseApiUrl' => $baseApiUrl,
+            'availableCarriers' => null, //$availableCarriers
+            'baseUrl' => _PS_BASE_URL_ . __PS_BASE_URI__ 
+        );
     }
 
     public function getContent()

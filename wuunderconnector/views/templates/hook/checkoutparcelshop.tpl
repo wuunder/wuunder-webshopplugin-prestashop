@@ -1,12 +1,11 @@
 <div class="delivery_option alternate_item parcelshop_container">
-
 </div>
 <script type="text/javascript">
 {literal}
-initParcelshopLocator();
 var shippingCarrierId = "{/literal}{$carrier_id}{literal}";
 // Get the modal
 var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio')[0];
+var shippingMethodElems = jQuery('input.delivery_option_radio');
 console.log(parcelshopShippingMethodElem);
 var shippingAddress;
 var parcelshopAddress;
@@ -14,20 +13,26 @@ var parcelshopAddress;
 var baseUrl;
 var baseUrlApi;
 var availableCarrierList;
+var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
+var addressId = {/literal}{$addressId}{literal};
+initParcelshopLocator('{/literal}{$baseUrl}{literal}', '{/literal}{$baseApiUrl}{literal}', '{/literal}{$availableCarriers}{literal}');
 
 function initParcelshopLocator(url, apiUrl, carrierList) {
+
     baseUrl = url;
     baseUrlApi = apiUrl;
     availableCarrierList = carrierList;
 
     if (parcelshopShippingMethodElem) {
-        parcelshopShippingMethodElem.onchange = _onShippingMethodChange;
+        //parcelshopShippingMethodElem.onchange = _onShippingMethodChange;
+        jQuery(shippingMethodElems).change(_onShippingMethodChange);
         _onShippingMethodChange();
     }
 }
 
 function _onShippingMethodChange() {
-    if (parcelshopShippingMethodElem.checked) {
+    console.log("here1", parcelshopShippingMethodElem.checked);
+    if (parcelshopShippingMethodElem.checked) {      
         var container = document.createElement('div');
         container.className += "chooseParcelshop";
         container.innerHTML = '<div id="parcelshopsSelectedContainer" onclick="_showParcelshopLocator()"><a href="#/" id="selectParcelshop">Klik hier om een parcelshop te kiezen</a></div>';
@@ -59,9 +64,8 @@ function _printParcelshopAddress() {
 function _showParcelshopLocator() {
     var address = "";
 
-    jQuery.post( baseUrl + "admin-ajax.php", {action: 'wuunder_parcelshoplocator_get_address', address: address}, function( data ) {
-        console.log(data);
-        shippingAddress = data;
+    jQuery.post( baseUrl + getAddressUrl + "&addressId=" + addressId, function( data ) {
+        shippingAddress = data["address1"] + ' ' + data["postcode"] + ' ' + data["city"] + ' ' + data["country"];
         _openIframe();
     });
 }
@@ -84,7 +88,6 @@ function _openIframe() {
     }
 
     function onServicePointSelected(messageData) {
-        window.parent.document.getElementById('parcelshop_id').value = messageData.parcelshopId;
         _loadSelectedParcelshopAddress(messageData.parcelshopId);
         removeServicePointPicker();
     }
@@ -112,13 +115,11 @@ function _openIframe() {
 }
 
 function _loadSelectedParcelshopAddress(id) {
-    jQuery.post( baseUrl + "admin-ajax.php", {action: 'wuunder_parcelshoplocator_get_parcelshop_address', parcelshop_id: id}, function( data ) {
-        data = JSON.parse(data);
-        var parcelshopInfoHtml = _capFirst(data.company_name) + "<br>" + _capFirst(data.address.street_name) +
-            " " + data.address.house_number + "<br>" + data.address.city;
-        parcelshopInfoHtml = parcelshopInfoHtml.replace(/"/g, '\\"').replace(/'/g, "\\'");
-        console.log(parcelshopInfoHtml);
-        parcelshopAddress = parcelshopInfoHtml;
+        jQuery.post( baseUrl + "module/wuunderconnector/parcelshop", {
+                'method': 'setParcelShop',
+                'parcelshopId' : this.id,
+        }, function( data ) {
+        console.log(data);
         _printParcelshopAddress();
     });
 }
