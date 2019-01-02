@@ -22,10 +22,9 @@ class wuunderconnectorParcelshopModuleFrontController extends ModuleFrontControl
             $this->getCheckoutAddress();
         }
 
-        if (isset($_REQUEST['setParcelshop'])) {
+        if (isset($_REQUEST['setParcelshopId'])) {
             $this->setParcelshopId();
         }
-
         
     }
 
@@ -41,9 +40,45 @@ class wuunderconnectorParcelshopModuleFrontController extends ModuleFrontControl
     {
         if(Tools::getValue('parcelshopId')) {
             $parcelshopId = Tools::getValue('parcelshopId');
-            $this->context->cookie->parcelId = $parceshoplId;
-            die($this->context->cookie->parcelshopId);
+            $this->context->cookie->parcelId = $parcelshopId;
+            $address = $this->getParcelshopAddress($parcelshopId);
+            die(Tools::jsonEncode($address));
         }
+        return null;
     }
+
+    private function getParcelshopAddress($id) {
+        $shipping_address = null;
+    
+        if(empty($id)) {
+            echo null;
+        } else {
+            $status = Configuration::get('testmode');
+            $apiKey = ($status == 0 ? Configuration::get('live_api_key') : Configuration::get('test_api_key'));
+    
+            $connector = new Wuunder\Connector($apiKey);
+            $connector->setLanguage("NL");
+            $parcelshopRequest = $connector->getParcelshopById();
+            $parcelshopConfig = new \Wuunder\Api\Config\ParcelshopConfig();
+    
+            $parcelshopConfig->setId($id);
+    
+            if ($parcelshopConfig->validate()) {
+                $parcelshopRequest->setConfig($parcelshopConfig);
+                if ($parcelshopRequest->fire()) {
+                    $parcelshop = $parcelshopRequest->getParcelshopResponse()->getParcelshopData();
+                } else {
+                    echo 'error';
+                    var_dump($parcelshopRequest->getParcelshopResponse()->getError());
+                }
+            } else {
+                $parcelshop = "ParcelshopsConfig not complete";
+            }
+            return $parcelshop;
+        }
+    
+        return null;
+    }
+
 }
 

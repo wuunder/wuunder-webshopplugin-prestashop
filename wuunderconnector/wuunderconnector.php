@@ -54,13 +54,28 @@ class WuunderConnector extends Module
                         )
                         ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
             ');
+
+        Db::getInstance()->execute('
+                        CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (
+                            `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+                            `order_id` INT(11) UNSIGNED NOT NULL,
+                            `parcelshop_id` VARCHAR(255),
+                            PRIMARY KEY(`id`)
+                        )
+                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
+ ');
+
+        
     }
 
     private function uninstallDB()
     {
         Db::getInstance()->execute('
-               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`
+               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`,
+               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`,
             ');
+
+        
     }
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
@@ -111,9 +126,6 @@ class WuunderConnector extends Module
 
     public function install()
     {
-        Logger::addLog('Hoi0', 2);
-
-
         if (Shop::isFeatureActive())
             Shop::setContext(Shop::CONTEXT_ALL);
 
@@ -124,7 +136,8 @@ class WuunderConnector extends Module
         if (!parent::install() ||
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping') ||
             !$this->registerHook('displayCarrierList') ||
-            !$this->registerHook('displayHeader')
+            !$this->registerHook('displayHeader') ||
+            !$this->registerHook('displayOrderConfirmation')
         )
             return false;
 
@@ -157,7 +170,6 @@ class WuunderConnector extends Module
 
     public function hookDisplayCarrierList($params)
     {
-        echo json_encode($params['cart']);
         $pickerData = $this->parcelshop_urls();
         Logger::addLog('Hook fired', 1);
         $this->context->smarty->assign(
@@ -167,10 +179,18 @@ class WuunderConnector extends Module
             'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
             'baseUrl'           => $pickerData['baseUrl'],
             'addressId'         => $params['cart']->id_address_delivery,
-            'cookieParcelshopId'=> $this->context->cookie->parcelshopId
+            'cookieParcelshopId'=> $this->context->cookie->parcelId
             )
         );
         return $this->display(__FILE__, 'checkoutparcelshop.tpl');
+    }
+
+    public function hookDisplayOrderConfirmation($params)
+    {
+        Logger::addLog('OrderHook', 1);
+        $parcelshopId = $this->context->cookie->parcelId;
+        // $orderId = $params['order_id'];
+        var_dump($params);
     }
 
     public function parcelshop_urls()
@@ -178,7 +198,7 @@ class WuunderConnector extends Module
         // $pluginPath = dirname(plugin_dir_url(__FILE__));
         // $pluginPathJS = $pluginPath . "/assets/js/parcelshop.js";
 
-        $tmpEnvironment = new \Wuunder\Api\Environment(Configuration::get('testmode') === 1 ? 'staging' : 'production');
+        $tmpEnvironment = new \Wuunder\Api\Environment(intval(Configuration::get('testmode')) === 1 ? 'staging' : 'production');
 
         $baseApiUrl = substr($tmpEnvironment->getStageBaseUrl(), 0, -3);
         //$availableCarriers = implode(',', get_option('woocommerce_wuunder_parcelshop_settings')['select_carriers']);
