@@ -8,7 +8,6 @@ var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].
 var shippingMethodElems = jQuery('input.delivery_option_radio');
 var shippingAddress;
 var parcelshopAddress;
-
 var baseUrl;
 var baseUrlApi;
 var availableCarrierList;
@@ -16,7 +15,6 @@ var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parc
 var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
 var addressId = {/literal}{$addressId}{literal};
 initParcelshopLocator('{/literal}{$baseUrl}{literal}', '{/literal}{$baseApiUrl}{literal}', '{/literal}{$availableCarriers}{literal}');
-
 function initParcelshopLocator(url, apiUrl, carrierList) {
 
     baseUrl = url;
@@ -25,6 +23,11 @@ function initParcelshopLocator(url, apiUrl, carrierList) {
 
     if (parcelshopShippingMethodElem) {
         //parcelshopShippingMethodElem.onchange = _onShippingMethodChange;
+        if ("{/literal}{$cookieParcelshopId}{literal}") {
+            var parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
+            _loadSelectedParcelshopAddress(parcelshopId);
+        }
+
         jQuery(shippingMethodElems).change(_onShippingMethodChange);
         _onShippingMethodChange();
     }

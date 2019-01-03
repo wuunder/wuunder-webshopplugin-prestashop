@@ -66,7 +66,7 @@ class WuunderConnector extends Module
  ');
 
         
-        addIndexToOrderId();
+        $this->addIndexToOrderId();
     }
 
     private function addIndexToOrderId(){
@@ -200,13 +200,16 @@ class WuunderConnector extends Module
     }
 
     public function hookActionValidateOrder($params)
-    {
-        $orderId = $params['order']->id;
-        $parcelshopId = $this->context->cookie->parcelId;
-        Db::getInstance()->insert('wuunder_order_parcelshop', array(
+    {   
+        $carrier_id = $params['cart']->id_carrier;      
+        if (Configuration::get('MYCARRIER1_CARRIER_ID') == $carrier_id) {
+            $orderId = $params['order']->id;
+            $parcelshopId = $this->context->cookie->parcelId;
+            Db::getInstance()->insert('wuunder_order_parcelshop', array(
             'order_id' => (int)$orderId,
             'parcelshop_id' => pSQL($parcelshopId),
         ));
+        }
     }
 
     public function parcelshop_urls()

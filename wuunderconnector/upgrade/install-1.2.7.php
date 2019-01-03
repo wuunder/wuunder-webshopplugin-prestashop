@@ -8,7 +8,7 @@
         CREATE INDEX `' . _DB_PREFIX_ . 'order_id`
         ON `wuunder_shipments` (`order_id`);
         
-      ')
+      ');
 
     return true; //if there were no errors
   }
