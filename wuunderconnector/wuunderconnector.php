@@ -137,7 +137,7 @@ class WuunderConnector extends Module
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping') ||
             !$this->registerHook('displayCarrierList') ||
             !$this->registerHook('displayHeader') ||
-            !$this->registerHook('displayOrderConfirmation')
+            !$this->registerHook('actionValidateOrder')
         )
             return false;
 
@@ -165,13 +165,11 @@ class WuunderConnector extends Module
     {
         Logger::addLog($this->_path . 'views/css/admin/parcelshop.css', 1);
         $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
-
     }
 
     public function hookDisplayCarrierList($params)
     {
         $pickerData = $this->parcelshop_urls();
-        Logger::addLog('Hook fired', 1);
         $this->context->smarty->assign(
             array(
             'carrier_id'        => Configuration::get('MYCARRIER1_CARRIER_ID'),
@@ -185,12 +183,14 @@ class WuunderConnector extends Module
         return $this->display(__FILE__, 'checkoutparcelshop.tpl');
     }
 
-    public function hookDisplayOrderConfirmation($params)
+    public function hookActionValidateOrder($params)
     {
-        Logger::addLog('OrderHook', 1);
+        $orderId = $params['order']->id;
         $parcelshopId = $this->context->cookie->parcelId;
-        // $orderId = $params['order_id'];
-        var_dump($params);
+        Db::getInstance()->insert('wuunder_order_parcelshop', array(
+            'order_id' => (int)$orderId,
+            'parcelshop_id' => pSQL($parcelshopId),
+        ));
     }
 
     public function parcelshop_urls()
