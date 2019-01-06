@@ -42,7 +42,9 @@ class wuunderconnectorParcelshopModuleFrontController extends ModuleFrontControl
             $parcelshopId = Tools::getValue('parcelshopId');
             $this->context->cookie->parcelId = $parcelshopId;
             $address = $this->getParcelshopAddress($parcelshopId);
-            die(Tools::jsonEncode($address));
+            $encodedAddress = Tools::jsonEncode($address);
+            $this->context->cookie->parcelAddress = $encodedAddress;
+            die($encodedAddress);
         }
         return null;
     }

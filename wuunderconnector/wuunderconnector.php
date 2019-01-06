@@ -186,6 +186,7 @@ class WuunderConnector extends Module
     public function hookDisplayCarrierList($params)
     {
         $pickerData = $this->parcelshop_urls();
+
         $this->context->smarty->assign(
             array(
             'carrier_id'        => Configuration::get('MYCARRIER1_CARRIER_ID'),
@@ -193,9 +194,15 @@ class WuunderConnector extends Module
             'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
             'baseUrl'           => $pickerData['baseUrl'],
             'addressId'         => $params['cart']->id_address_delivery,
-            'cookieParcelshopId'=> $this->context->cookie->parcelId
             )
         );
+
+        if ($this->context->cookie->parcelId) {
+            Logger::addLog('cookie toegevoegd');
+            $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
+            $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
+        }
+
         return $this->display(__FILE__, 'checkoutparcelshop.tpl');
     }
 
@@ -210,6 +217,8 @@ class WuunderConnector extends Module
             'parcelshop_id' => pSQL($parcelshopId),
         ));
         }
+        unset($this->context->cookie->parcelId);
+        $this->context->smarty->clearAssign('cookieParcelshopId');      
     }
 
     public function parcelshop_urls()

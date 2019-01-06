@@ -23,13 +23,17 @@ function initParcelshopLocator(url, apiUrl, carrierList) {
 
     if (parcelshopShippingMethodElem) {
         //parcelshopShippingMethodElem.onchange = _onShippingMethodChange;
-        if ("{/literal}{$cookieParcelshopId}{literal}") {
-            var parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
+        if ({/literal}{$cookieParcelshopAddress}{literal}) {
+            console.log('Parcelshop zit nog in cookie ' + {/literal}{$cookieParcelshopAddress}{literal});
+            parcelshopAddress = {/literal}{$cookieParcelshopAddress}{literal};
+            parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
             _loadSelectedParcelshopAddress(parcelshopId);
+            jQuery(shippingMethodElems).change(_onShippingMethodChange);
         }
-
+        else {
         jQuery(shippingMethodElems).change(_onShippingMethodChange);
         _onShippingMethodChange();
+        }
     }
 }
 
