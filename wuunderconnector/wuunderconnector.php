@@ -72,14 +72,14 @@ class WuunderConnector extends Module
     private function addIndexToOrderId(){
 
         Db::getInstance()->execute('
-                    CREATE INDEX `' . _DB_PREFIX_ . 'order_id`
-                    ON `wuunder_shipments` (`order_id`);
+                    CREATE INDEX `order_id`
+                    ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);
         
             ');
 
         Db::getInstance()->execute('
-                    CREATE INDEX `' . _DB_PREFIX_ . 'order_id`
-                    ON `wuunder_order_parcelshop` (`order_id`);
+                    CREATE INDEX `order_id`
+                    ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);
 
             ');
     }
@@ -87,8 +87,8 @@ class WuunderConnector extends Module
     private function uninstallDB()
     {
         Db::getInstance()->execute('
-               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`,
-               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`,
+               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`;
+               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`
             ');
 
         
@@ -153,7 +153,8 @@ class WuunderConnector extends Module
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping') ||
             !$this->registerHook('displayCarrierList') ||
             !$this->registerHook('displayHeader') ||
-            !$this->registerHook('actionValidateOrder')
+            !$this->registerHook('actionValidateOrder') ||
+            !$this->registerHook('displayFooter')
         )
             return false;
 
@@ -179,11 +180,15 @@ class WuunderConnector extends Module
 
     public function hookDisplayHeader($params)
     {
-        Logger::addLog($this->_path . 'views/css/admin/parcelshop.css', 1);
         $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
     }
 
     public function hookDisplayCarrierList($params)
+    {
+        return $this->display(__FILE__, 'checkoutparcelshop.tpl');
+    }
+
+    public function hookDisplayFooter($params)
     {
         $pickerData = $this->parcelshop_urls();
 
@@ -198,12 +203,17 @@ class WuunderConnector extends Module
         );
 
         if ($this->context->cookie->parcelId) {
-            Logger::addLog('cookie toegevoegd');
             $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
-            $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
+            $this->context->smarty->assign('cookieParcelshopAddress', json_encode($this->context->cookie->parcelAddress));
+        }
+        else {
+            $this->context->smarty->assign('cookieParcelshopAddress', false);
+            $this->context->smarty->assign('cookieParcelshopId', false);
+
         }
 
-        return $this->display(__FILE__, 'checkoutparcelshop.tpl');
+        return $this->display(__FILE__, 'checkoutjavascript.tpl');
+
     }
 
     public function hookActionValidateOrder($params)
@@ -220,6 +230,7 @@ class WuunderConnector extends Module
         unset($this->context->cookie->parcelId);
         $this->context->smarty->clearAssign('cookieParcelshopId');      
     }
+
 
     public function parcelshop_urls()
     {

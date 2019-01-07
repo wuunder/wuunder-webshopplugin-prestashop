@@ -66,7 +66,6 @@ class WuunderCarrier extends CarrierModule
 	public function install()
 	{
 		
-        Logger::addLog('hoi1', 2);
 		$carrierConfig = array(
 			0 => array('name' => 'Wuunder parcelshop locator',
 				'id_tax_rules_group' => 0,
@@ -299,9 +298,6 @@ class WuunderCarrier extends CarrierModule
 
 	public function hookupdateCarrier($params)
 	{
-		Logger::addLog((int)$params['id_carrier']);
-		Logger::addLog((int)$params['carrier']->id);
-
 		if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER1_CARRIER_ID')))
 			Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)($params['carrier']->id));
 		// if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')))

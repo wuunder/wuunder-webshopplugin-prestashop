@@ -291,6 +291,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
                 $apiKey = Configuration::get('live_api_key');
             }
 
+
             // Combine wuunder info and order data
             $bookingConfig = $this->buildWuunderData($order);
             $bookingConfig->setWebhookUrl($webhook_url);
@@ -335,6 +336,18 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
         if (isset($_REQUEST['processLabelForOrder'])) {
             $this->requestBookingUrl($_REQUEST['processLabelForOrder']);
+        }
+
+        $test_mode = Configuration::get('testmode');
+
+        if ($test_mode == 1) {
+            $apiKey = Configuration::get('test_api_key');
+        } else {
+            $apiKey = Configuration::get('live_api_key');
+        }
+
+        if (empty($apiKey)) {
+            $this->errors[] = Tools::displayError("Api Key is empty");
         }
 
         $link = new Link();
