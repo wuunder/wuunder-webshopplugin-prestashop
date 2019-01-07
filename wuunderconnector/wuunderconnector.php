@@ -11,9 +11,10 @@ class WuunderConnector extends Module
     private $parcelshopcarrier;
 
     private $hooks = array(
-        // 'displayCarrierList',
-        // 'actionCarrierProcess',
-        // 'displayAfterCarrier'
+         'displayCarrierList',
+         'actionValidateOrder',
+         'displayHeader',
+         'displayFooter',
     );
 
     public function __construct()
@@ -149,12 +150,15 @@ class WuunderConnector extends Module
 
         $this->parcelshopcarrier->install();
 
+        foreach($this->hooks as $hookName){
+			if(!$this->registerHook($hookName)) {
+			Logger::addLog('Installation of hook: ' . $hookName . 'failed');
+			return false;
+			}
+		}
+
         if (!parent::install() ||
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping') ||
-            !$this->registerHook('displayCarrierList') ||
-            !$this->registerHook('displayHeader') ||
-            !$this->registerHook('actionValidateOrder') ||
-            !$this->registerHook('displayFooter')
         )
             return false;
 
@@ -181,11 +185,6 @@ class WuunderConnector extends Module
     public function hookDisplayHeader($params)
     {
         $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
-    }
-
-    public function hookDisplayCarrierList($params)
-    {
-        return $this->display(__FILE__, 'checkoutparcelshop.tpl');
     }
 
     public function hookDisplayFooter($params)
