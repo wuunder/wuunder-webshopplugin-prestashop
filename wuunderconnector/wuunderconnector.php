@@ -11,7 +11,6 @@ class WuunderConnector extends Module
     private $parcelshopcarrier;
 
     private $hooks = array(
-         'displayCarrierList',
          'actionValidateOrder',
          'displayHeader',
          'displayFooter',
@@ -73,13 +72,13 @@ class WuunderConnector extends Module
     private function addIndexToOrderId(){
 
         Db::getInstance()->execute('
-                    CREATE INDEX `order_id`
+                    CREATE INDEX `shipment_order_id`
                     ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);
         
             ');
 
         Db::getInstance()->execute('
-                    CREATE INDEX `order_id`
+                    CREATE INDEX `parcelshop_order_id`
                     ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);
 
             ');
@@ -90,6 +89,7 @@ class WuunderConnector extends Module
         Db::getInstance()->execute('
                DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`;
                DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`
+
             ');
 
         
@@ -150,18 +150,19 @@ class WuunderConnector extends Module
 
         $this->parcelshopcarrier->install();
 
-        foreach($this->hooks as $hookName){
-			if(!$this->registerHook($hookName)) {
-			Logger::addLog('Installation of hook: ' . $hookName . 'failed');
-			return false;
-			}
-		}
+
 
         if (!parent::install() ||
-            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping') ||
+            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
         )
             return false;
 
+        foreach($this->hooks as $hookName){
+            if(!$this->registerHook($hookName)) {
+                Logger::addLog('Installation of hook: ' . $hookName . 'failed');
+                return false;
+            }
+        }    
         Configuration::updateValue('testmode', '1');
         
         return true;

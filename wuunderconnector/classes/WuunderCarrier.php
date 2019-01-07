@@ -67,7 +67,7 @@ class WuunderCarrier extends CarrierModule
 	{
 		
 		$carrierConfig = array(
-			0 => array('name' => 'Wuunder parcelshop locator',
+			0 => array('name' => 'Wuunder_parcelshop_locator',
 				'id_tax_rules_group' => 0,
 				'active' => true,
 				'deleted' => 0,
@@ -77,7 +77,7 @@ class WuunderCarrier extends CarrierModule
 				'id_zone' => 1,
 				'is_module' => true,
 				'shipping_external' => true,
-				'external_module_name' => 'Wuunder parcelshop locator',
+				'external_module_name' => 'Wuunder_parcelshop_locator',
 				'need_range' => true
 			),
 			// 1 => array('name' => 'Carrier2',
