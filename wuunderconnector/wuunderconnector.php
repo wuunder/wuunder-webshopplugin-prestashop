@@ -1,4 +1,30 @@
 <?php
+/**
+
+ * NOTICE OF LICENSE
+
+ *
+
+ * This file is licenced under the Software License Agreement.
+
+ * With the purchase or the installation of the software in your application
+
+ * you accept the licence agreement.
+
+ *
+
+ * You must not modify, adapt or create derivative works of this source code
+
+ *
+
+ *  @author    Wuunder
+
+ *  @copyright 2015-2019 Wuunder Holding B.V.
+
+ *  @license   LICENSE.txt
+
+ */
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
@@ -11,15 +37,15 @@ class WuunderConnector extends Module
     private $parcelshopcarrier;
 
     private $hooks = array(
-         'actionValidateOrder',
-         'displayHeader',
-         'displayFooter',
+        'actionValidateOrder',
+        'displayHeader',
+        'displayFooter',
     );
 
     public function __construct()
     {
         $this->name = 'wuunderconnector';
-        $this->tab = 'wuunder';
+        $this->tab = 'Wuunder_booking';
         $this->version = '1.2.7';
         $this->author = 'Wuunder';
         $this->need_instance = 0;
@@ -33,9 +59,10 @@ class WuunderConnector extends Module
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
-        if (!Configuration::get($this->name))
+        if (!Configuration::get($this->name)) {
             $this->warning = $this->l('No name provided');
-                 
+        }
+
         $this->parcelshopcarrier = new WuunderCarrier();
     }
 
@@ -65,16 +92,16 @@ class WuunderConnector extends Module
                         ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
  ');
 
-        
         $this->addIndexToOrderId();
     }
 
-    private function addIndexToOrderId(){
+    private function addIndexToOrderId()
+    {
 
         Db::getInstance()->execute('
                     CREATE INDEX `shipment_order_id`
                     ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);
-        
+
             ');
 
         Db::getInstance()->execute('
@@ -92,28 +119,27 @@ class WuunderConnector extends Module
 
             ');
 
-        
     }
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
     {
 //        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
-//            return false;
-//        }
-//        $tab = new Tab();
-//
-//        $languages = Language::getLanguages(false);
-//        foreach ($languages as $language) {
-//            $tab->name[$language['id_lang']] = $tab_name;
-//        }
-//        $tab->class_name = $tab_class;
-//        $tab->module = $this->name;
-//        $tab->id_parent = $id_tab_parent;
-//
-//        if (!$tab->save()) {
-//            return false;
-//        }
-//        return true;
+        //            return false;
+        //        }
+        //        $tab = new Tab();
+        //
+        //        $languages = Language::getLanguages(false);
+        //        foreach ($languages as $language) {
+        //            $tab->name[$language['id_lang']] = $tab_name;
+        //        }
+        //        $tab->class_name = $tab_class;
+        //        $tab->module = $this->name;
+        //        $tab->id_parent = $id_tab_parent;
+        //
+        //        if (!$tab->save()) {
+        //            return false;
+        //        }
+        //        return true;
         $tab = new Tab();
         $tab->active = 1;
         $tab->class_name = $tab_class;
@@ -143,28 +169,28 @@ class WuunderConnector extends Module
 
     public function install()
     {
-        if (Shop::isFeatureActive())
+        if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
+        }
 
         $this->installDB();
 
         $this->parcelshopcarrier->install();
 
-
-
         if (!parent::install() ||
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
-        )
+        ) {
             return false;
+        }
 
-        foreach($this->hooks as $hookName){
-            if(!$this->registerHook($hookName)) {
+        foreach ($this->hooks as $hookName) {
+            if (!$this->registerHook($hookName)) {
                 Logger::addLog('Installation of hook: ' . $hookName . 'failed');
                 return false;
             }
-        }    
+        }
         Configuration::updateValue('testmode', '1');
-        
+
         return true;
     }
 
@@ -177,8 +203,9 @@ class WuunderConnector extends Module
         if (!parent::uninstall() ||
             !Configuration::deleteByName($this->name) ||
             !$this->uninstallModuleTab('AdminWuunderConnector')
-        )
+        ) {
             return false;
+        }
 
         return true;
     }
@@ -194,19 +221,18 @@ class WuunderConnector extends Module
 
         $this->context->smarty->assign(
             array(
-            'carrier_id'        => Configuration::get('MYCARRIER1_CARRIER_ID'),
-            'baseApiUrl'        => $pickerData['baseApiUrl'],
-            'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
-            'baseUrl'           => $pickerData['baseUrl'],
-            'addressId'         => $params['cart']->id_address_delivery,
+                'carrier_id' => Configuration::get('MYCARRIER1_CARRIER_ID'),
+                'baseApiUrl' => $pickerData['baseApiUrl'],
+                'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
+                'baseUrl' => $pickerData['baseUrl'],
+                'addressId' => $params['cart']->id_address_delivery,
             )
         );
 
         if ($this->context->cookie->parcelId) {
             $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
             $this->context->smarty->assign('cookieParcelshopAddress', json_encode($this->context->cookie->parcelAddress));
-        }
-        else {
+        } else {
             $this->context->smarty->assign('cookieParcelshopAddress', false);
             $this->context->smarty->assign('cookieParcelshopId', false);
 
@@ -217,29 +243,28 @@ class WuunderConnector extends Module
     }
 
     public function hookActionValidateOrder($params)
-    {   
-        $carrier_id = $params['cart']->id_carrier;      
+    {
+        $carrier_id = $params['cart']->id_carrier;
         if (Configuration::get('MYCARRIER1_CARRIER_ID') == $carrier_id) {
             $orderId = $params['order']->id;
             $parcelshopId = $this->context->cookie->parcelId;
             Db::getInstance()->insert('wuunder_order_parcelshop', array(
-            'order_id' => (int)$orderId,
-            'parcelshop_id' => pSQL($parcelshopId),
-        ));
+                'order_id' => (int) $orderId,
+                'parcelshop_id' => pSQL($parcelshopId),
+            ));
         }
         unset($this->context->cookie->parcelId);
-        $this->context->smarty->clearAssign('cookieParcelshopId');      
+        $this->context->smarty->clearAssign('cookieParcelshopId');
     }
-
 
     public function parcelshop_urls()
     {
         // $pluginPath = dirname(plugin_dir_url(__FILE__));
         // $pluginPathJS = $pluginPath . "/assets/js/parcelshop.js";
 
-        $tmpEnvironment = new \Wuunder\Api\Environment(intval(Configuration::get('testmode')) === 1 ? 'staging' : 'production');
+        $tmpEnvironment = new \Wuunder\Api\Environment((int) Configuration::get('testmode') === 1 ? 'staging' : 'production');
 
-        $baseApiUrl = substr($tmpEnvironment->getStageBaseUrl(), 0, -3);
+        $baseApiUrl = Tools::substr($tmpEnvironment->getStageBaseUrl(), 0, -3);
         //$availableCarriers = implode(',', get_option('woocommerce_wuunder_parcelshop_settings')['select_carriers']);
 
         // echo <<<EOT
@@ -251,7 +276,7 @@ class WuunderConnector extends Module
         return $pickerData = array(
             'baseApiUrl' => $baseApiUrl,
             'availableCarriers' => null, //$availableCarriers
-            'baseUrl' => _PS_BASE_URL_ . __PS_BASE_URI__ 
+            'baseUrl' => _PS_BASE_URL_ . __PS_BASE_URI__,
         );
     }
 
@@ -259,7 +284,7 @@ class WuunderConnector extends Module
     {
         $output = null;
         $fields = array(
-          "testmode",
+            "testmode",
             "live_api_key",
             "test_api_key",
             "company_name",
@@ -280,7 +305,7 @@ class WuunderConnector extends Module
             "wuunderfilter3carrier",
             "wuunderfilter3filter",
             "wuunderfilter4carrier",
-            "wuunderfilter4filter"
+            "wuunderfilter4filter",
         );
 
         if (Tools::isSubmit('submit' . $this->name)) {
@@ -290,29 +315,30 @@ class WuunderConnector extends Module
                     || empty($field_name)
                     || !Validate::isGenericName($field_name))
                     && ($field !== "live_api_key"
-                    && $field !== "test_api_key"
-                    && $field !== "testmode"
-                    && $field !== "wuunderfilter1filter"
-                    && $field !== "wuunderfilter2filter"
-                    && $field !== "wuunderfilter3filter"
-                    && $field !== "wuunderfilter4filter")
-                )
-                    $output .= $this->displayError($this->l('Invalid Configuration value: '.$field));
-                else {
+                        && $field !== "test_api_key"
+                        && $field !== "testmode"
+                        && $field !== "wuunderfilter1filter"
+                        && $field !== "wuunderfilter2filter"
+                        && $field !== "wuunderfilter3filter"
+                        && $field !== "wuunderfilter4filter")
+                ) {
+                    $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
+                } else {
                     Configuration::updateValue($field, $field_name);
 //                    $output .= $this->displayConfirmation($this->l('Settings updated'));
                 }
             }
         }
-        return $output.$this->displayForm();
+        return $output . $this->displayForm();
     }
 
     public function displayForm()
     {
         // Get default language
-        $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+        $default_lang = (int) Configuration::get('PS_LANG_DEFAULT');
 
         // Init Fields form array
+        $fields_form = array();
         $fields_form[0]['form'] = array(
             'legend' => array(
                 'title' => $this->l('Settings'),
@@ -325,93 +351,93 @@ class WuunderConnector extends Module
                     'options' => array(
                         'query' => array(array("id" => 1, "name" => "Aan"), array("id" => 0, "name" => "Uit")),
                         'id' => 'id',
-                        'name' => 'name'
+                        'name' => 'name',
                     ),
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Live API key'),
                     'name' => "live_api_key",
-                    'required' => false
+                    'required' => false,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Test API key'),
                     'name' => "test_api_key",
-                    'required' => false
+                    'required' => false,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Bedrijfsnaam'),
                     'name' => "company_name",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Firstname'),
                     'name' => "firstname",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Lastname'),
                     'name' => "lastname",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Email'),
                     'name' => "email",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Phonenumber'),
                     'name' => "phonenumber",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Streetname'),
                     'name' => "streetname",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Housenumber'),
                     'name' => "housenumber",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Zipcode'),
                     'name' => "zipcode",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('City'),
                     'name' => "city",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Country code'),
                     'name' => "country",
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
@@ -421,9 +447,9 @@ class WuunderConnector extends Module
                     'options' => array(
                         'query' => OrderState::getOrderStates($this->context->language->id, $this->context->cookie->profile),
                         'id' => 'id_order_state',
-                        'name' => 'name'
+                        'name' => 'name',
                     ),
-                    'required' => true
+                    'required' => true,
                 ),
 
                 array(
@@ -431,74 +457,74 @@ class WuunderConnector extends Module
                     'label' => $this->l('Wuunder filter: #1 Carrier'),
                     'name' => "wuunderfilter1carrier",
                     'options' => array(
-                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
                         'id' => 'id_carrier',
-                        'name' => 'name'
+                        'name' => 'name',
                     ),
-                    'required' => false
+                    'required' => false,
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Wuunder filter: #1 Filter'),
                     'name' => "wuunderfilter1filter",
-                    'required' => false
+                    'required' => false,
                 ),
                 array(
                     'type' => 'select',
                     'label' => $this->l('Wuunder filter: #2 Carrier'),
                     'name' => "wuunderfilter2carrier",
                     'options' => array(
-                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
                         'id' => 'id_carrier',
-                        'name' => 'name'
+                        'name' => 'name',
                     ),
-                    'required' => false
+                    'required' => false,
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Wuunder filter: #2 Filter'),
                     'name' => "wuunderfilter2filter",
-                    'required' => false
+                    'required' => false,
                 ),
                 array(
                     'type' => 'select',
                     'label' => $this->l('Wuunder filter: #3 Carrier'),
                     'name' => "wuunderfilter3carrier",
                     'options' => array(
-                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
                         'id' => 'id_carrier',
-                        'name' => 'name'
+                        'name' => 'name',
                     ),
-                    'required' => false
+                    'required' => false,
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Wuunder filter: #3 Filter'),
                     'name' => "wuunderfilter3filter",
-                    'required' => false
+                    'required' => false,
                 ),
                 array(
                     'type' => 'select',
                     'label' => $this->l('Wuunder filter: #4 Carrier'),
                     'name' => "wuunderfilter4carrier",
                     'options' => array(
-                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
                         'id' => 'id_carrier',
-                        'name' => 'name'
+                        'name' => 'name',
                     ),
-                    'required' => false
+                    'required' => false,
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Wuunder filter: #4 Filter'),
                     'name' => "wuunderfilter4filter",
-                    'required' => false
-                )
+                    'required' => false,
+                ),
             ),
             'submit' => array(
                 'title' => $this->l('Save'),
-                'class' => 'btn btn-default pull-right'
-            )
+                'class' => 'btn btn-default pull-right',
+            ),
         );
 
         $helper = new HelperForm();
@@ -516,20 +542,19 @@ class WuunderConnector extends Module
 
         // Title and toolbar
         $helper->title = $this->displayName;
-        $helper->show_toolbar = true;        // false -> remove toolbar
-        $helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
+        $helper->show_toolbar = true; // false -> remove toolbar
+        $helper->toolbar_scroll = true; // yes - > Toolbar is always visible on the top of the screen.
         $helper->submit_action = 'submit' . $this->name;
         $helper->toolbar_btn = array(
-            'save' =>
-                array(
-                    'desc' => $this->l('Save'),
-                    'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&save' . $this->name .
-                        '&token=' . Tools::getAdminTokenLite('AdminModules'),
-                ),
+            'save' => array(
+                'desc' => $this->l('Save'),
+                'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&save' . $this->name .
+                '&token=' . Tools::getAdminTokenLite('AdminModules'),
+            ),
             'back' => array(
                 'href' => AdminController::$currentIndex . '&token=' . Tools::getAdminTokenLite('AdminModules'),
-                'desc' => $this->l('Back to list')
-            )
+                'desc' => $this->l('Back to list'),
+            ),
         );
 
         // Load current value
@@ -556,7 +581,7 @@ class WuunderConnector extends Module
             "wuunderfilter3carrier",
             "wuunderfilter3filter",
             "wuunderfilter4carrier",
-            "wuunderfilter4filter"
+            "wuunderfilter4filter",
         );
 
         foreach ($fields as $field) {
