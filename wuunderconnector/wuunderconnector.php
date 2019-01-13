@@ -310,7 +310,7 @@ class WuunderConnector extends Module
 
         if (Tools::isSubmit('submit' . $this->name)) {
             foreach ($fields as $field) {
-                $field_name = strval(Tools::getValue($field));
+                $field_name = (string)Tools::getValue($field);
                 if ((!$field_name
                     || empty($field_name)
                     || !Validate::isGenericName($field_name))

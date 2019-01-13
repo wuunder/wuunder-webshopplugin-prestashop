@@ -148,7 +148,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function addressSplitter($address, $address2 = null, $address3 = null)
     {
-
+        $result = array();
         if (!isset($address)) {
             return false;
         }
