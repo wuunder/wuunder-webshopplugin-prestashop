@@ -68,7 +68,7 @@ class WuunderCarrier extends CarrierModule
 
             // Testing if Carrier Id exists
             $warning = array();
-            if (!in_array((int) (Configuration::get('MYCARRIER1_CARRIER_ID')), $id_carrier_list)) {
+            if (!in_array((int)(Configuration::get('MYCARRIER1_CARRIER_ID')), $id_carrier_list)) {
                 $warning[] .= $this->l('"Carrier 1"') . ' ';
             }
 
@@ -96,7 +96,8 @@ class WuunderCarrier extends CarrierModule
     {
 
         $carrierConfig = array(
-            0 => array('name' => 'Wuunder_parcelshop_locator',
+            0 => array(
+                'name' => 'Wuunder_parcelshop_locator',
                 'id_tax_rules_group' => 0,
                 'active' => true,
                 'deleted' => 0,
@@ -126,12 +127,12 @@ class WuunderCarrier extends CarrierModule
 
         $id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
         // $id_carrier2 = $this->installExternalCarrier($carrierConfig[1]);
-        Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int) $id_carrier1);
+        Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)$id_carrier1);
         // Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)$id_carrier2);
-        if (!parent::install() ||
-            !Configuration::updateValue('MYCARRIER1_OVERCOST', '') ||
-            // !Configuration::updateValue('MYCARRIER2_OVERCOST', '') ||
-            !$this->registerHook('updateCarrier')) {
+        if (!parent::install() 
+            || !Configuration::updateValue('MYCARRIER1_OVERCOST', '') 
+            || !$this->registerHook('updateCarrier')
+        ) {
             Logger::addLog('carrier not installed', 2);
         }
 
@@ -143,22 +144,24 @@ class WuunderCarrier extends CarrierModule
     public function uninstall()
     {
         // Uninstall
-        if (!parent::uninstall() ||
-            !Configuration::deleteByName('MYCARRIER1_OVERCOST') ||
-            // !Configuration::deleteByName('MYCARRIER2_OVERCOST') ||
-            !$this->unregisterHook('updateCarrier')) {
+        if (!parent::uninstall() 
+            || !Configuration::deleteByName('MYCARRIER1_OVERCOST') 
+            || !$this->unregisterHook('updateCarrier')
+        ) {
             return false;
         }
 
         // Delete External Carrier
-        $Carrier1 = new Carrier((int) (Configuration::get('MYCARRIER1_CARRIER_ID')));
+        $Carrier1 = new Carrier((int)(Configuration::get('MYCARRIER1_CARRIER_ID')));
         // $Carrier2 = new Carrier((int)(Configuration::get('MYCARRIER2_CARRIER_ID')));
 
         // If external carrier is default set other one as default
-        if (Configuration::get('PS_CARRIER_DEFAULT') == (int) ($Carrier1->id)) //|| Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier2->id))
-        {
+        if (Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier1->id)) {
             $this->context->cookie;
-            $carriersD = Carrier::getCarriers($this->context->cookie->id_lang, true, false, false, null, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE);
+            $carriersD = Carrier::getCarriers(
+                $this->context->cookie->id_lang, true, false, false, null,
+                PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE
+            );
             foreach ($carriersD as $carrierD) {
                 if ($carrierD['active'] and !$carrierD['deleted'] and ($carrierD['name'] != $this->_config['name'])) {
                     Configuration::updateValue('PS_CARRIER_DEFAULT', $carrierD['id_carrier']);
@@ -170,8 +173,7 @@ class WuunderCarrier extends CarrierModule
         // Then delete Carrier
         $Carrier1->deleted = 1;
         // $Carrier2->deleted = 1;
-        if (!$Carrier1->update()) //|| !$Carrier2->update())
-        {
+        if (!$Carrier1->update()) {
             return false;
         }
 
@@ -197,15 +199,18 @@ class WuunderCarrier extends CarrierModule
         $languages = Language::getLanguages(true);
         foreach ($languages as $language) {
             if ($language['iso_code'] == 'nl') {
-                $carrier->delay[(int) $language['id_lang']] = $config['delay'][$language['iso_code']];
+                $carrier->delay[(int)$language['id_lang']]
+                    = $config['delay'][$language['iso_code']];
             }
 
             if ($language['iso_code'] == 'en') {
-                $carrier->delay[(int) $language['id_lang']] = $config['delay'][$language['iso_code']];
+                $carrier->delay[(int)$language['id_lang']] 
+                    = $config['delay'][$language['iso_code']];
             }
 
             if ($language['iso_code'] == Language::getIsoById(Configuration::get('PS_LANG_DEFAULT'))) {
-                $carrier->delay[(int) $language['id_lang']] = $config['delay'][$language['iso_code']];
+                $carrier->delay[(int)$language['id_lang']] 
+                    = $config['delay'][$language['iso_code']];
             }
 
         }
@@ -213,7 +218,7 @@ class WuunderCarrier extends CarrierModule
         if ($carrier->add()) {
             $groups = Group::getGroups(true);
             foreach ($groups as $group) {
-                Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_group', array('id_carrier' => (int) ($carrier->id), 'id_group' => (int) ($group['id_group'])), 'INSERT');
+                Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_group', array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])), 'INSERT');
             }
 
             $rangePrice = new RangePrice();
@@ -230,9 +235,9 @@ class WuunderCarrier extends CarrierModule
 
             $zones = Zone::getZones(true);
             foreach ($zones as $zone) {
-                Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_zone', array('id_carrier' => (int) ($carrier->id), 'id_zone' => (int) ($zone['id_zone'])), 'INSERT');
-                Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int) ($carrier->id), 'id_range_price' => (int) ($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int) ($zone['id_zone']), 'price' => '0'), 'INSERT');
-                Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int) ($carrier->id), 'id_range_price' => null, 'id_range_weight' => (int) ($rangeWeight->id), 'id_zone' => (int) ($zone['id_zone']), 'price' => '0'), 'INSERT');
+                Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_zone', array('id_carrier' => (int)($carrier->id), 'id_zone' => (int)($zone['id_zone'])), 'INSERT');
+                Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => '0'), 'INSERT');
+                Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => null, 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => '0'), 'INSERT');
             }
 
             // Copy Logo
@@ -241,7 +246,7 @@ class WuunderCarrier extends CarrierModule
 
             // Return ID
             Logger::addLog("return id", 2);
-            return (int) ($carrier->id);
+            return (int)($carrier->id);
         }
         Logger::addLog("return false", 2);
         return false;
@@ -294,7 +299,9 @@ class WuunderCarrier extends CarrierModule
         $this->_html .= '</fieldset><div class="clear">&nbsp;</div>
 			<style>
 				#tabList { clear: left; }
-				.tabItem { display: block; background: #FFFFF0; border: 1px solid #CCCCCC; padding: 10px; padding-top: 20px; }
+                .tabItem { display: block; 
+                    background: #FFFFF0; border: 1px solid #CCCCCC;
+                    padding: 10px; padding-top: 20px; }
 			</style>
 			<div id="tabList">
 				<div class="tabItem">
@@ -303,13 +310,18 @@ class WuunderCarrier extends CarrierModule
 					<fieldset style="border: 0px;">
 						<h4>' . $this->l('General configuration') . ' :</h4>
 						<label>' . $this->l('My Carrier1 overcost') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="mycarrier1_overcost" value="' . Tools::getValue('mycarrier1_overcost', Configuration::get('MYCARRIER1_OVERCOST')) . '" /></div>
-						<label>' . $this->l('My Carrier2 overcost') . ' : </label>
-						<div class="margin-form"><input type="text" size="20" name="mycarrier2_overcost" value="' . Tools::getValue('mycarrier2_overcost', Configuration::get('MYCARRIER2_OVERCOST')) . '" /></div>
+                        <div class="margin-form">
+                            <input type="text" size="20" name="mycarrier1_overcost" value="' . Tools::getValue('mycarrier1_overcost', Configuration::get('MYCARRIER1_OVERCOST')) . '" /></div>
+						    <label>' . $this->l('My Carrier2 overcost') . ' : </label>
+                        <div class="margin-form">
+                            <input type="text" size="20" name="mycarrier2_overcost" value="' . Tools::getValue('mycarrier2_overcost', Configuration::get('MYCARRIER2_OVERCOST')) . '" />
+                        </div>
 					</div>
 					<br /><br />
 				</fieldset>
-				<div class="margin-form"><input class="button" name="submitSave" type="submit"></div>
+                <div class="margin-form">
+                    <input class="button" name="submitSave" type="submit">
+                </div>
 			</form>
 		</div></div>';
     }
@@ -317,9 +329,10 @@ class WuunderCarrier extends CarrierModule
     private function _postValidation()
     {
         // Check configuration values
-        if (Tools::getValue('mycarrier1_overcost') == '') //&& Tools::getValue('mycarrier2_overcost') == '')
-        {
-            $this->_postErrors[] = $this->l('You have to configure at least one carrier');
+        if (Tools::getValue('mycarrier1_overcost') == '') {
+            $this->_postErrors[] = $this->l(
+                'You have to configure at least one carrier'
+            );
         }
 
     }
@@ -327,9 +340,7 @@ class WuunderCarrier extends CarrierModule
     private function _postProcess()
     {
         // Saving new configurations
-        if (Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost'))) //&&
-        // Configuration::updateValue('MYCARRIER2_OVERCOST', Tools::getValue('mycarrier2_overcost')))
-        {
+        if (Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost'))) {
             $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
         } else {
             $this->_html .= $this->displayErrors($this->l('Settings failed'));
@@ -344,8 +355,13 @@ class WuunderCarrier extends CarrierModule
 
     public function hookupdateCarrier($params)
     {
-        if ((int) ($params['id_carrier']) == (int) (Configuration::get('MYCARRIER1_CARRIER_ID'))) {
-            Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int) ($params['carrier']->id));
+        if ((int)($params['id_carrier']) == (int)(Configuration::get(
+            'MYCARRIER1_CARRIER_ID'
+        ))
+        ) {
+            Configuration::updateValue(
+                'MYCARRIER1_CARRIER_ID', (int)($params['carrier']->id)
+            );
         }
 
         // if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')))
@@ -366,8 +382,8 @@ class WuunderCarrier extends CarrierModule
     public function getOrderShippingCost($params, $shipping_cost)
     {
         // This example returns shipping cost with overcost set in the back-office, but you can call a webservice or calculate what you want before returning the final value to the Cart
-        if ($this->id_carrier == (int) (Configuration::get('MYCARRIER1_CARRIER_ID')) && Configuration::get('MYCARRIER1_OVERCOST') > 1) {
-            return (float) (Configuration::get('MYCARRIER1_OVERCOST'));
+        if ($this->id_carrier == (int)(Configuration::get('MYCARRIER1_CARRIER_ID')) && Configuration::get('MYCARRIER1_OVERCOST') > 1) {
+            return (float)(Configuration::get('MYCARRIER1_OVERCOST'));
         }
 
         // if ($this->id_carrier == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')) && Configuration::get('MYCARRIER2_OVERCOST') > 1)
@@ -380,8 +396,8 @@ class WuunderCarrier extends CarrierModule
     public function getOrderShippingCostExternal($params)
     {
         // This example returns the overcost directly, but you can call a webservice or calculate what you want before returning the final value to the Cart
-        if ($this->id_carrier == (int) (Configuration::get('MYCARRIER1_CARRIER_ID')) && Configuration::get('MYCARRIER1_OVERCOST') > 1) {
-            return (float) (Configuration::get('MYCARRIER1_OVERCOST'));
+        if ($this->id_carrier == (int)(Configuration::get('MYCARRIER1_CARRIER_ID')) && Configuration::get('MYCARRIER1_OVERCOST') > 1) {
+            return (float)(Configuration::get('MYCARRIER1_OVERCOST'));
         }
 
         // if ($this->id_carrier == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')) && Configuration::get('MYCARRIER2_OVERCOST') > 1)

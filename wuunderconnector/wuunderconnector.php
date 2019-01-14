@@ -315,12 +315,12 @@ class WuunderConnector extends Module
                     || empty($field_name)
                     || !Validate::isGenericName($field_name))
                     && ($field !== "live_api_key"
-                        && $field !== "test_api_key"
-                        && $field !== "testmode"
-                        && $field !== "wuunderfilter1filter"
-                        && $field !== "wuunderfilter2filter"
-                        && $field !== "wuunderfilter3filter"
-                        && $field !== "wuunderfilter4filter")
+                    && $field !== "test_api_key"
+                    && $field !== "testmode"
+                    && $field !== "wuunderfilter1filter"
+                    && $field !== "wuunderfilter2filter"
+                    && $field !== "wuunderfilter3filter"
+                    && $field !== "wuunderfilter4filter")
                 ) {
                     $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
                 } else {
