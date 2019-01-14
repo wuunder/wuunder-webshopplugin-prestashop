@@ -45,7 +45,7 @@ class WuunderConnector extends Module
     public function __construct()
     {
         $this->name = 'wuunderconnector';
-        $this->tab = 'Wuunder_booking';
+        $this->tab = 'shipping_logistics';
         $this->version = '1.2.7';
         $this->author = 'Wuunder';
         $this->need_instance = 0;
@@ -229,7 +229,7 @@ class WuunderConnector extends Module
 
         if ($this->context->cookie->parcelId) {
             $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
-            $this->context->smarty->assign('cookieParcelshopAddress', json_encode($this->context->cookie->parcelAddress));
+            $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
         } else {
             $this->context->smarty->assign('cookieParcelshopAddress', false);
             $this->context->smarty->assign('cookieParcelshopId', false);

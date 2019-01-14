@@ -30,7 +30,7 @@ var shippingCarrierId = "{/literal}{$carrier_id|escape:'htmlall':'UTF-8'}{litera
 var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio')[0];
 var shippingMethodElems = jQuery('input.delivery_option_radio');
 var shippingAddress;
-var parcelshopAddress = _markupParcelshopAddress({/literal}{$cookieParcelshopAddress|escape:'htmlall':'UTF-8'}{literal});
+var parcelshopAddress = _markupParcelshopAddress({/literal}{$cookieParcelshopAddress|@json_encode|escape:'quotes':'UTF-8'}{literal});
 var baseUrl;
 var baseUrlApi;
 var availableCarrierList;
