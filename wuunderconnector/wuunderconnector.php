@@ -196,7 +196,7 @@ class WuunderConnector extends Module
             array(
             'carrier_id'        => Configuration::get('MYCARRIER1_CARRIER_ID'),
             'baseApiUrl'        => $pickerData['baseApiUrl'],
-            'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
+            'availableCarriers' => $pickerData['availableCarriers'],
             'baseUrl'           => $pickerData['baseUrl'],
             'addressId'         => $params['cart']->id_address_delivery,
             )
