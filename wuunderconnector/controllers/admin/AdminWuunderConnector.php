@@ -226,10 +226,11 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
         // Load product image for first ordered item
         $image = null;
-        if (file_exists('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg')) {
-            $image = base64_encode(Tools::file_get_contents('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg'));
+        if (file_exists(ImageType::getFormattedName('home_default'))) {
+            $image = base64_encode(
+                Tools::file_get_contents(ImageType::getFormattedName('home_default'))
+            );
         }
-
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
         $length = round($product_data['depth']);
         $width = round($product_data['width']);

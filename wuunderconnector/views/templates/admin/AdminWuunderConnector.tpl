@@ -53,21 +53,21 @@
             <ul class="wuunder-action-list">
                 {if !empty($order.label_url)}
                 <li>
-                    <a href="{$order.label_url}" target="_blank"><img
+                    <a href="{$order.label_url|escape:'htmlall':'UTF-8'}" target="_blank"><img
                                 src="../modules/wuunderconnector/views/img/admin/print-label.png"/></a>
                 </li>
                 <li>
-                    <a href="{$order.label_tt_url}" target="_blank"><img
+                    <a href="{$order.label_tt_url|escape:'htmlall':'UTF-8'}" target="_blank"><img
                                 src="../modules/wuunderconnector/views/img/admin/in-transit.png"/></a>
                 </li>
-                {elseif !empty($order.booking_url)}
+                {elseif !empty($order.booking_url|escape:'htmlall':'UTF-8')}
                 <li>
-                    <a href="{$order.booking_url}"><img
+                    <a href="{$order.booking_url|escape:'htmlall':'UTF-8'}"><img
                                 src="../modules/wuunderconnector/views/img/admin/create-label.png"/></a>
                 </li>
                 {else}
                 <li>
-                    <a href="{$admin_url}&processLabelForOrder={$order.id_order}"><img
+                    <a href="{$admin_url|escape:'htmlall':'UTF-8'}&processLabelForOrder={$order.id_order|escape:'htmlall':'UTF-8'}"><img
                                 src="../modules/wuunderconnector/views/img/admin/create-label.png"/></a>
                 </li>
                 {/if}

@@ -25,19 +25,19 @@
 
 <script type="text/javascript">
 {literal}
-var shippingCarrierId = "{/literal}{$carrier_id}{literal}";
+var shippingCarrierId = "{/literal}{$carrier_id|escape:'htmlall':'UTF-8'}{literal}";
 // Get the modal
 var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio')[0];
 var shippingMethodElems = jQuery('input.delivery_option_radio');
 var shippingAddress;
-var parcelshopAddress = _markupParcelshopAddress({/literal}{$cookieParcelshopAddress}{literal});
+var parcelshopAddress = _markupParcelshopAddress({/literal}{$cookieParcelshopAddress|escape:'htmlall':'UTF-8'}{literal});
 var baseUrl;
 var baseUrlApi;
 var availableCarrierList;
 var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
 var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
-var addressId = {/literal}{$addressId}{literal};
-initParcelshopLocator('{/literal}{$baseUrl}{literal}', '{/literal}{$baseApiUrl}{literal}', '{/literal}{$availableCarriers}{literal}');
+var addressId = {/literal}{$addressId|escape:'htmlall':'UTF-8'}{literal};
+initParcelshopLocator('{/literal}{$baseUrl|escape:'htmlall':'UTF-8'}{literal}', '{/literal}{$baseApiUrl|escape:'htmlall':'UTF-8'}{literal}', '{/literal}{$availableCarriers|escape:'htmlall':'UTF-8'}{literal}');
 function initParcelshopLocator(url, apiUrl, carrierList) {
 
     baseUrl = url;
@@ -49,7 +49,7 @@ function initParcelshopLocator(url, apiUrl, carrierList) {
     if (parcelshopShippingMethodElem) {
         //parcelshopShippingMethodElem.onchange = _onShippingMethodChange;
         if (parcelshopAddress !== "") {
-            parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
+            parcelshopId = "{/literal}{$cookieParcelshopId|escape:'htmlall':'UTF-8'}{literal}";
         }
         //jQuery(shippingMethodElems).change(_onShippingMethodChange);
         jQuery(shippingMethodElems).on('change', _onShippingMethodChange);
