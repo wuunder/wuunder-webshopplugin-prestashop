@@ -51,17 +51,19 @@ class AdminWuunderConnectorController extends ModuleAdminController
     {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'wuunder_shipments (order_id, booking_url, booking_token)
                     VALUES (' . $order_id . ', "' . $booking_url . '", "' . $booking_token . '")';
-        if (Db::getInstance()->insert('wuunder_shipments', array(
-            'order_id' => $order_id,
-            'booking_url' => $booking_url,
-            'booking_token' => $booking_token,
-        ))
+        if (Db::getInstance()->insert(
+            'wuunder_shipments',
+            array(
+                'order_id' => $order_id,
+                'booking_url' => $booking_url,
+                'booking_token' => $booking_token,
+            )
+        )
         ) {
             return true;
         } else {
             $this->logger->logDebug(Db::getInstance()->getMsgError());
         }
-
     }
 
     private function getBookingUrlForOrder($order_id)
@@ -156,13 +158,10 @@ class AdminWuunderConnectorController extends ModuleAdminController
         }
 
         if (isset($address2) && $address2 != '' && isset($address3) && $address3 != '') {
-
             $result['streetName'] = $address;
             $result['houseNumber'] = $address2;
             $result['houseNumberSuffix'] = $address3;
-
         } else if (isset($address2) && $address2 != '') {
-
             $result['streetName'] = $address;
 
             // Pregmatch pattern, dutch addresses
@@ -172,9 +171,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
             $result['houseNumber'] = $houseNumbers[1];
             $result['houseNumberSuffix'] = (isset($houseNumbers[2])) ? $houseNumbers[2] : '';
-
         } else {
-
             // Pregmatch pattern, dutch addresses
             $pattern = '#^([a-z0-9 [:punct:]\']*) ([0-9]{1,5})([a-z0-9 \-/]{0,})$#i';
 
@@ -239,21 +236,21 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $height = round($product_data['height']);
 
         switch (Configuration::get('PS_DIMENSION_UNI')) {
-        case "mm":
-            $dimension_product_factor = 10;
-            break;
-        case "cm":
-            $dimension_product_factor = 1;
-            break;
-        case "dm":
-            $dimension_product_factor = 0.1;
-            break;
-        case "m":
-            $dimension_product_factor = 0.01;
-            break;
-        default:
-            $dimension_product_factor = 1;
-            break;
+            case "mm":
+                $dimension_product_factor = 10;
+                break;
+            case "cm":
+                $dimension_product_factor = 1;
+                break;
+            case "dm":
+                $dimension_product_factor = 0.1;
+                break;
+            case "m":
+                $dimension_product_factor = 0.01;
+                break;
+            default:
+                $dimension_product_factor = 1;
+                break;
         }
 
         $product_length = ($length > 0) ? round($length * $dimension_product_factor) : null;

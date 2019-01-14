@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class wuunderconnectorwuunderwebhookModuleFrontController extends ModuleFrontController
+class WuunderconnectorwuunderwebhookModuleFrontController extends ModuleFrontController
 {
     public function __construct()
     {

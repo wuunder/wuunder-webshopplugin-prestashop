@@ -83,7 +83,6 @@ class WuunderCarrier extends CarrierModule
             if (count($warning)) {
                 $this->warning .= implode(' , ', $warning) . $this->l('must be configured to use this module correctly') . ' ';
             }
-
         }
     }
 
@@ -129,8 +128,8 @@ class WuunderCarrier extends CarrierModule
         // $id_carrier2 = $this->installExternalCarrier($carrierConfig[1]);
         Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)$id_carrier1);
         // Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)$id_carrier2);
-        if (!parent::install() 
-            || !Configuration::updateValue('MYCARRIER1_OVERCOST', '') 
+        if (!parent::install()
+            || !Configuration::updateValue('MYCARRIER1_OVERCOST', '')
             || !$this->registerHook('updateCarrier')
         ) {
             Logger::addLog('carrier not installed', 2);
@@ -144,8 +143,8 @@ class WuunderCarrier extends CarrierModule
     public function uninstall()
     {
         // Uninstall
-        if (!parent::uninstall() 
-            || !Configuration::deleteByName('MYCARRIER1_OVERCOST') 
+        if (!parent::uninstall()
+            || !Configuration::deleteByName('MYCARRIER1_OVERCOST')
             || !$this->unregisterHook('updateCarrier')
         ) {
             return false;
@@ -159,7 +158,11 @@ class WuunderCarrier extends CarrierModule
         if (Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier1->id)) {
             $this->context->cookie;
             $carriersD = Carrier::getCarriers(
-                $this->context->cookie->id_lang, true, false, false, null,
+                $this->context->cookie->id_lang,
+                true,
+                false,
+                false,
+                null,
                 PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE
             );
             foreach ($carriersD as $carrierD) {
@@ -167,7 +170,6 @@ class WuunderCarrier extends CarrierModule
                     Configuration::updateValue('PS_CARRIER_DEFAULT', $carrierD['id_carrier']);
                 }
             }
-
         }
 
         // Then delete Carrier
@@ -204,17 +206,15 @@ class WuunderCarrier extends CarrierModule
             }
 
             if ($language['iso_code'] == 'en') {
-                $carrier->delay[(int)$language['id_lang']] 
+                $carrier->delay[(int)$language['id_lang']]
                     = $config['delay'][$language['iso_code']];
             }
 
             if ($language['iso_code'] == Language::getIsoById(Configuration::get('PS_LANG_DEFAULT'))) {
-                $carrier->delay[(int)$language['id_lang']] 
+                $carrier->delay[(int)$language['id_lang']]
                     = $config['delay'][$language['iso_code']];
             }
-
         }
-
         if ($carrier->add()) {
             $groups = Group::getGroups(true);
             foreach ($groups as $group) {
@@ -269,7 +269,6 @@ class WuunderCarrier extends CarrierModule
                     $this->_html .= '<div class="alert error"><img src="' . _PS_IMG_ . 'admin/forbbiden.gif" alt="nok" />&nbsp;' . $err . '</div>';
                 }
             }
-
         }
         $this->_displayForm();
         return $this->_html;
@@ -334,7 +333,6 @@ class WuunderCarrier extends CarrierModule
                 'You have to configure at least one carrier'
             );
         }
-
     }
 
     private function _postProcess()
@@ -345,7 +343,6 @@ class WuunderCarrier extends CarrierModule
         } else {
             $this->_html .= $this->displayErrors($this->l('Settings failed'));
         }
-
     }
 
     /*
@@ -360,10 +357,10 @@ class WuunderCarrier extends CarrierModule
         ))
         ) {
             Configuration::updateValue(
-                'MYCARRIER1_CARRIER_ID', (int)($params['carrier']->id)
+                'MYCARRIER1_CARRIER_ID',
+                (int)($params['carrier']->id)
             );
         }
-
         // if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')))
         //     Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)($params['carrier']->id));
     }
@@ -406,5 +403,4 @@ class WuunderCarrier extends CarrierModule
         // If the carrier is not known, you can return false, the carrier won't appear in the order process
         return false;
     }
-
 }

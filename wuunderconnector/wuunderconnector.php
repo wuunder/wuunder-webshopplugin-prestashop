@@ -116,9 +116,7 @@ class WuunderConnector extends Module
         Db::getInstance()->execute('
                DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`;
                DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`
-
             ');
-
     }
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
@@ -235,11 +233,8 @@ class WuunderConnector extends Module
         } else {
             $this->context->smarty->assign('cookieParcelshopAddress', false);
             $this->context->smarty->assign('cookieParcelshopId', false);
-
         }
-
         return $this->display(__FILE__, 'checkoutjavascript.tpl');
-
     }
 
     public function hookActionValidateOrder($params)
@@ -261,7 +256,6 @@ class WuunderConnector extends Module
     {
         // $pluginPath = dirname(plugin_dir_url(__FILE__));
         // $pluginPathJS = $pluginPath . "/assets/js/parcelshop.js";
-
         $tmpEnvironment = new \Wuunder\Api\Environment((int) Configuration::get('testmode') === 1 ? 'staging' : 'production');
 
         $baseApiUrl = Tools::substr($tmpEnvironment->getStageBaseUrl(), 0, -3);
@@ -590,5 +584,4 @@ class WuunderConnector extends Module
 
         return $helper->generateForm($fields_form);
     }
-
 }

@@ -29,7 +29,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class wuunderconnectorParcelshopModuleFrontController extends ModuleFrontController
+class WuunderconnectorParcelshopModuleFrontController extends ModuleFrontController
 {
     public function __construct()
     {
@@ -51,7 +51,6 @@ class wuunderconnectorParcelshopModuleFrontController extends ModuleFrontControl
         if (isset($_REQUEST['setParcelshopId'])) {
             $this->setParcelshopId();
         }
-
     }
 
     private function getCheckoutAddress()
@@ -106,5 +105,4 @@ class wuunderconnectorParcelshopModuleFrontController extends ModuleFrontControl
 
         return null;
     }
-
 }
