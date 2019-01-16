@@ -51,6 +51,7 @@ class WuunderConnector extends Module
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
+        $this->module_key = '314132fd1611ed03d1a68870a6e94b36';
 
         parent::__construct();
 
