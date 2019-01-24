@@ -54,9 +54,9 @@ class AdminWuunderConnectorController extends ModuleAdminController
         if (Db::getInstance()->insert(
             'wuunder_shipments',
             array(
-                'order_id' => $order_id,
-                'booking_url' => $booking_url,
-                'booking_token' => $booking_token,
+                'order_id' => (int)$order_id,
+                'booking_url' => pSQL($booking_url),
+                'booking_token' => pSQL($booking_token),
             )
         )
         ) {
@@ -228,7 +228,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $image = null;
         if (file_exists('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg')) {
             $image = base64_encode(Tools::file_get_contents('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg'));
-
         }
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
         $length = round($product_data['depth']);
