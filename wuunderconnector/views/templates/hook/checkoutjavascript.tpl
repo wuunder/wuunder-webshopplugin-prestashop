@@ -153,11 +153,17 @@ function _loadSelectedParcelshopAddress(id) {
 }
 
 function _markupParcelshopAddress(parcelshopData) {
-                data = JSON.parse(parcelshopData);
-                var parcelshopInfoHtml = _capFirst(data.company_name) + "<br>" + _capFirst(data.address.street_name) +
-                " " + data.address.house_number + "<br>" + data.address.city;
-                parcelshopInfoHtml = parcelshopInfoHtml.replace(/"/g, '\\"').replace(/'/g, "\\'");
-                return parcelshopInfoHtml;
+        if (!parcelshopData) {
+            return false;
+        }
+        else {
+            data = JSON.parse(parcelshopData);
+            var parcelshopInfoHtml = _capFirst(data.company_name) + "<br>" + _capFirst(data.address.street_name) +
+            " " + data.address.house_number + "<br>" + data.address.city;
+            parcelshopInfoHtml = parcelshopInfoHtml.replace(/"/g, '\\"').replace(/'/g, "\\'");
+            return parcelshopInfoHtml;
+        }
+
 }
 
 // Capitalizes first letter of every new word.
