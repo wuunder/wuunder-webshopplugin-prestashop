@@ -40,6 +40,7 @@ class WuunderConnector extends Module
         'actionValidateOrder',
         'displayHeader',
         'displayFooter',
+        'actionCarrierUpdate',
     );
 
     public function __construct()
@@ -206,7 +207,28 @@ class WuunderConnector extends Module
             return false;
         }
 
+        foreach ($this->hooks as $hookName) {
+            if (!$this->unregisterHook($hookName)) {
+                Logger::addLog('Uninstallation of hook: ' . $hookName . 'failed');
+                return false;
+            }
+        }
         return true;
+    }
+
+    public function hookActionCarrierUpdate($params)
+    {
+        Logger::addLog('carrier hook', 2);
+        if ((int)($params['id_carrier']) == (int)(Configuration::get(
+            'MYCARRIER1_CARRIER_ID'
+        ))
+        ) {
+            Configuration::updateValue(
+                'MYCARRIER1_CARRIER_ID',
+                (int)($params['carrier']->id)
+            );
+            Logger::addLog('carrier updated: ' . $params['carrier']->id, 2);
+        }
     }
 
     public function hookDisplayHeader($params)
@@ -247,7 +269,8 @@ class WuunderConnector extends Module
             Db::getInstance()->insert('wuunder_order_parcelshop', array(
                 'order_id' => (int) $orderId,
                 'parcelshop_id' => pSQL($parcelshopId),
-            ));
+                )
+            );
         }
         unset($this->context->cookie->parcelId);
         $this->context->smarty->clearAssign('cookieParcelshopId');
@@ -255,19 +278,10 @@ class WuunderConnector extends Module
 
     public function parcelshop_urls()
     {
-        // $pluginPath = dirname(plugin_dir_url(__FILE__));
-        // $pluginPathJS = $pluginPath . "/assets/js/parcelshop.js";
         $tmpEnvironment = new \Wuunder\Api\Environment((int) Configuration::get('testmode') === 1 ? 'staging' : 'production');
 
         $baseApiUrl = Tools::substr($tmpEnvironment->getStageBaseUrl(), 0, -3);
-        //$availableCarriers = implode(',', get_option('woocommerce_wuunder_parcelshop_settings')['select_carriers']);
 
-        // echo <<<EOT
-        //     <script type="text/javascript" data-cfasync="false" src="$pluginPathJS"></script>
-        //     <script type="text/javascript">
-        //         initParcelshopLocator("$baseWebshopUrl", "$baseApiUrl", "$availableCarriers");
-        //     </script>
-        // EOT;
         return $pickerData = array(
             'baseApiUrl' => $baseApiUrl,
             'availableCarriers' => null, //$availableCarriers
@@ -320,7 +334,6 @@ class WuunderConnector extends Module
                     $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
                 } else {
                     Configuration::updateValue($field, $field_name);
-//                    $output .= $this->displayConfirmation($this->l('Settings updated'));
                 }
             }
         }

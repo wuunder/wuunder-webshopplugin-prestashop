@@ -72,14 +72,10 @@ class WuunderCarrier extends CarrierModule
                 $warning[] .= $this->l('"Carrier 1"') . ' ';
             }
 
-            // if (!in_array((int)(Configuration::get('MYCARRIER2_CARRIER_ID')), $id_carrier_list))
-            //     $warning[] .= $this->l('"Carrier 2"').' ';
             if (!Configuration::get('MYCARRIER1_OVERCOST')) {
                 $warning[] .= $this->l('"Carrier 1 Overcost"') . ' ';
             }
 
-            // if (!Configuration::get('MYCARRIER2_OVERCOST'))
-            //     $warning[] .= $this->l('"Carrier 2 Overcost"').' ';
             if (count($warning)) {
                 $this->warning .= implode(' , ', $warning) . $this->l('must be configured to use this module correctly') . ' ';
             }
@@ -96,7 +92,7 @@ class WuunderCarrier extends CarrierModule
 
         $carrierConfig = array(
             0 => array(
-                'name' => 'Wuunder_parcelshop_locator',
+                'name' => 'Wuunder parcelshop locator',
                 'id_tax_rules_group' => 0,
                 'active' => true,
                 'deleted' => 0,
@@ -109,19 +105,6 @@ class WuunderCarrier extends CarrierModule
                 'external_module_name' => 'Wuunder_parcelshop_locator',
                 'need_range' => true,
             ),
-            // 1 => array('name' => 'Carrier2',
-            //     'id_tax_rules_group' => 0,
-            //     'active' => true,
-            //     'deleted' => 0,
-            //     'shipping_handling' => false,
-            //     'range_behavior' => 0,
-            //     'delay' => array('fr' => 'Description 2', 'en' => 'Description 2', Language::getIsoById(Configuration::get('PS_LANG_DEFAULT')) => 'Description 2'),
-            //     'id_zone' => 1,
-            //     'is_module' => true,
-            //     'shipping_external' => true,
-            //     'external_module_name' => 'mycarrier',
-            //     'need_range' => true
-            // ),
         );
 
         $id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
@@ -130,12 +113,10 @@ class WuunderCarrier extends CarrierModule
         // Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)$id_carrier2);
         if (!parent::install()
             || !Configuration::updateValue('MYCARRIER1_OVERCOST', '')
-            || !$this->registerHook('updateCarrier')
         ) {
             Logger::addLog('carrier not installed', 2);
+            return false;
         }
-
-        return false;
         Logger::addLog('carrier installed id = ' . $id_carrier1, 2);
         return true;
     }
@@ -145,14 +126,12 @@ class WuunderCarrier extends CarrierModule
         // Uninstall
         if (!parent::uninstall()
             || !Configuration::deleteByName('MYCARRIER1_OVERCOST')
-            || !$this->unregisterHook('updateCarrier')
         ) {
             return false;
         }
 
         // Delete External Carrier
         $Carrier1 = new Carrier((int)(Configuration::get('MYCARRIER1_CARRIER_ID')));
-        // $Carrier2 = new Carrier((int)(Configuration::get('MYCARRIER2_CARRIER_ID')));
 
         // If external carrier is default set other one as default
         if (Configuration::get('PS_CARRIER_DEFAULT') == (int)($Carrier1->id)) {
@@ -284,15 +263,12 @@ class WuunderCarrier extends CarrierModule
             $alert['carrier1'] = 1;
         }
 
-        // if (!Configuration::get('MYCARRIER2_OVERCOST') || Configuration::get('MYCARRIER2_OVERCOST') == '')
-        //     $alert['carrier2'] = 1;
 
         if (!count($alert)) {
             $this->_html .= '<img src="' . _PS_IMG_ . 'admin/module_install.png" /><strong>' . $this->l('My Carrier is configured and online!') . '</strong>';
         } else {
             $this->_html .= '<img src="' . _PS_IMG_ . 'admin/warn2.png" /><strong>' . $this->l('My Carrier is not configured yet, please:') . '</strong>';
             $this->_html .= '<br />' . (isset($alert['carrier1']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 1) ' . $this->l('Configure the carrier 1 overcost');
-            // $this->_html .= '<br />'.(isset($alert['carrier2']) ? '<img src="'._PS_IMG_.'admin/warn2.png" />' : '<img src="'._PS_IMG_.'admin/module_install.png" />').' 2) '.$this->l('Configure the carrier 2 overcost');
         }
 
         $this->_html .= '</fieldset><div class="clear">&nbsp;</div>
@@ -344,29 +320,6 @@ class WuunderCarrier extends CarrierModule
             $this->_html .= $this->displayErrors($this->l('Settings failed'));
         }
     }
-
-    /*
-     ** Hook update carrier
-     **
-     */
-
-    public function hookupdateCarrier($params)
-    {
-        Logger::addLog('carrier hook', 2);
-        if ((int)($params['id_carrier']) == (int)(Configuration::get(
-            'MYCARRIER1_CARRIER_ID'
-        ))
-        ) {
-            Configuration::updateValue(
-                'MYCARRIER1_CARRIER_ID',
-                (int)($params['carrier']->id)
-            );
-            Logger::addLog('carrier updated: ' . $params['carrier']->id, 2);
-        }
-        // if ((int)($params['id_carrier']) == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')))
-        //     Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)($params['carrier']->id));
-    }
-
     /*
      ** Front Methods
      **
@@ -384,10 +337,6 @@ class WuunderCarrier extends CarrierModule
         if ($this->id_carrier == (int)(Configuration::get('MYCARRIER1_CARRIER_ID')) && Configuration::get('MYCARRIER1_OVERCOST') > 1) {
             return (float)(Configuration::get('MYCARRIER1_OVERCOST'));
         }
-
-        // if ($this->id_carrier == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')) && Configuration::get('MYCARRIER2_OVERCOST') > 1)
-        //     return (float)(Configuration::get('MYCARRIER2_OVERCOST'));
-
         // If the carrier is not known, you can return false, the carrier won't appear in the order process
         return false;
     }
@@ -398,10 +347,6 @@ class WuunderCarrier extends CarrierModule
         if ($this->id_carrier == (int)(Configuration::get('MYCARRIER1_CARRIER_ID')) && Configuration::get('MYCARRIER1_OVERCOST') > 1) {
             return (float)(Configuration::get('MYCARRIER1_OVERCOST'));
         }
-
-        // if ($this->id_carrier == (int)(Configuration::get('MYCARRIER2_CARRIER_ID')) && Configuration::get('MYCARRIER2_OVERCOST') > 1)
-        //     return (float)(Configuration::get('MYCARRIER2_OVERCOST'));
-
         // If the carrier is not known, you can return false, the carrier won't appear in the order process
         return false;
     }
