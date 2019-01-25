@@ -61,7 +61,7 @@ function _onShippingMethodChange() {
     if (parcelshopShippingMethodElem.checked) {      
         var container = document.createElement('div');
         container.className += "chooseParcelshop";
-        container.innerHTML = '<div id="parcelshopsSelectedContainer"><a href="#/" onclick="_showParcelshopLocator()" id="selectParcelshop">Klik hier om een parcelshop te kiezen</a></div>';
+        container.innerHTML = '<div id="parcelshopsSelectedContainer"><a href="#/" onclick="_showParcelshopLocator()" id="selectParcelshop">{/literal}{l s='Click here to select your parcelshop' mod='wuunderconnector'}{literal}</a></div>';
         // window.parent.document.getElementsByClassName('shipping')[0].appendChild(container);
         window.parent.document.getElementsByClassName('parcelshop_container')[0].appendChild(container);
         _printParcelshopAddress();
@@ -81,9 +81,9 @@ function _printParcelshopAddress() {
         }
         var currentParcelshop = document.createElement('div');
         currentParcelshop.className += 'parcelshopInfo';
-        currentParcelshop.innerHTML = '<br/><strong>Huidige Parcelshop:</strong><br/>' + parcelshopAddress;
+        currentParcelshop.innerHTML = '<br/><strong>{/literal}{l s='Current parcelshop:' mod='wuunderconnector'}{literal}</strong><br/>' + parcelshopAddress;
         window.parent.document.getElementById('parcelshopsSelectedContainer').appendChild(currentParcelshop);
-        window.parent.document.getElementById('selectParcelshop').innerHTML = 'klik hier om een andere parcelshop te kiezen';
+        window.parent.document.getElementById('selectParcelshop').innerHTML = '{/literal}{l s='Click here to select a different parcelshop' mod='wuunderconnector'}{literal}';
 
     }
 }
