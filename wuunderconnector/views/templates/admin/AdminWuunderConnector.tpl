@@ -29,14 +29,14 @@
 <table id="wuunderTable" class="table order">
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Referentie</th>
-        <th>Klant</th>
-        <th>Totaal</th>
-        <th>Betaling</th>
-        <th>Status</th>
-        <th>Datum</th>
-        <th>Acties</th>
+        <th>{l s='ID' mod='wuunderconnector'}</th>
+        <th>{l s='Reference' mod='wuunderconnector'}</th>
+        <th>{l s='Customer' mod='wuunderconnector'}</th>
+        <th>{l s='Total' mod='wuunderconnector'}</th>
+        <th>{l s='Payment' mod='wuunderconnector'}</th>
+        <th>{l s='Status' mod='wuunderconnector'}</th>
+        <th>{l s='Date' mod='wuunderconnector'}</th>
+        <th>{l s='Actions' mod='wuunderconnector'}</th>
     </tr>
     </thead>
     <tbody>
