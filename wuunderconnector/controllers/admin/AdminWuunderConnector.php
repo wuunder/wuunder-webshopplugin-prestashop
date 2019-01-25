@@ -285,7 +285,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
         if ($parcelshop_id) {
             $bookingConfig->setParcelshopId($parcelshop_id);
         }
-        Logger::addLog('testboeking', 1);
         return $bookingConfig;
     }
 

@@ -218,7 +218,6 @@ class WuunderConnector extends Module
 
     public function hookActionCarrierUpdate($params)
     {
-        Logger::addLog('carrier hook', 2);
         if ((int)($params['id_carrier']) == (int)(Configuration::get(
             'MYCARRIER1_CARRIER_ID'
         ))
@@ -227,7 +226,6 @@ class WuunderConnector extends Module
                 'MYCARRIER1_CARRIER_ID',
                 (int)($params['carrier']->id)
             );
-            Logger::addLog('carrier updated: ' . $params['carrier']->id, 2);
         }
     }
 

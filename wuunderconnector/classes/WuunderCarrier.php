@@ -117,7 +117,6 @@ class WuunderCarrier extends CarrierModule
             Logger::addLog('carrier not installed', 2);
             return false;
         }
-        Logger::addLog('carrier installed id = ' . $id_carrier1, 2);
         return true;
     }
 
@@ -224,10 +223,8 @@ class WuunderCarrier extends CarrierModule
             //     return false;
 
             // Return ID
-            Logger::addLog("return id", 2);
             return (int)($carrier->id);
         }
-        Logger::addLog("return false", 2);
         return false;
     }
 
