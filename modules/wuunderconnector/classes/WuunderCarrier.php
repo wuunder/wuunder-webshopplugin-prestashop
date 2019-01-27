@@ -92,13 +92,13 @@ class WuunderCarrier extends CarrierModule
 
         $carrierConfig = array(
             0 => array(
-                'name' => $this->l('Wuunder parcelshop locator', 'wuunderconnector'),
+                'name' => 'Wuunder parcelshop locator',
                 'id_tax_rules_group' => 0,
                 'active' => true,
                 'deleted' => 0,
                 'shipping_handling' => false,
                 'range_behavior' => 0,
-                'delay' => $this->l('Take your package to a parcelshop.', 'wuunderconnector'),
+                'delay' => array('nl' => 'Breng uw pakket naar een pakketpunt', 'en' => 'Take your package to a parcelshop.', Language::getIsoById(Configuration::get('PS_LANG_DEFAULT')) => 'Take your package to a parcelshop.'),
                 'id_zone' => 1,
                 'is_module' => true,
                 'shipping_external' => true,
