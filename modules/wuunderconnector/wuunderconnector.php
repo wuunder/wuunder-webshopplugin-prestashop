@@ -265,7 +265,7 @@ class WuunderConnector extends Module
             $orderId = $params['order']->id;
             $parcelshopId = $this->context->cookie->parcelId;
             Db::getInstance()->insert(
-                'wuunder_order_parcelshop', 
+                'wuunder_order_parcelshop',
                 array(
                     'order_id' => (int) $orderId,
                     'parcelshop_id' => pSQL($parcelshopId),
