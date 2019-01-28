@@ -264,9 +264,11 @@ class WuunderConnector extends Module
         if (Configuration::get('MYCARRIER1_CARRIER_ID') == $carrier_id) {
             $orderId = $params['order']->id;
             $parcelshopId = $this->context->cookie->parcelId;
-            Db::getInstance()->insert('wuunder_order_parcelshop', array(
-                'order_id' => (int) $orderId,
-                'parcelshop_id' => pSQL($parcelshopId),
+            Db::getInstance()->insert(
+                'wuunder_order_parcelshop', 
+                array(
+                    'order_id' => (int) $orderId,
+                    'parcelshop_id' => pSQL($parcelshopId),
                 )
             );
         }
