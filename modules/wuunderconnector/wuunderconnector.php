@@ -17,7 +17,7 @@
 
  *
 
- *  @author    Wuunder
+ *  @author    Wuunder Nederland BV
 
  *  @copyright 2015-2019 Wuunder Holding B.V.
 
@@ -245,6 +245,7 @@ class WuunderConnector extends Module
                 'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
                 'baseUrl' => $pickerData['baseUrl'],
                 'addressId' => $params['cart']->id_address_delivery,
+                'jsFile' => _MODULE_DIR_ . 'wuunderconnector/views/js/hook/checkoutjavascript.js'
             )
         );
 
