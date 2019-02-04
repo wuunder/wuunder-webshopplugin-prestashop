@@ -50,7 +50,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
     private function setBookingToken($order_id, $booking_url, $booking_token)
     {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'wuunder_shipments (order_id, booking_url, booking_token)
-                    VALUES (' . $order_id . ', "' . $booking_url . '", "' . $booking_token . '")';
+                    VALUES (' . pSQL($order_id) . ', "' . pSQL($booking_url) . '", "' . pSQL($booking_token) . '")';
         if (Db::getInstance()->insert(
             'wuunder_shipments',
             array(
