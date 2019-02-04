@@ -65,14 +65,11 @@
             currentParcelshop.innerHTML = parcelshopHtmlPrefix + parcelshopAddress;
             window.parent.document.getElementById('parcelshopsSelectedContainer').appendChild(currentParcelshop);
             window.parent.document.getElementById('selectParcelshop').innerHTML = parcelshopSelectDifferent;
-            console.log(currentParcelshop.innerHTML);
         }
     }
     
     
     function _showParcelshopLocator() {
-        var address = "";
-    
         jQuery.post( baseUrl + getAddressUrl + "&addressId=" + addressId, function( data ) {
             shippingAddress = data["address1"] + ' ' + data["postcode"] + ' ' + data["city"] + ' ' + data["country"];
             _openIframe();
@@ -107,7 +104,6 @@
         }
     
         function onWindowMessage(event) {
-            var origin = event.origin,
                 messageData = event.data;
             var messageHandlers = {
                 'servicePointPickerSelected': onServicePointSelected,
