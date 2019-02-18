@@ -50,7 +50,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
     private function setBookingToken($order_id, $booking_url, $booking_token)
     {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'wuunder_shipments (order_id, booking_url, booking_token)
-                    VALUES (' . pSQL($order_id) . ', "' . pSQL($booking_url) . '", "' . pSQL($booking_token) . '")';
+                    VALUES (' . (int)$order_id . ', "' . pSQL($booking_url) . '", "' . pSQL($booking_token) . '")';
         if (Db::getInstance()->insert(
             'wuunder_shipments',
             array(
@@ -68,7 +68,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getBookingUrlForOrder($order_id)
     {
-        $sql = 'SELECT booking_url FROM ' . _DB_PREFIX_ . 'wuunder_shipments WHERE order_id = ' . $order_id;
+        $sql = 'SELECT booking_url FROM ' . _DB_PREFIX_ . 'wuunder_shipments WHERE order_id = ' . (int)$order_id;
         $result = Db::getInstance()->getValue($sql);
         if ($result) {
             return $result;
@@ -78,7 +78,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getParcelshopIdForOrder($order_id)
     {
-        $sql = 'SELECT parcelshop_id FROM ' . _DB_PREFIX_ . 'wuunder_order_parcelshop WHERE order_id = ' . $order_id;
+        $sql = 'SELECT parcelshop_id FROM ' . _DB_PREFIX_ . 'wuunder_order_parcelshop WHERE order_id = ' . (int)$order_id;
         $result = Db::getInstance()->getValue($sql);
         if ($result) {
             return $result;
@@ -93,7 +93,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
             'WS.label_tt_url'
         );
 
-        $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
+        $sql = 'SELECT  ' . implode(', ', pSQL($fieldlist)) . '
                     FROM    ' . _DB_PREFIX_ . 'orders AS O LEFT JOIN ' . _DB_PREFIX_ . 'wuunder_shipments AS WS ON O.id_order = WS.order_id,
                             ' . _DB_PREFIX_ . 'carrier AS CA,
                             ' . _DB_PREFIX_ . 'customer AS C,
@@ -112,7 +112,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
     {
         $fieldlist = array('O.*', 'AD.*', 'CL.iso_code', 'C.email', 'SUM(OD.product_weight) as weight', 'MIN(OD.product_id) as id_product', 'GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description');
 
-        $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
+        $sql = 'SELECT  ' . implode(', ', pSQL($fieldlist)) . '
                     FROM    ' . _DB_PREFIX_ . 'orders AS O,
                             ' . _DB_PREFIX_ . 'carrier AS CA,
                             ' . _DB_PREFIX_ . 'customer AS C,
@@ -124,7 +124,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
                             CL.id_country=AD.id_country AND
                             CA.id_carrier=O.id_carrier AND
                             O.id_order=OD.id_order AND
-                            O.id_order=' . $order_id . '
+                            O.id_order=' . (int)$order_id . '
                     LIMIT 1';
         return Db::getInstance()->ExecuteS($sql)[0];
     }
@@ -133,9 +133,9 @@ class AdminWuunderConnectorController extends ModuleAdminController
     {
         $fieldlist = array('width, height, depth');
 
-        $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
+        $sql = 'SELECT  ' . implode(', ', pSQL($fieldlist)) . '
                     FROM    ' . _DB_PREFIX_ . 'product
-                    WHERE   id_product=' . $product_id;
+                    WHERE   id_product=' . (int)$product_id;
         return Db::getInstance()->ExecuteS($sql)[0];
     }
 
