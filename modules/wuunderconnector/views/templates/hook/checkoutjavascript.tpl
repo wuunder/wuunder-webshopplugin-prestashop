@@ -17,11 +17,10 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-* @author    DPD France S.A.S.
-<support.ecommerce@dpd.fr>
-* @copyright 2016 DPD France S.A.S.
-* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*}
+ *  @author    Wuunder Nederland BV
+ *  @copyright 2015-2019 Wuunder Holding B.V.
+ *  @license   LICENSE.txt
+ *}
 
 <script type="text/javascript">
 {literal}
