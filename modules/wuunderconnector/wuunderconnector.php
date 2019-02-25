@@ -318,10 +318,15 @@ class WuunderConnector extends Module
             "wuunderfilter4filter",
         );
 
+        $success = true;
+
         if (Tools::isSubmit('submit' . $this->name)) {
             foreach ($fields as $field) {
                 $field_name = (string)Tools::getValue($field);
-                if ((!$field_name
+                if (!$this->validateForm($field, $field_name)) {
+                    $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
+                    $success = false;
+                } elseif ((!$field_name
                     || empty($field_name)
                     || !Validate::isGenericName($field_name))
                     && ($field !== "live_api_key"
@@ -333,12 +338,31 @@ class WuunderConnector extends Module
                     && $field !== "wuunderfilter4filter")
                 ) {
                     $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
+                    $success = false;
                 } else {
                     Configuration::updateValue($field, $field_name);
                 }
             }
+            if ($success) {
+                $output .= $this->displayConfirmation("Successfully saved");
+            }
         }
         return $output . $this->displayForm();
+    }
+
+    private function validateForm($field, $field_name) 
+    {
+        if ($field == "phonenumber") {
+            return Validate::isPhoneNumber($field_name);
+        } elseif ($field == "zipcode") {
+            return Validate::isPostCode($field_name);
+        } elseif ($field == "country") {
+            return Validate::isCountryName($field_name);
+        } elseif ($field == "city") {
+            return Validate::isCityName($field_name);
+        } else {
+            return true;
+        }
     }
 
     public function displayForm()
