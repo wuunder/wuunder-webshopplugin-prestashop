@@ -360,6 +360,8 @@ class WuunderConnector extends Module
             return Validate::isCountryName($field_name);
         } elseif ($field == "city") {
             return Validate::isCityName($field_name);
+        } elseif ($field == "email") {
+            return Validate::isEmail($field_name);
         } else {
             return true;
         }
@@ -382,7 +384,7 @@ class WuunderConnector extends Module
                     'label' => $this->l('Testmode'),
                     'name' => "testmode",
                     'options' => array(
-                        'query' => array(array("id" => 1, "name" => "Aan"), array("id" => 0, "name" => "Uit")),
+                        'query' => array(array("id" => 1, "name" => "On"), array("id" => 0, "name" => "Off")),
                         'id' => 'id',
                         'name' => 'name',
                     ),
