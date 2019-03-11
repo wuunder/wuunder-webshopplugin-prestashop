@@ -29,9 +29,6 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once 'vendor/autoload.php';
-require_once 'classes/WuunderCarrier.php';
-
 class WuunderConnector extends Module
 {
     private $parcelshopcarrier;
@@ -41,6 +38,7 @@ class WuunderConnector extends Module
         'displayHeader',
         'displayFooter',
         'actionCarrierUpdate',
+        'actionDispatcherBefore'
     );
 
     public function __construct()
@@ -56,6 +54,7 @@ class WuunderConnector extends Module
 
         parent::__construct();
 
+        $this->autoLoad();
         $this->displayName = $this->l('Wuunder shipping module');
         $this->description = $this->l('Send and receive your shipments easily, personally and efficiently. You can ship via more then 23 carriers. Wuunder takes care of all your transport and warehouse solutions you need.');
 
@@ -66,6 +65,21 @@ class WuunderConnector extends Module
         }
 
         $this->parcelshopcarrier = new WuunderCarrier();
+    }
+
+    
+    public function hookActionDispatcherBefore()
+    {
+        $this->autoLoad();
+    }    
+    
+    /**
+     * Autoload's project files from /src directory
+     */
+    private function autoLoad()
+    {
+        $autoLoadPath = $this->getLocalPath().'vendor/autoload.php';
+        require_once $autoLoadPath;
     }
 
     private function installDB()
