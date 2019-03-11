@@ -164,6 +164,7 @@ class WuunderConnector extends Module
             $tab = new Tab($id_tab);
             return $tab->delete();
         }
+        Logger::addLog('uninstallation failed 167.');
         return false;
     }
 
@@ -180,6 +181,7 @@ class WuunderConnector extends Module
         if (!parent::install() ||
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
         ) {
+            Logger::addLog('Installation failed 183.');
             return false;
         }
 
@@ -204,6 +206,7 @@ class WuunderConnector extends Module
             !Configuration::deleteByName($this->name) ||
             !$this->uninstallModuleTab('AdminWuunderConnector')
         ) {
+            Logger::addLog('uninstallation failed 209.');
             return false;
         }
 
