@@ -17,7 +17,7 @@
 
  *
 
- *  @author    Wuunder
+ *  @author    Wuunder Nederland BV
 
  *  @copyright 2015-2019 Wuunder Holding B.V.
 
@@ -67,8 +67,8 @@ class WuunderconnectorwuunderwebhookModuleFrontController extends ModuleFrontCon
     private function updateLabelUrl($order_id, $booking_token, $label_id, $label_url, $label_tt_url)
     {
         $sql = 'UPDATE ' . _DB_PREFIX_ . 'wuunder_shipments
-                    SET label_id = "' . $label_id . '", label_url = "' . $label_url . '", label_tt_url = "' . $label_tt_url . '"
-                    WHERE order_id = ' . $order_id . ' AND booking_token = "' . $booking_token . '"';
+                    SET label_id = "' . pSQL($label_id) . '", label_url = "' . pSQL($label_url) . '", label_tt_url = "' . pSQL($label_tt_url) . '"
+                    WHERE order_id = ' . pSQL($order_id) . ' AND booking_token = "' . pSQL($booking_token) . '"';
         if (Db::getInstance()->Execute($sql)) {
             return true;
         } else {

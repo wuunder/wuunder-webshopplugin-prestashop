@@ -17,7 +17,7 @@
 
  *
 
- *  @author    Wuunder
+ *  @author    Wuunder Nederland BV
 
  *  @copyright 2015-2019 Wuunder Holding B.V.
 
@@ -108,9 +108,7 @@ class WuunderCarrier extends CarrierModule
         );
 
         $id_carrier1 = $this->installExternalCarrier($carrierConfig[0]);
-        // $id_carrier2 = $this->installExternalCarrier($carrierConfig[1]);
         Configuration::updateValue('MYCARRIER1_CARRIER_ID', (int)$id_carrier1);
-        // Configuration::updateValue('MYCARRIER2_CARRIER_ID', (int)$id_carrier2);
         if (!parent::install()
             || !Configuration::updateValue('MYCARRIER1_OVERCOST', '')
         ) {

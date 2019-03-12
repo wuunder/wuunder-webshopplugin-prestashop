@@ -17,11 +17,10 @@
 * versions in the future. If you wish to customize PrestaShop for your
 * needs please refer to http://www.prestashop.com for more information.
 *
-* @author    DPD France S.A.S.
-<support.ecommerce@dpd.fr>
-* @copyright 2016 DPD France S.A.S.
-* @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
-*}
+ *  @author    Wuunder Nederland BV
+ *  @copyright 2015-2019 Wuunder Holding B.V.
+ *  @license   LICENSE.txt
+ *}
 
 <link rel="stylesheet" type="text/css" href="../modules/wuunderconnector/views/css/admin/wuunder.css"/>
 <link rel="stylesheet" type="text/css" href="../modules/wuunderconnector/views/css/admin/datatable.css"/>
@@ -29,14 +28,14 @@
 <table id="wuunderTable" class="table order">
     <thead>
     <tr>
-        <th>ID</th>
-        <th>Referentie</th>
-        <th>Klant</th>
-        <th>Totaal</th>
-        <th>Betaling</th>
-        <th>Status</th>
-        <th>Datum</th>
-        <th>Acties</th>
+        <th>{l s='ID' mod='wuunderconnector'}</th>
+        <th>{l s='Reference' mod='wuunderconnector'}</th>
+        <th>{l s='Customer' mod='wuunderconnector'}</th>
+        <th>{l s='Total' mod='wuunderconnector'}</th>
+        <th>{l s='Payment' mod='wuunderconnector'}</th>
+        <th>{l s='Status' mod='wuunderconnector'}</th>
+        <th>{l s='Date' mod='wuunderconnector'}</th>
+        <th>{l s='Actions' mod='wuunderconnector'}</th>
     </tr>
     </thead>
     <tbody>

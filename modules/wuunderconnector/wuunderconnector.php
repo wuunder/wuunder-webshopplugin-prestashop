@@ -17,7 +17,7 @@
 
  *
 
- *  @author    Wuunder
+ *  @author    Wuunder Nederland BV
 
  *  @copyright 2015-2019 Wuunder Holding B.V.
 
@@ -245,6 +245,7 @@ class WuunderConnector extends Module
                 'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
                 'baseUrl' => $pickerData['baseUrl'],
                 'addressId' => $params['cart']->id_address_delivery,
+                'jsFile' => _MODULE_DIR_ . 'wuunderconnector/views/js/hook/checkoutjavascript.js'
             )
         );
 
@@ -264,9 +265,11 @@ class WuunderConnector extends Module
         if (Configuration::get('MYCARRIER1_CARRIER_ID') == $carrier_id) {
             $orderId = $params['order']->id;
             $parcelshopId = $this->context->cookie->parcelId;
-            Db::getInstance()->insert('wuunder_order_parcelshop', array(
-                'order_id' => (int) $orderId,
-                'parcelshop_id' => pSQL($parcelshopId),
+            Db::getInstance()->insert(
+                'wuunder_order_parcelshop',
+                array(
+                    'order_id' => (int) $orderId,
+                    'parcelshop_id' => pSQL($parcelshopId),
                 )
             );
         }
@@ -315,10 +318,15 @@ class WuunderConnector extends Module
             "wuunderfilter4filter",
         );
 
+        $success = true;
+
         if (Tools::isSubmit('submit' . $this->name)) {
             foreach ($fields as $field) {
                 $field_name = (string)Tools::getValue($field);
-                if ((!$field_name
+                if (!$this->validateForm($field, $field_name)) {
+                    $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
+                    $success = false;
+                } elseif ((!$field_name
                     || empty($field_name)
                     || !Validate::isGenericName($field_name))
                     && ($field !== "live_api_key"
@@ -330,12 +338,33 @@ class WuunderConnector extends Module
                     && $field !== "wuunderfilter4filter")
                 ) {
                     $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
+                    $success = false;
                 } else {
                     Configuration::updateValue($field, $field_name);
                 }
             }
+            if ($success) {
+                $output .= $this->displayConfirmation("Successfully saved");
+            }
         }
         return $output . $this->displayForm();
+    }
+
+    private function validateForm($field, $field_name) 
+    {
+        if ($field == "phonenumber") {
+            return Validate::isPhoneNumber($field_name);
+        } elseif ($field == "zipcode") {
+            return Validate::isPostCode($field_name);
+        } elseif ($field == "country") {
+            return Validate::isCountryName($field_name);
+        } elseif ($field == "city") {
+            return Validate::isCityName($field_name);
+        } elseif ($field == "email") {
+            return Validate::isEmail($field_name);
+        } else {
+            return true;
+        }
     }
 
     public function displayForm()
@@ -355,7 +384,7 @@ class WuunderConnector extends Module
                     'label' => $this->l('Testmode'),
                     'name' => "testmode",
                     'options' => array(
-                        'query' => array(array("id" => 1, "name" => "Aan"), array("id" => 0, "name" => "Uit")),
+                        'query' => array(array("id" => 1, "name" => "On"), array("id" => 0, "name" => "Off")),
                         'id' => 'id',
                         'name' => 'name',
                     ),
@@ -378,7 +407,7 @@ class WuunderConnector extends Module
 
                 array(
                     'type' => 'text',
-                    'label' => $this->l('Bedrijfsnaam'),
+                    'label' => $this->l('Company'),
                     'name' => "company_name",
                     'required' => true,
                 ),

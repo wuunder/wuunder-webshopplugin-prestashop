@@ -17,7 +17,7 @@
 
  *
 
- *  @author    Wuunder
+ *  @author    Wuunder Nederland BV
 
  *  @copyright 2015-2019 Wuunder Holding B.V.
 
