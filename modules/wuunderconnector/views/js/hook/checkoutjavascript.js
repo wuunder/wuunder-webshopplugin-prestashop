@@ -17,8 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
     // Get the modal
-    var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option[6]')[0];
-    var shippingMethodElems = jQuery('input.delivery_option[6]');
+    var parcelshopShippingMethodElem = jQuery('#delivery_option_' + shippingCarrierId);
+    console.log(parcelshopShippingMethodElem);
+    var shippingMethodElems = jQuery("input[name='delivery_option[6]']");
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
@@ -29,9 +30,7 @@
         baseUrlApi = apiUrl;
         availableCarrierList = carrierList;
         parcelshopAddress = _markupParcelshopAddress(parcelshopAddress);
-        
-        jQuery('.delivery_options').append('<div class="delivery_option alternate_item parcelshop_container"></div>');
-    
+            
         if (parcelshopShippingMethodElem) {
             jQuery(shippingMethodElems).on('change', _onShippingMethodChange);
             _onShippingMethodChange();
@@ -39,15 +38,16 @@
     }
     
     function _onShippingMethodChange() {
-        if (parcelshopShippingMethodElem.checked) {      
+        if (parcelshopShippingMethodElem.prop('checked') && find(parcelshopShippingMethodElem).length > 0) {      
             var container = document.createElement('div');
             container.className += "chooseParcelshop";
             container.innerHTML = selectParcelshopLink;
+            console.log(container);
             // window.parent.document.getElementsByClassName('shipping')[0].appendChild(container);
-            window.parent.document.getElementsByClassName('parcelshop_container')[0].appendChild(container);
+            parcelshopShippingMethodElem.closest(jQuery('.row.delivery-option')).append(container);
             _printParcelshopAddress();
         } else {
-            var containerElems = window.parent.document.getElementsByClassName('chooseParcelshop');
+            var containerElems = window.parent.document.querySelectorAll('chooseParcelshop');
             if (containerElems.length) {
                 containerElems[0].remove();
             }
