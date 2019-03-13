@@ -251,9 +251,12 @@ class WuunderConnector extends Module
     public function hookDisplayHeader($params)
     {
 
-        {
-            $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
-        }
+        $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
+        $this->context->controller->registerJavascript(
+            'wuunderconnector',
+            '/js/jquery/jquery-1.11.0.min.js',
+            array('position' => 'head', 'priority' => 1)
+        );
         
         $pickerData = $this->parcelshop_urls();
 

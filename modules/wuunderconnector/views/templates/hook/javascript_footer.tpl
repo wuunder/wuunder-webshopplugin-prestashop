@@ -25,20 +25,20 @@
  {block name='javascript_bottom'}
 <script type="text/javascript">
 {literal}
-var shippingCarrierId = "{/literal}{$carrier_id|escape:'htmlall':'UTF-8'}{literal}";
+var shippingCarrierId = "{/literal}{$carrier_id}{literal}";
 // Get the modal
-var parcelshopAddress = {/literal}{$cookieParcelshopAddress|@json_encode|escape:'quotes':'UTF-8'}{literal};
+var parcelshopAddress = {/literal}{$cookieParcelshopAddress|@json_encode}{literal};
 if (parcelshopAddress !== "") {
-    var parcelshopId = "{/literal}{$cookieParcelshopId|escape:'htmlall':'UTF-8'}{literal}";
+    var parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
 }
 
-var addressId = {/literal}{$addressId|escape:'htmlall':'UTF-8'}{literal};
-var baseUrl = '{/literal}{$baseUrl|escape:'htmlall':'UTF-8'}{literal}';
-var baseApiUrl = '{/literal}{$baseApiUrl|escape:'htmlall':'UTF-8'}{literal}';
-var availableCarriers ='{/literal}{$availableCarriers|escape:'htmlall':'UTF-8'}{literal}';
+var addressId = {/literal}{$addressId}{literal};
+var baseUrl = '{/literal}{$baseUrl}{literal}';
+var baseApiUrl = '{/literal}{$baseApiUrl}{literal}';
+var availableCarriers ='{/literal}{$availableCarriers}{literal}';
 var selectParcelshopLink = '<div id="parcelshopsSelectedContainer"><a href="#/" onclick="_showParcelshopLocator()" id="selectParcelshop">{/literal}{l s='Click here to select your parcelshop' mod='wuunderconnector'}{literal}</a></div>';
 var parcelshopHtmlPrefix = '<br/><strong>{/literal}{l s='Current parcelshop:' mod='wuunderconnector'}{literal}</strong><br/>';
 var parcelshopSelectDifferent = '{/literal}{l s='Click here to select a different parcelshop' mod='wuunderconnector'}{literal}'; 
 {/literal}</script>
-<script src={$jsFile|escape:'htmlall':'UTF-8'}></script>
+<script src={$jsFile}></script>
 {/block}
