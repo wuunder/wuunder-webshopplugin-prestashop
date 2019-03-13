@@ -17,8 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
     // Get the modal
-    var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio')[0];
-    var shippingMethodElems = jQuery('input.delivery_option_radio');
+    var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option[6]')[0];
+    var shippingMethodElems = jQuery('input.delivery_option[6]');
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
