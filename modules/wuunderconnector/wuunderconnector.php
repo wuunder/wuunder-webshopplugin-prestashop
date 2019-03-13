@@ -40,7 +40,8 @@ class WuunderConnector extends Module
         'displayHeader',
         'displayFooter',
         'actionCarrierUpdate',
-        'actionDispatcherBefore'
+        'actionDispatcherBefore',
+        'displayBeforeBodyClosingTag'
     );
 
     public function __construct()
@@ -73,7 +74,32 @@ class WuunderConnector extends Module
     public function hookActionDispatcherBefore()
     {
         $this->autoLoad();
-    }    
+    }  
+    
+    public function hookDisplayBeforeBodyClosingTag($params)
+    {    
+        $pickerData = $this->parcelshop_urls();
+
+        $this->context->smarty->assign(
+            array(
+                'carrier_id' => Configuration::get('MYCARRIER1_CARRIER_ID'),
+                'baseApiUrl' => $pickerData['baseApiUrl'],
+                'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
+                'baseUrl' => $pickerData['baseUrl'],
+                'addressId' => $params['cart']->id_address_delivery,
+                'jsFile' => _MODULE_DIR_ . 'wuunderconnector/views/js/hook/checkoutjavascript.js'
+            )
+        );
+
+        if ($this->context->cookie->parcelId) {
+            $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
+            $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
+        } else {
+            $this->context->smarty->assign('cookieParcelshopAddress', false);
+            $this->context->smarty->assign('cookieParcelshopId', false);
+        }
+        return $this->display(__FILE__, 'javascript_footer.tpl');
+    }
     
     /**
      * Autoload's project files from /src directory
@@ -257,29 +283,6 @@ class WuunderConnector extends Module
             '/js/jquery/jquery-1.11.0.min.js',
             array('position' => 'head', 'priority' => 1)
         );
-        
-        $pickerData = $this->parcelshop_urls();
-
-        $this->context->smarty->assign(
-            array(
-                'carrier_id' => Configuration::get('MYCARRIER1_CARRIER_ID'),
-                'baseApiUrl' => $pickerData['baseApiUrl'],
-                'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
-                'baseUrl' => $pickerData['baseUrl'],
-                'addressId' => $params['cart']->id_address_delivery,
-                'jsFile' => _MODULE_DIR_ . 'wuunderconnector/views/js/hook/checkoutjavascript.js'
-            )
-        );
-
-        if ($this->context->cookie->parcelId) {
-            $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
-            $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
-        } else {
-            $this->context->smarty->assign('cookieParcelshopAddress', false);
-            $this->context->smarty->assign('cookieParcelshopId', false);
-        }
-        return $this->display(__FILE__, 'javascript_footer.tpl');
-    
     }
 
     public function hookActionValidateOrder($params)
