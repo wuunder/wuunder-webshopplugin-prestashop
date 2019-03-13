@@ -29,6 +29,8 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+require_once 'classes/WuunderCarrier.php';
+
 class WuunderConnector extends Module
 {
     private $parcelshopcarrier;
@@ -248,11 +250,11 @@ class WuunderConnector extends Module
 
     public function hookDisplayHeader($params)
     {
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
-    }
 
-    public function hookDisplayFooter($params)
-    {
+        {
+            $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
+        }
+        
         $pickerData = $this->parcelshop_urls();
 
         $this->context->smarty->assign(
@@ -273,7 +275,8 @@ class WuunderConnector extends Module
             $this->context->smarty->assign('cookieParcelshopAddress', false);
             $this->context->smarty->assign('cookieParcelshopId', false);
         }
-        return $this->display(__FILE__, 'checkoutjavascript.tpl');
+        return $this->display(__FILE__, 'javascript_footer.tpl');
+    
     }
 
     public function hookActionValidateOrder($params)
