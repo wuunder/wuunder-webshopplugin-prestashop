@@ -220,8 +220,11 @@ class WuunderConnector extends Module
 
         $this->parcelshopcarrier->install();
 
-        if (!parent::install() ||
-            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
+        if (!parent::install() 
+            || !$this->installModuleTab(
+                'AdminWuunderConnector', 
+                'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping'
+            )
         ) {
             Logger::addLog('Installation failed 183.');
             return false;

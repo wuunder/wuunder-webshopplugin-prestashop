@@ -16,3 +16,7 @@
 .parcelshopPickerIframe > iframe {
     border: none;
 }
+
+.chooseParcelshop {
+    padding-left: calc(1/12*100%);
+}

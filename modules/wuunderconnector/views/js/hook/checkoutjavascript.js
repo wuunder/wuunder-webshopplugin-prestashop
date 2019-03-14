@@ -18,12 +18,12 @@
  */
     // Get the modal
     var parcelshopShippingMethodElem = jQuery('#delivery_option_' + shippingCarrierId);
-    console.log(parcelshopShippingMethodElem);
     var shippingMethodElems = jQuery("input[name='delivery_option[6]']");
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
     initParcelshopLocator(baseUrl, baseApiUrl, availableCarriers);
+    console.log(availableCarriers);
     function initParcelshopLocator(url, apiUrl, carrierList) {
     
         baseUrl = url;
