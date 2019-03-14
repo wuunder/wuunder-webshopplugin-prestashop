@@ -38,12 +38,11 @@
     }
     
     function _onShippingMethodChange() {
-        if (parcelshopShippingMethodElem.prop('checked') && find(parcelshopShippingMethodElem).length > 0) {      
+        if (parcelshopShippingMethodElem.prop('checked')) {      
             var container = document.createElement('div');
             container.className += "chooseParcelshop";
             container.innerHTML = selectParcelshopLink;
             console.log(container);
-            // window.parent.document.getElementsByClassName('shipping')[0].appendChild(container);
             parcelshopShippingMethodElem.closest(jQuery('.row.delivery-option')).append(container);
             _printParcelshopAddress();
         } else {
