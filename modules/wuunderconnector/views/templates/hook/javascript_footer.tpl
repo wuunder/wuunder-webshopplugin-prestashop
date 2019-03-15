@@ -27,7 +27,7 @@
 {literal}
 var shippingCarrierId = "{/literal}{$carrier_id}{literal}";
 // Get the modal
-var parcelshopAddress = {/literal}{$cookieParcelshopAddress|@json_encode}{literal};
+var parcelshopAddress = "{/literal}{$cookieParcelshopAddress|nofilter}{literal}";
 if (parcelshopAddress !== "") {
     var parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
 }
@@ -40,5 +40,4 @@ var selectParcelshopLink = '<div id="parcelshopsSelectedContainer"><a href="#/" 
 var parcelshopHtmlPrefix = '<br/><strong>{/literal}{l s='Current parcelshop:' mod='wuunderconnector'}{literal}</strong><br/>';
 var parcelshopSelectDifferent = '{/literal}{l s='Click here to select a different parcelshop' mod='wuunderconnector'}{literal}'; 
 {/literal}</script>
-<script src={$jsFile}></script>
 {/block}

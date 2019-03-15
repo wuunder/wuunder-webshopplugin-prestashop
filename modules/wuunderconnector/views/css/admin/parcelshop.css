@@ -17,6 +17,7 @@
     border: none;
 }
 
-.chooseParcelshop {
+.parcelshopsSelectedContainer {
     padding-left: calc(1/12*100%);
+    text-align: right;
 }

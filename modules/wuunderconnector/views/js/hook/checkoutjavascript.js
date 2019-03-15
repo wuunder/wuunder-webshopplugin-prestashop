@@ -18,12 +18,12 @@
  */
     // Get the modal
     var parcelshopShippingMethodElem = jQuery('#delivery_option_' + shippingCarrierId);
-    var shippingMethodElems = jQuery("input[name='delivery_option[6]']");
+    var shippingMethodElems = jQuery("input[name='" + $('#delivery_option_' + shippingCarrierId).attr('name') + "']");
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
     initParcelshopLocator(baseUrl, baseApiUrl, availableCarriers);
-    console.log(availableCarriers);
+
     function initParcelshopLocator(url, apiUrl, carrierList) {
     
         baseUrl = url;
@@ -42,11 +42,10 @@
             var container = document.createElement('div');
             container.className += "chooseParcelshop";
             container.innerHTML = selectParcelshopLink;
-            console.log(container);
-            parcelshopShippingMethodElem.closest(jQuery('.row.delivery-option')).append(container);
+            jQuery('#delivery_option_' + shippingCarrierId).parentsUntil('#js-delivery > div > div.delivery-options').last().next().append(container);
             _printParcelshopAddress();
         } else {
-            var containerElems = window.parent.document.querySelectorAll('chooseParcelshop');
+            var containerElems = jQuery('#parcelshopsSelectedContainer');
             if (containerElems.length) {
                 containerElems[0].remove();
             }
@@ -64,6 +63,7 @@
             currentParcelshop.innerHTML = parcelshopHtmlPrefix + parcelshopAddress;
             window.parent.document.getElementById('parcelshopsSelectedContainer').appendChild(currentParcelshop);
             window.parent.document.getElementById('selectParcelshop').innerHTML = parcelshopSelectDifferent;
+            $('#parcelshopsSelectedContainer > div').css({ 'font-size':$("#js-delivery > div > div.delivery-options > div:nth-child(1) > label > div > div.col-sm-4.col-xs-12 > span").css('font-size')})
         }
     }
     
