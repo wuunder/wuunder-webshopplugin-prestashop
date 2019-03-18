@@ -386,7 +386,7 @@ class WuunderConnector extends Module
         } elseif ($field == "zipcode") {
             return Validate::isPostCode($field_name);
         } elseif ($field == "country") {
-            return Validate::isCountryName($field_name);
+            return Validate::isLanguageIsoCode($field_name);
         } elseif ($field == "city") {
             return Validate::isCityName($field_name);
         } elseif ($field == "email") {
@@ -502,6 +502,7 @@ class WuunderConnector extends Module
                     'label' => $this->l('Country code'),
                     'name' => "country",
                     'required' => true,
+                    'placeholder' => "e.g. NL",
                 ),
 
                 array(
