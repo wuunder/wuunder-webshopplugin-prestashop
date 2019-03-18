@@ -39,6 +39,42 @@
     </tr>
     </thead>
     <tbody>
+    {if $version lt '1.7'}
+    {foreach from=$order_info item=order}
+    <tr>
+        <td>{$order.id_order|escape:'quotes':'UTF-8'}</td>
+        <td>{$order.reference|escape:'quotes':'UTF-8'}</td>
+        <td>{$order.firstname|escape:'quotes':'UTF-8'|substr:0:1}. {$order.lastname|escape:'quotes':'UTF-8'}</td>
+        <td>{$order.total_paid|escape:'quotes':'UTF-8'|round:2}</td>
+        <td>{$order.payment|escape:'quotes':'UTF-8'}</td>
+        <td>{order_state state_id=$order.current_state|escape:'quotes':'UTF-8'}</td>
+        <td>{$order.date_upd|escape:'quotes':'UTF-8'}</td>
+        <td>
+            <ul class="wuunder-action-list">
+                {if !empty($order.label_url)}
+                <li>
+                    <a href="{$order.label_url|escape:'quotes':'UTF-8'}" target="_blank"><img
+                                src="../modules/wuunderconnector/views/img/admin/print-label.png"/></a>
+                </li>
+                <li>
+                    <a href="{$order.label_tt_url|escape:'quotes':'UTF-8'}" target="_blank"><img
+                                src="../modules/wuunderconnector/views/img/admin/in-transit.png"/></a>
+                </li>
+                {elseif !empty($order.booking_url)}
+                <li>
+                    <a href="{$order.booking_url|escape:'quotes':'UTF-8'}"><img
+                                src="../modules/wuunderconnector/views/img/admin/create-label.png"/></a>
+                </li>
+                {else}
+                <li>
+                    <a href="{$admin_url|escape:'quotes':'UTF-8'}&processLabelForOrder={$order.id_order|escape:'quotes':'UTF-8'}"><img
+                                src="../modules/wuunderconnector/views/img/admin/create-label.png"/></a>
+                </li>
+                {/if}
+            </ul>
+        </td>
+    </tr>
+    {else}
     {foreach from=$order_info item=order}
     <tr>
         <td>{$order.id_order}</td>
@@ -74,6 +110,7 @@
         </td>
     </tr>
     {/foreach}
+    {/if}
     </tbody>
 </table>
 
