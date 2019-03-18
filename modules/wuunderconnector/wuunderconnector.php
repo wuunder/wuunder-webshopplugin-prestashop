@@ -29,6 +29,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
+if (_PS_VERSION_ < '1.7') {
+    require_once 'vendor/autoload.php';
+}
 require_once 'classes/WuunderCarrier.php';
 
 class WuunderConnector extends Module
@@ -40,8 +43,6 @@ class WuunderConnector extends Module
         'displayHeader',
         'displayFooter',
         'actionCarrierUpdate',
-        'actionDispatcherBefore',
-        'displayBeforeBodyClosingTag'
     );
 
     public function __construct()
@@ -57,7 +58,9 @@ class WuunderConnector extends Module
 
         parent::__construct();
 
-        $this->autoLoad();
+        if (_PS_VERSION_ > '1.7') {
+            $this->autoLoad();
+        }
         $this->displayName = $this->l('Wuunder shipping module');
         $this->description = $this->l('Send and receive your shipments easily, personally and efficiently. You can ship via more then 23 carriers. Wuunder takes care of all your transport and warehouse solutions you need.');
 
@@ -70,7 +73,7 @@ class WuunderConnector extends Module
         $this->parcelshopcarrier = new WuunderCarrier();
     }
 
-    
+    //will not be called in version 1.6
     public function hookActionDispatcherBefore()
     {
         $this->autoLoad();
@@ -87,9 +90,22 @@ class WuunderConnector extends Module
                 'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
                 'baseUrl' => $pickerData['baseUrl'],
                 'addressId' => $params['cart']->id_address_delivery,
-                'jsFile' => _MODULE_DIR_ . 'wuunderconnector/views/js/hook/checkoutjavascript.js'
+                'version' => floatval(_PS_VERSION_),
             )
         );
+
+        if (_PS_VERSION_ < '1.7') {
+            $this->context->controller->addJS($this->_path . 'views/js/checkoutjavascript1.6.js', 'all');
+        } else {
+            $this->context->controller->registerStylesheet(
+                'wuunderconnector',
+                $this->_path . 'views/js/checkoutjavascript1.7.js',
+                [
+                'media' => 'all',
+                'priority' => 200,
+                ]
+            );
+        }
 
         if ($this->context->cookie->parcelId) {
             $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
@@ -101,8 +117,9 @@ class WuunderConnector extends Module
         return $this->display(__FILE__, 'javascript_footer.tpl');
     }
     
+
     /**
-     * Autoload's project files from /src directory
+     * Autoload's project files from /src directory ps > 1.7
      */
     private function autoLoad()
     {
@@ -230,6 +247,14 @@ class WuunderConnector extends Module
             return false;
         }
 
+        if (_PS_VERSION_ > '1.6') {
+            array_push(
+                $hooks,
+                'displayBeforeBodyClosingTag',
+                'actionDispatcherBefore'
+            );
+        }
+
         foreach ($this->hooks as $hookName) {
             if (!$this->registerHook($hookName)) {
                 Logger::addLog('Installation of hook: ' . $hookName . 'failed');
@@ -281,11 +306,13 @@ class WuunderConnector extends Module
     {
 
         $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
-        $this->context->controller->registerJavascript(
-            'wuunderconnector',
-            '/js/jquery/jquery-1.11.0.min.js',
-            array('position' => 'head', 'priority' => 1)
-        );
+        if (_PS_VERSION_ > '1.6') {
+            $this->context->controller->registerJavascript(
+                'wuunderconnector',
+                '/js/jquery/jquery-1.11.0.min.js',
+                array('position' => 'head', 'priority' => 1)
+            );    
+        }
     }
 
     public function hookActionValidateOrder($params)

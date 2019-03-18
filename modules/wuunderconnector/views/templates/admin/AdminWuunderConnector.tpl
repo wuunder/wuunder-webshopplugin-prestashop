@@ -39,7 +39,7 @@
     </tr>
     </thead>
     <tbody>
-    {if $version lt '1.7'}
+    {if $version lt 1.7}
     {foreach from=$order_info item=order}
     <tr>
         <td>{$order.id_order|escape:'quotes':'UTF-8'}</td>
