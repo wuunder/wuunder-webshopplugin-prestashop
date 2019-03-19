@@ -21,14 +21,12 @@
  *  @copyright 2015-2019 Wuunder Holding B.V.
  *  @license   LICENSE.txt
  *}
-
- {block name='javascript_bottom'}
 <script type="text/javascript">
 {if $version > 1.6}
     {literal}
     var shippingCarrierId = "{/literal}{$carrier_id}{literal}";
     // Get the modal
-    var parcelshopAddress = "{/literal}{$cookieParcelshopAddress|nofilter}{literal}";
+    var parcelshopAddress = {/literal}{$cookieParcelshopAddress|@json_encode nofilter}{literal};
     if (parcelshopAddress !== "") {
         var parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
     }
@@ -36,7 +34,7 @@
     var baseUrl = '{/literal}{$baseUrl}{literal}';
     var baseApiUrl = '{/literal}{$baseApiUrl}{literal}';
     var availableCarriers ='{/literal}{$availableCarriers}{literal}';
-{else}
+{/literal}{else}{literal}
     var shippingCarrierId = "{/literal}{$carrier_id|escape:'htmlall':'UTF-8'}{literal}";
     // Get the modal
     var parcelshopAddress = {/literal}{$cookieParcelshopAddress|@json_encode|escape:'quotes':'UTF-8'}{literal};
@@ -48,12 +46,12 @@
     var baseUrl = '{/literal}{$baseUrl|escape:'htmlall':'UTF-8'}{literal}';
     var baseApiUrl = '{/literal}{$baseApiUrl|escape:'htmlall':'UTF-8'}{literal}';
     var availableCarriers ='{/literal}{$availableCarriers|escape:'htmlall':'UTF-8'}{literal}';
-{/if}
-var selectParcelshopLink = '<div id="parcelshopsSelectedContainer"><a href="#/" onclick="_showParcelshopLocator()" id="selectParcelshop">{/literal}{l s='Click here to select your parcelshop' mod='wuunderconnector'}{literal}</a></div>';
+{/literal}{/if}{literal}
+var innerHtml = '{/literal}{l s='Click here to select your parcelshop' mod='wuunderconnector'}{literal}';
 var parcelshopHtmlPrefix = '<br/><strong>{/literal}{l s='Current parcelshop:' mod='wuunderconnector'}{literal}</strong><br/>';
 var parcelshopSelectDifferent = '{/literal}{l s='Click here to select a different parcelshop' mod='wuunderconnector'}{literal}'; 
 {/literal}</script>
-{/block}
+
 
 
 

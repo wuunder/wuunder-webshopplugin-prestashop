@@ -74,6 +74,7 @@
             </ul>
         </td>
     </tr>
+    {/foreach}
     {else}
     {foreach from=$order_info item=order}
     <tr>

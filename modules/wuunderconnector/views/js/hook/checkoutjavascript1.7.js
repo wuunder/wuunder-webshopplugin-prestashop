@@ -16,12 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+$(window).on("load", function() {
     // Get the modal
     var parcelshopShippingMethodElem = jQuery('#delivery_option_' + shippingCarrierId);
     var shippingMethodElems = jQuery("input[name='" + $('#delivery_option_' + shippingCarrierId).attr('name') + "']");
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
+    var selectParcelshopLink = '<div id="parcelshopsSelectedContainer"><a href="#/" id="selectParcelshop">' + innerHtml + '</a></div>';
     initParcelshopLocator(baseUrl, baseApiUrl, availableCarriers);
 
     function initParcelshopLocator(url, apiUrl, carrierList) {
@@ -43,6 +45,8 @@
             container.className += "chooseParcelshop";
             container.innerHTML = selectParcelshopLink;
             jQuery('#delivery_option_' + shippingCarrierId).parentsUntil('#js-delivery > div > div.delivery-options').last().next().append(container);
+            $("#selectParcelshop").on('click',_showParcelshopLocator);
+            console.log(parcelshopAddress);
             _printParcelshopAddress();
         } else {
             var containerElems = jQuery('#parcelshopsSelectedContainer');
@@ -135,6 +139,7 @@
             }
             else {
                 data = JSON.parse(parcelshopData);
+                console.log(data);
                 var parcelshopInfoHtml = _capFirst(data.company_name) + "<br>" + _capFirst(data.address.street_name) +
                 " " + data.address.house_number + "<br>" + data.address.city;
                 parcelshopInfoHtml = parcelshopInfoHtml.replace(/"/g, '\\"').replace(/'/g, "\\'");
@@ -160,3 +165,6 @@
         }
         
     }
+
+});
+

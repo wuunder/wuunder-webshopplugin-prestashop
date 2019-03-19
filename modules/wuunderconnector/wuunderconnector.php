@@ -78,8 +78,26 @@ class WuunderConnector extends Module
     {
         $this->autoLoad();
     }  
+
+    public function hookActionFrontControllerSetMedia($params)
+    {   
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        //if ('order' === $this->context->controller->php_self) {
+            $this->context->controller->registerJavascript(
+                'wuunderconnector',
+                'modules/wuunderconnector/views/js/hook/checkoutjavascript1.7.js',
+                [
+                'position' => 'bottom',
+                'media' => 'all',
+                'priority' => 0,
+                'attributes' =>'sync'
+                ]
+            );
+        //}
+    }
     
-    public function hookDisplayBeforeBodyClosingTag($params)
+    public function hookDisplayAfterBodyOpeningTag($params)
     {    
         $pickerData = $this->parcelshop_urls();
 
@@ -95,18 +113,8 @@ class WuunderConnector extends Module
         );
 
         if (_PS_VERSION_ < '1.7') {
-            $this->context->controller->addJS($this->_path . 'views/js/checkoutjavascript1.6.js', 'all');
-        } else {
-            $this->context->controller->registerStylesheet(
-                'wuunderconnector',
-                $this->_path . 'views/js/checkoutjavascript1.7.js',
-                [
-                'media' => 'all',
-                'priority' => 200,
-                ]
-            );
-        }
-
+            $this->context->controller->addJS($this->_path . 'views/js//hook/checkoutjavascript1.6.js', 'all');
+        } 
         if ($this->context->cookie->parcelId) {
             $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
             $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
@@ -114,7 +122,7 @@ class WuunderConnector extends Module
             $this->context->smarty->assign('cookieParcelshopAddress', false);
             $this->context->smarty->assign('cookieParcelshopId', false);
         }
-        return $this->display(__FILE__, 'javascript_footer.tpl');
+        return $this->display(__FILE__, 'javascript_ini.tpl');
     }
     
 
@@ -249,9 +257,10 @@ class WuunderConnector extends Module
 
         if (_PS_VERSION_ > '1.6') {
             array_push(
-                $hooks,
-                'displayBeforeBodyClosingTag',
-                'actionDispatcherBefore'
+                $this->hooks,
+                'displayAfterBodyOpeningTag',
+                'actionDispatcherBefore',
+                'actionFrontControllerSetMedia'
             );
         }
 
@@ -311,7 +320,7 @@ class WuunderConnector extends Module
                 'wuunderconnector',
                 '/js/jquery/jquery-1.11.0.min.js',
                 array('position' => 'head', 'priority' => 1)
-            );    
+            ); 
         }
     }
 
