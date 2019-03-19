@@ -93,7 +93,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
             'WS.label_tt_url'
         );
 
-        $sql = 'SELECT  ' . implode(', ', (_PS_VERSION_ < '1.7') ? pSQL($fieldlist) : $fieldlist) . '
+        $sql = 'SELECT  ' . ((_PS_VERSION_ < "1.7") ? pSQL(implode(', ', $fieldlist)) : implode(', ', $fieldlist)) . '
                     FROM    ' . _DB_PREFIX_ . 'orders AS O LEFT JOIN ' . _DB_PREFIX_ . 'wuunder_shipments AS WS ON O.id_order = WS.order_id,
                             ' . _DB_PREFIX_ . 'carrier AS CA,
                             ' . _DB_PREFIX_ . 'customer AS C,
@@ -110,9 +110,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getOrderInfo($order_id)
     {
-        $fieldlist = array('O.*', 'AD.*', 'CL.iso_code', 'C.email', 'SUM(OD.product_weight) as weight', 'MIN(OD.product_id) as id_product', 'GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description');
-
-        $sql = 'SELECT  ' . implode(', ', (_PS_VERSION_ < '1.7') ? pSQL($fieldlist) : $fieldlist) . '
+        $sql = 'SELECT  O.*, AD.*, CL.iso_code, C.email, SUM(OD.product_weight) as weight, MIN(OD.product_id) as id_product, GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description
                     FROM    ' . _DB_PREFIX_ . 'orders AS O,
                             ' . _DB_PREFIX_ . 'carrier AS CA,
                             ' . _DB_PREFIX_ . 'customer AS C,
@@ -133,7 +131,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
     {
         $fieldlist = array('width, height, depth');
 
-        $sql = 'SELECT  ' . implode(', ', (_PS_VERSION_ < '1.7') ? pSQL($fieldlist) : $fieldlist) . '
+        $sql = 'SELECT  ' . ((_PS_VERSION_ < "1.7") ? pSQL(implode(', ', $fieldlist)) : implode(', ', $fieldlist)) . '
                     FROM    ' . _DB_PREFIX_ . 'product
                     WHERE   id_product=' . (int)$product_id;
         return Db::getInstance()->ExecuteS($sql)[0];

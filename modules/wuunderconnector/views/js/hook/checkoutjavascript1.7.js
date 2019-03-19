@@ -23,7 +23,7 @@ $(window).on("load", function() {
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
-    var selectParcelshopLink = '<div id="parcelshopsSelectedContainer"><a href="#/" id="selectParcelshop">' + innerHtml + '</a></div>';
+    var selectParcelshopLink = '<div id="parcelshopsSelectedContainer17"><a href="#/" id="selectParcelshop">' + innerHtml + '</a></div>';
     initParcelshopLocator(baseUrl, baseApiUrl, availableCarriers);
 
     function initParcelshopLocator(url, apiUrl, carrierList) {
@@ -46,10 +46,9 @@ $(window).on("load", function() {
             container.innerHTML = selectParcelshopLink;
             jQuery('#delivery_option_' + shippingCarrierId).parentsUntil('#js-delivery > div > div.delivery-options').last().next().append(container);
             $("#selectParcelshop").on('click',_showParcelshopLocator);
-            console.log(parcelshopAddress);
             _printParcelshopAddress();
         } else {
-            var containerElems = jQuery('#parcelshopsSelectedContainer');
+            var containerElems = jQuery('#parcelshopsSelectedContainer17');
             if (containerElems.length) {
                 containerElems[0].remove();
             }
@@ -65,9 +64,9 @@ $(window).on("load", function() {
             var currentParcelshop = document.createElement('div');
             currentParcelshop.className += 'parcelshopInfo';
             currentParcelshop.innerHTML = parcelshopHtmlPrefix + parcelshopAddress;
-            window.parent.document.getElementById('parcelshopsSelectedContainer').appendChild(currentParcelshop);
+            window.parent.document.getElementById('parcelshopsSelectedContainer17').appendChild(currentParcelshop);
             window.parent.document.getElementById('selectParcelshop').innerHTML = parcelshopSelectDifferent;
-            $('#parcelshopsSelectedContainer > div').css({ 'font-size':$("#js-delivery > div > div.delivery-options > div:nth-child(1) > label > div > div.col-sm-4.col-xs-12 > span").css('font-size')})
+            $('#parcelshopsSelectedContainer17 > div').css({ 'font-size':$("#js-delivery > div > div.delivery-options > div:nth-child(1) > label > div > div.col-sm-4.col-xs-12 > span").css('font-size')})
         }
     }
     

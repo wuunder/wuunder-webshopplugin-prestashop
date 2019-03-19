@@ -78,27 +78,15 @@ class WuunderConnector extends Module
     {
         $this->autoLoad();
     }  
-
-    public function hookActionFrontControllerSetMedia($params)
-    {   
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-        //if ('order' === $this->context->controller->php_self) {
-            $this->context->controller->registerJavascript(
-                'wuunderconnector',
-                'modules/wuunderconnector/views/js/hook/checkoutjavascript1.7.js',
-                [
-                'position' => 'bottom',
-                'media' => 'all',
-                'priority' => 0,
-                'attributes' =>'sync'
-                ]
-            );
-        //}
-    }
     
     public function hookDisplayAfterBodyOpeningTag($params)
     {    
+        $this->initJavascriptTemplate($params);
+        return $this->display(__FILE__, 'javascript_ini.tpl');
+    }
+
+    private function initJavascriptTemplate($params)
+    {
         $pickerData = $this->parcelshop_urls();
 
         $this->context->smarty->assign(
@@ -112,9 +100,6 @@ class WuunderConnector extends Module
             )
         );
 
-        if (_PS_VERSION_ < '1.7') {
-            $this->context->controller->addJS($this->_path . 'views/js//hook/checkoutjavascript1.6.js', 'all');
-        } 
         if ($this->context->cookie->parcelId) {
             $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
             $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
@@ -122,9 +107,7 @@ class WuunderConnector extends Module
             $this->context->smarty->assign('cookieParcelshopAddress', false);
             $this->context->smarty->assign('cookieParcelshopId', false);
         }
-        return $this->display(__FILE__, 'javascript_ini.tpl');
-    }
-    
+    }    
 
     /**
      * Autoload's project files from /src directory ps > 1.7
@@ -148,8 +131,8 @@ class WuunderConnector extends Module
                             `label_tt_url` TEXT NULL,
                             PRIMARY KEY(`id`)
                         )
-                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
-            ');
+                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;'
+        );
 
         Db::getInstance()->execute('
                         CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (
@@ -158,8 +141,8 @@ class WuunderConnector extends Module
                             `parcelshop_id` VARCHAR(255),
                             PRIMARY KEY(`id`)
                         )
-                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
- ');
+                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;'
+        );
 
         $this->addIndexToOrderId();
     }
@@ -169,23 +152,21 @@ class WuunderConnector extends Module
 
         Db::getInstance()->execute('
                     CREATE INDEX `shipment_order_id`
-                    ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);
-
-            ');
+                    ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);'
+        );
 
         Db::getInstance()->execute('
                     CREATE INDEX `parcelshop_order_id`
-                    ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);
-
-            ');
+                    ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);'
+        );
     }
 
     private function uninstallDB()
     {
         Db::getInstance()->execute('
                DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`;
-               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`
-            ');
+               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`'
+        );
     }
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
@@ -313,15 +294,47 @@ class WuunderConnector extends Module
 
     public function hookDisplayHeader($params)
     {
-
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
-        if (_PS_VERSION_ > '1.6') {
+        if (_PS_VERSION_ < '1.7') {
+            if ('order' === $this->context->controller->php_self) {
+                $this->context->controller->addCSS($this->_path . 'views/css/hook/parcelshop.css', 'all');
+                $this->context->controller->addJS($this->_path . 'views/js/hook/checkoutjavascript1.6.js', 'all');
+                $this->initJavascriptTemplate($params);
+                return $this->display(__FILE__, 'javascript_ini.tpl');
+            }
+        } else {
             $this->context->controller->registerJavascript(
                 'wuunderconnector',
                 '/js/jquery/jquery-1.11.0.min.js',
                 array('position' => 'head', 'priority' => 1)
             ); 
+            $this->context->controller->registerStylesheet(
+                'wuunderconnector',
+                'modules/'.$this->name.'/views/css/hook/parcelshop.css',
+                [
+                  'media' => 'all',
+                  'priority' => 200,
+                ]
+            );
+
         }
+    }
+
+    public function hookActionFrontControllerSetMedia($params)
+    {   
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        //if ('order' === $this->context->controller->php_self) {
+            $this->context->controller->registerJavascript(
+                'wuunderconnector',
+                'modules/wuunderconnector/views/js/hook/checkoutjavascript1.7.js',
+                [
+                'position' => 'bottom',
+                'media' => 'all',
+                'priority' => 0,
+                'attributes' =>'sync'
+                ]
+            );
+        //}
     }
 
     public function hookActionValidateOrder($params)

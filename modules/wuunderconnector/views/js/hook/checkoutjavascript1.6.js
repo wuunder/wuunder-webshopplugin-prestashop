@@ -17,41 +17,50 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
     // Get the modal
-    var parcelshopShippingMethodElem = jQuery('#delivery_option_' + shippingCarrierId);
-    var shippingMethodElems = jQuery("input[name='" + $('#delivery_option_' + shippingCarrierId).attr('name') + "']");
+$(window).on("load", function() {
+    // Get the modal
+    var selectParcelshopLink = '<div id="parcelshopsSelectedContainer16"><a href="#/" id="selectParcelshop">' + innerHtml + '</a></div>';
+    var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio');
+    var shippingMethodElems = jQuery('input.delivery_option_radio');
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
+
     initParcelshopLocator(baseUrl, baseApiUrl, availableCarriers);
 
     function initParcelshopLocator(url, apiUrl, carrierList) {
-    
         baseUrl = url;
         baseUrlApi = apiUrl;
         availableCarrierList = carrierList;
         parcelshopAddress = _markupParcelshopAddress(parcelshopAddress);
-            
+        
+        jQuery('.delivery_options').append('<div class="delivery_option alternate_item parcelshop_container"></div>');
         if (parcelshopShippingMethodElem) {
+            //parcelshopShippingMethodElem.onchange = _onShippingMethodChange;
+            if (parcelshopAddress !== "") {
+                parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
+            }
+            //jQuery(shippingMethodElems).change(_onShippingMethodChange);
             jQuery(shippingMethodElems).on('change', _onShippingMethodChange);
             _onShippingMethodChange();
         }
     }
-    
     function _onShippingMethodChange() {
-        if (parcelshopShippingMethodElem.prop('checked')) {      
+        if (parcelshopShippingMethodElem.is(':checked')) {  
             var container = document.createElement('div');
             container.className += "chooseParcelshop";
             container.innerHTML = selectParcelshopLink;
-            jQuery('#delivery_option_' + shippingCarrierId).parentsUntil('#js-delivery > div > div.delivery-options').last().next().append(container);
+            // window.parent.document.getElementsByClassName('shipping')[0].appendChild(container);
+            jQuery(jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio')).parentsUntil('#form > div > div.delivery_options_address > div.delivery_options > div:nth-child(1)').last().append(container);
+            jQuery("#selectParcelshop").on('click',_showParcelshopLocator);
             _printParcelshopAddress();
         } else {
-            var containerElems = jQuery('#parcelshopsSelectedContainer');
+            var containerElems = window.parent.document.getElementsByClassName('chooseParcelshop');
             if (containerElems.length) {
                 containerElems[0].remove();
             }
         }
     }
-    
     // add selected parcelshop to page
     function _printParcelshopAddress() {
         if (parcelshopAddress) {
@@ -60,25 +69,20 @@
             }
             var currentParcelshop = document.createElement('div');
             currentParcelshop.className += 'parcelshopInfo';
-            currentParcelshop.innerHTML = parcelshopHtmlPrefix + parcelshopAddress;
-            window.parent.document.getElementById('parcelshopsSelectedContainer').appendChild(currentParcelshop);
-            window.parent.document.getElementById('selectParcelshop').innerHTML = parcelshopSelectDifferent;
-            $('#parcelshopsSelectedContainer > div').css({ 'font-size':$("#js-delivery > div > div.delivery-options > div:nth-child(1) > label > div > div.col-sm-4.col-xs-12 > span").css('font-size')})
+            currentParcelshop.innerHTML = '<br/><strong>Huidige Parcelshop:</strong><br/>' + parcelshopAddress;
+            window.parent.document.getElementById('parcelshopsSelectedContainer16').appendChild(currentParcelshop);
+            window.parent.document.getElementById('selectParcelshop').innerHTML = 'klik hier om een andere parcelshop te kiezen';
         }
     }
-    
-    
     function _showParcelshopLocator() {
+        var address = "";
         jQuery.post( baseUrl + getAddressUrl + "&addressId=" + addressId, function( data ) {
             shippingAddress = data["address1"] + ' ' + data["postcode"] + ' ' + data["city"] + ' ' + data["country"];
             _openIframe();
         });
     }
-    
-    
     function _openIframe() {
         var iframeUrl = baseUrlApi + 'parcelshop_locator/iframe/?lang=nl&availableCarriers=' + availableCarrierList + '&address=' + encodeURI(shippingAddress);
-    
         var iframeContainer = document.createElement('div');
         iframeContainer.className = "parcelshopPickerIframeContainer";
         iframeContainer.onclick = function() { removeElement(iframeContainer); };
@@ -88,21 +92,18 @@
         iframeDiv.style.cssText = 'position: fixed; top: 0; left: 0; bottom: 0; right: 0; z-index: 2147483647';
         iframeContainer.appendChild(iframeDiv);
         window.parent.document.getElementsByClassName("chooseParcelshop")[0].appendChild(iframeContainer);
-    
         function removeServicePointPicker() {
             removeElement(iframeContainer);
         }
-    
         function onServicePointSelected(messageData) {
             removeServicePointPicker();
             _loadSelectedParcelshopAddress(messageData.parcelshopId);
         }
-    
         function onServicePointClose() {
             removeServicePointPicker();
         }
-    
         function onWindowMessage(event) {
+            var origin = event.origin,
                 messageData = event.data;
             var messageHandlers = {
                 'servicePointPickerSelected': onServicePointSelected,
@@ -115,34 +116,23 @@
             var messageFn = messageHandlers[messageData.type];
             messageFn(messageData);
         }
-    
         window.addEventListener('message', onWindowMessage, false);
     }
-    
     function _loadSelectedParcelshopAddress(id) {
             jQuery.post( baseUrl + setParcelshopId, {
                     'parcelshopId' : id,
             }, function( data ) {
                     parcelshopAddress = _markupParcelshopAddress(data);
-                    parcelshopHTML = parcelshopHtmlPrefix + parcelshopAddress;
                     _printParcelshopAddress();
         });
     }
-    
     function _markupParcelshopAddress(parcelshopData) {
-            if (!parcelshopData) {
-                return false;
-            }
-            else {
-                data = JSON.parse(parcelshopData);
-                var parcelshopInfoHtml = _capFirst(data.company_name) + "<br>" + _capFirst(data.address.street_name) +
-                " " + data.address.house_number + "<br>" + data.address.city;
-                parcelshopInfoHtml = parcelshopInfoHtml.replace(/"/g, '\\"').replace(/'/g, "\\'");
-                return parcelshopInfoHtml;
-            }
-    
+                    data = JSON.parse(parcelshopData);
+                    var parcelshopInfoHtml = _capFirst(data.company_name) + "<br>" + _capFirst(data.address.street_name) +
+                    " " + data.address.house_number + "<br>" + data.address.city;
+                    parcelshopInfoHtml = parcelshopInfoHtml.replace(/"/g, '\\"').replace(/'/g, "\\'");
+                    return parcelshopInfoHtml;
     }
-    
     // Capitalizes first letter of every new word.
     function _capFirst(str) {
         if (str === undefined)
@@ -151,7 +141,6 @@
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
     }
-    
     function removeElement(element) {
         if (element.remove !== undefined) {
             element.remove();
@@ -160,3 +149,4 @@
         }
         
     }
+});
