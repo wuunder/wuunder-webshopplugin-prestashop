@@ -236,7 +236,7 @@ class WuunderConnector extends Module
             return false;
         }
 
-        if (_PS_VERSION_ > '1.6') {
+        if (_PS_VERSION_ >= '1.7') {
             array_push(
                 $this->hooks,
                 'displayAfterBodyOpeningTag',
