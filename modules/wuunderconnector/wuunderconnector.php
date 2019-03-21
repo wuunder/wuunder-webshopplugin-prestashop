@@ -93,7 +93,7 @@ class WuunderConnector extends Module
             array(
                 'carrier_id' => Configuration::get('MYCARRIER1_CARRIER_ID'),
                 'baseApiUrl' => $pickerData['baseApiUrl'],
-                'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
+                'availableCarriers' => $pickerData['availableCarriers'],
                 'baseUrl' => $pickerData['baseUrl'],
                 'addressId' => $params['cart']->id_address_delivery,
                 'version' => floatval(_PS_VERSION_),
@@ -323,6 +323,7 @@ class WuunderConnector extends Module
     {   
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
+        if (_PS_VERSION_ > '1.7') {
         //if ('order' === $this->context->controller->php_self) {
             $this->context->controller->registerJavascript(
                 'wuunderconnector',
@@ -335,6 +336,7 @@ class WuunderConnector extends Module
                 ]
             );
         //}
+        }
     }
 
     public function hookActionValidateOrder($params)
@@ -363,7 +365,7 @@ class WuunderConnector extends Module
 
         return $pickerData = array(
             'baseApiUrl' => $baseApiUrl,
-            'availableCarriers' => null, //$availableCarriers
+            'availableCarriers' => preg_replace('/\s+/', '', Configuration::get('available_carriers_locator')),
             'baseUrl' => _PS_BASE_URL_ . __PS_BASE_URI__,
         );
     }
@@ -386,6 +388,7 @@ class WuunderConnector extends Module
             "city",
             "country",
             "postbookingstatus",
+            "available_carriers_locator",
             "wuunderfilter1carrier",
             "wuunderfilter1filter",
             "wuunderfilter2carrier",
@@ -551,7 +554,7 @@ class WuunderConnector extends Module
                     'label' => $this->l('Country code'),
                     'name' => "country",
                     'required' => true,
-                    'placeholder' => "e.g. NL",
+                    'placeholder' => $this->l("e.g. NL"),
                 ),
 
                 array(
@@ -564,6 +567,14 @@ class WuunderConnector extends Module
                         'name' => 'name',
                     ),
                     'required' => true,
+                ),
+
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Set carriers for parcelshop locator'),
+                    'name' => 'available_carriers_locator',
+                    'required' => false,
+                    'placeholder' => $this->l('carriers for the parcelshop locator. e.g. dpd, postnl')
                 ),
 
                 array(
@@ -688,6 +699,7 @@ class WuunderConnector extends Module
             "city",
             "country",
             "postbookingstatus",
+            "available_carriers_locator",
             "wuunderfilter1carrier",
             "wuunderfilter1filter",
             "wuunderfilter2carrier",
