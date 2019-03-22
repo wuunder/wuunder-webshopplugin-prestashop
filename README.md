@@ -1,4 +1,4 @@
-# Wuunder opencart plugin
+# Wuunder Prestashop plugin
 
 This plugin is meant to function with __version 1.6.X.X of [Prestashop](https://www.prestashop.com/nl).
 The Wuunder plugin compatible with Prestashop __version 1.7.X.X__ can be found [here](…).
