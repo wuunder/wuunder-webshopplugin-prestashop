@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.7](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.7) - 2018-4-4
 
-## Fix
+### Fix
 
 - Fix for not rounded values for dimensions in redirect [@kFrolichs](https://github.com/kFrolichs)
 
@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.6](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.6) - 2018-1-5
 
-## Fix
+### Fix
 
 - Fix for not rounded values for dimensions in redirect [@timoj](https://github.com/timoj)
 
@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.5](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.5) - 2017-12-21
 
-## Fix
+### Fix
 
 - Fix configuration testmode field [@timoj](https://github.com/timoj)
 
@@ -32,7 +32,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.4](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.4) - 2017-11-28
 
-## Fix
+### Fix
 
 - SQL bugfix [@timoj](https://github.com/timoj)
 
@@ -40,7 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.3](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.3) - 2017-11-27
 
-## Removed
+### Removed
 
 - Logging [@timoj](https://github.com/timoj)
 
@@ -48,7 +48,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.2](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.2) - 2017-11-27
 
-## Fix
+### Fix
 
 - Bugfix sql query [@timoj](https://github.com/timoj)
 
@@ -56,7 +56,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.1](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.1) - 2017-11-27
 
-## Added
+### Added
 
 - Debugging version [@timoj](https://github.com/timoj)
 
@@ -64,7 +64,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.2.0](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.0) - 2017-11-15
 
-## Added
+### Added
 
 - Added filter mapping [@timoj](https://github.com/timoj)
 - Added source info for debugging [@timoj](https://github.com/timoj)
@@ -73,7 +73,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [1.1.0](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.1.0) - 2017-8-10
 
-# Added
+### Added
 
 - Prestashop 1.7 and 1.6 support [@timoj](https://github.com/timoj)
 
