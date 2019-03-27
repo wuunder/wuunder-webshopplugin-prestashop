@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - Fix for not rounded values for dimensions in redirect [@kFrolichs](https://github.com/kFrolichs)
 
+
 ## Released
 
 ## [1.2.6](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.6) - 2018-1-5
@@ -19,6 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fix
 
 - Fix for not rounded values for dimensions in redirect [@timoj](https://github.com/timoj)
+
 
 ## Released
 
@@ -28,6 +30,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - Fix configuration testmode field [@timoj](https://github.com/timoj)
 
+
 ## Released
 
 ## [1.2.4](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.4) - 2017-11-28
@@ -35,6 +38,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fix
 
 - SQL bugfix [@timoj](https://github.com/timoj)
+
 
 ## Released
 
@@ -44,6 +48,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - Logging [@timoj](https://github.com/timoj)
 
+
 ## Released
 
 ## [1.2.2](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.2) - 2017-11-27
@@ -52,6 +57,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - Bugfix sql query [@timoj](https://github.com/timoj)
 
+
 ## Released
 
 ## [1.2.1](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.1) - 2017-11-27
@@ -59,6 +65,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - Debugging version [@timoj](https://github.com/timoj)
+
 
 ## Released
 
@@ -69,6 +76,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Added filter mapping [@timoj](https://github.com/timoj)
 - Added source info for debugging [@timoj](https://github.com/timoj)
 
+
 ## Released
 
 ## [1.1.0](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.1.0) - 2017-8-10
@@ -76,6 +84,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - Prestashop 1.7 and 1.6 support [@timoj](https://github.com/timoj)
+
 
 ## Released
 
