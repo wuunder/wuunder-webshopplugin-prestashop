@@ -33,9 +33,10 @@ class WuunderConnector extends Module
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
-        if (!Configuration::get($this->name))
+        if (!Configuration::get($this->name)) {
             $this->warning = $this->l('No name provided');
-                 
+        }
+
         $this->parcelshopcarrier = new WuunderCarrier();
     }
 
@@ -97,23 +98,7 @@ class WuunderConnector extends Module
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
     {
-//        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
-//            return false;
-//        }
-//        $tab = new Tab();
-//
-//        $languages = Language::getLanguages(false);
-//        foreach ($languages as $language) {
-//            $tab->name[$language['id_lang']] = $tab_name;
-//        }
-//        $tab->class_name = $tab_class;
-//        $tab->module = $this->name;
-//        $tab->id_parent = $id_tab_parent;
-//
-//        if (!$tab->save()) {
-//            return false;
-//        }
-//        return true;
+
         $tab = new Tab();
         $tab->active = 1;
         $tab->class_name = $tab_class;
@@ -143,8 +128,9 @@ class WuunderConnector extends Module
 
     public function install()
     {
-        if (Shop::isFeatureActive())
+        if (Shop::isFeatureActive()) {
             Shop::setContext(Shop::CONTEXT_ALL);
+        }
 
         $this->installDB();
 
@@ -154,8 +140,9 @@ class WuunderConnector extends Module
 
         if (!parent::install() ||
             !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
-        )
+        ) {
             return false;
+        }
 
         foreach($this->hooks as $hookName){
             if(!$this->registerHook($hookName)) {
@@ -177,8 +164,9 @@ class WuunderConnector extends Module
         if (!parent::uninstall() ||
             !Configuration::deleteByName($this->name) ||
             !$this->uninstallModuleTab('AdminWuunderConnector')
-        )
+        ) {
             return false;
+        }
 
         return true;
     }
@@ -224,7 +212,7 @@ class WuunderConnector extends Module
             $parcelshopId = $this->context->cookie->parcelId;
             Db::getInstance()->insert('wuunder_order_parcelshop', array(
             'order_id' => (int)$orderId,
-            'parcelshop_id' => pSQL($parcelshopId),
+            'parcelshop_id' => pSQL($parcelshopId)
         ));
         }
         unset($this->context->cookie->parcelId);
@@ -259,7 +247,7 @@ class WuunderConnector extends Module
     {
         $output = null;
         $fields = array(
-          "testmode",
+            "testmode",
             "live_api_key",
             "test_api_key",
             "company_name",
@@ -296,15 +284,15 @@ class WuunderConnector extends Module
                     && $field !== "wuunderfilter2filter"
                     && $field !== "wuunderfilter3filter"
                     && $field !== "wuunderfilter4filter")
-                )
-                    $output .= $this->displayError($this->l('Invalid Configuration value: '.$field));
-                else {
+                ) {
+                    $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
+                } else {
                     Configuration::updateValue($field, $field_name);
 //                    $output .= $this->displayConfirmation($this->l('Settings updated'));
                 }
             }
         }
-        return $output.$this->displayForm();
+        return $output . $this->displayForm();
     }
 
     public function displayForm()
@@ -482,7 +470,7 @@ class WuunderConnector extends Module
                     'label' => $this->l('Wuunder filter: #4 Carrier'),
                     'name' => "wuunderfilter4carrier",
                     'options' => array(
-                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, NULL, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
+                        'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
                         'id' => 'id_carrier',
                         'name' => 'name'
                     ),
@@ -493,7 +481,7 @@ class WuunderConnector extends Module
                     'label' => $this->l('Wuunder filter: #4 Filter'),
                     'name' => "wuunderfilter4filter",
                     'required' => false
-                )
+                ),
             ),
             'submit' => array(
                 'title' => $this->l('Save'),
