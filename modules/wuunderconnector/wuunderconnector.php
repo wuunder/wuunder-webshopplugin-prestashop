@@ -171,23 +171,6 @@ class WuunderConnector extends Module
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
     {
-//        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
-        //            return false;
-        //        }
-        //        $tab = new Tab();
-        //
-        //        $languages = Language::getLanguages(false);
-        //        foreach ($languages as $language) {
-        //            $tab->name[$language['id_lang']] = $tab_name;
-        //        }
-        //        $tab->class_name = $tab_class;
-        //        $tab->module = $this->name;
-        //        $tab->id_parent = $id_tab_parent;
-        //
-        //        if (!$tab->save()) {
-        //            return false;
-        //        }
-        //        return true;
         $tab = new Tab();
         $tab->active = 1;
         $tab->class_name = $tab_class;
@@ -443,6 +426,7 @@ class WuunderConnector extends Module
         } else {
             return true;
         }
+        return $output . $this->displayForm();
     }
 
     public function displayForm()
@@ -632,7 +616,7 @@ class WuunderConnector extends Module
                     'type' => 'text',
                     'label' => $this->l('Wuunder filter: #4 Filter'),
                     'name' => "wuunderfilter4filter",
-                    'required' => false,
+                    'required' => false
                 ),
             ),
             'submit' => array(
