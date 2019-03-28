@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - Prestashop guidelines (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/8)
-
+- Added 1.7 translation files dutch (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/7)
 
 
 ## [1.2.7](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.2.7) - 2018-4-4
