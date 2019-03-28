@@ -24,19 +24,36 @@ class AdminWuunderConnectorController extends ModuleAdminController
     {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'wuunder_shipments (order_id, booking_url, booking_token)
                     VALUES (' . $order_id . ', "' . $booking_url . '", "' . $booking_token . '")';
-        if (Db::getInstance()->Execute($sql)) {
+        if (Db::getInstance()->insert('wuunder_shipments', array(
+                'order_id'      => $order_id,
+                'booking_url'   => $booking_url,
+                'booking_token' => $booking_token,
+                ))
+            ) {
             return true;
         } else {
             $this->logger->logDebug(Db::getInstance()->getMsgError());
         }
+
+
     }
 
     private function getBookingUrlForOrder($order_id)
     {
         $sql = 'SELECT booking_url FROM ' . _DB_PREFIX_ . 'wuunder_shipments WHERE order_id = ' . $order_id;
-        $result = Db::getInstance()->ExecuteS($sql);
+        $result = Db::getInstance()->getValue($sql);
         if ($result) {
-            return $result[0]['booking_url'];
+            return $result;
+        }
+        return false;
+    }
+
+    private function getParcelshopIdForOrder($order_id)
+    {
+        $sql = 'SELECT parcelshop_id FROM ' . _DB_PREFIX_ . 'wuunder_order_parcelshop WHERE order_id = ' . $order_id;
+        $result = Db::getInstance()->getValue($sql);
+        if ($result) {
+            return $result;
         }
         return false;
     }
@@ -229,6 +246,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
             }
         }
 
+        $parcelshop_id = $this->getParcelshopIdForOrder($order_info['id_order']);
+
         $bookingConfig = new Wuunder\Api\Config\BookingConfig();
 
         $bookingConfig->setDescription($order_info['description']);
@@ -244,7 +263,10 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $bookingConfig->setSource($this->sourceObj);
         $bookingConfig->setDeliveryAddress($customerAdr);
         $bookingConfig->setPickupAddress($webshopAdr);
-
+        if ($parcelshop_id) {
+            $bookingConfig->setParcelshopId($parcelshop_id);
+        }
+        Logger::addLog('testboeking', 1);
         return $bookingConfig;
     }
 
@@ -269,6 +291,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
             } else {
                 $apiKey = Configuration::get('live_api_key');
             }
+
 
             // Combine wuunder info and order data
             $bookingConfig = $this->buildWuunderData($order);
@@ -314,6 +337,18 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
         if (isset($_REQUEST['processLabelForOrder'])) {
             $this->requestBookingUrl($_REQUEST['processLabelForOrder']);
+        }
+
+        $test_mode = Configuration::get('testmode');
+
+        if ($test_mode == 1) {
+            $apiKey = Configuration::get('test_api_key');
+        } else {
+            $apiKey = Configuration::get('live_api_key');
+        }
+
+        if (empty($apiKey)) {
+            $this->errors[] = Tools::displayError("Api Key is empty");
         }
 
         $link = new Link();
