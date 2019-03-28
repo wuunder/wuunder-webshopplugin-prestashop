@@ -98,23 +98,7 @@ class WuunderConnector extends Module
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
     {
-//        if (!copy(_PS_MODULE_DIR_ . $this->name . '/logo.png', _PS_IMG_DIR_ . 't/' . $tab_class . '.png')) {
-        //            return false;
-        //        }
-        //        $tab = new Tab();
-        //
-        //        $languages = Language::getLanguages(false);
-        //        foreach ($languages as $language) {
-        //            $tab->name[$language['id_lang']] = $tab_name;
-        //        }
-        //        $tab->class_name = $tab_class;
-        //        $tab->module = $this->name;
-        //        $tab->id_parent = $id_tab_parent;
-        //
-        //        if (!$tab->save()) {
-        //            return false;
-        //        }
-        //        return true;
+
         $tab = new Tab();
         $tab->active = 1;
         $tab->class_name = $tab_class;
@@ -228,7 +212,7 @@ class WuunderConnector extends Module
             $parcelshopId = $this->context->cookie->parcelId;
             Db::getInstance()->insert('wuunder_order_parcelshop', array(
             'order_id' => (int)$orderId,
-            'parcelshop_id' => pSQL($parcelshopId),
+            'parcelshop_id' => pSQL($parcelshopId)
         ));
         }
         unset($this->context->cookie->parcelId);
@@ -284,7 +268,7 @@ class WuunderConnector extends Module
             "wuunderfilter3carrier",
             "wuunderfilter3filter",
             "wuunderfilter4carrier",
-            "wuunderfilter4filter",
+            "wuunderfilter4filter"
         );
 
         if (Tools::isSubmit('submit' . $this->name)) {
@@ -488,20 +472,20 @@ class WuunderConnector extends Module
                     'options' => array(
                         'query' => Carrier::getCarriers($this->context->language->id, true, false, false, null, PS_CARRIERS_AND_CARRIER_MODULES_NEED_RANGE),
                         'id' => 'id_carrier',
-                        'name' => 'name',
+                        'name' => 'name'
                     ),
-                    'required' => false,
+                    'required' => false
                 ),
                 array(
                     'type' => 'text',
                     'label' => $this->l('Wuunder filter: #4 Filter'),
                     'name' => "wuunderfilter4filter",
-                    'required' => false,
+                    'required' => false
                 ),
             ),
             'submit' => array(
                 'title' => $this->l('Save'),
-                'class' => 'btn btn-default pull-right',
+                'class' => 'btn btn-default pull-right'
             )
         );
 
