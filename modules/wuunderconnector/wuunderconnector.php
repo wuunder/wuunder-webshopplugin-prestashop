@@ -29,7 +29,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once 'vendor/autoload.php';
+if (_PS_VERSION_ < '1.7') {
+    require_once 'vendor/autoload.php';
+}
 require_once 'classes/WuunderCarrier.php';
 
 class WuunderConnector extends Module
@@ -56,6 +58,9 @@ class WuunderConnector extends Module
 
         parent::__construct();
 
+        if (_PS_VERSION_ > '1.7') {
+            $this->autoLoad();
+        }
         $this->displayName = $this->l('Wuunder shipping module');
         $this->description = $this->l('Send and receive your shipments easily, personally and efficiently. You can ship via more then 23 carriers. Wuunder takes care of all your transport and warehouse solutions you need.');
 
@@ -66,6 +71,51 @@ class WuunderConnector extends Module
         }
 
         $this->parcelshopcarrier = new WuunderCarrier();
+    }
+
+    //will not be called in version 1.6
+    public function hookActionDispatcherBefore()
+    {
+        $this->autoLoad();
+    }  
+    
+    public function hookDisplayAfterBodyOpeningTag($params)
+    {    
+        $this->initJavascriptTemplate($params);
+        return $this->display(__FILE__, 'javascript_ini.tpl');
+    }
+
+    private function initJavascriptTemplate($params)
+    {
+        $pickerData = $this->parcelshop_urls();
+
+        $this->context->smarty->assign(
+            array(
+                'carrier_id' => Configuration::get('MYCARRIER1_CARRIER_ID'),
+                'baseApiUrl' => $pickerData['baseApiUrl'],
+                'availableCarriers' => $pickerData['availableCarriers'],
+                'baseUrl' => $pickerData['baseUrl'],
+                'addressId' => $params['cart']->id_address_delivery,
+                'version' => floatval(_PS_VERSION_),
+            )
+        );
+
+        if ($this->context->cookie->parcelId) {
+            $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
+            $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
+        } else {
+            $this->context->smarty->assign('cookieParcelshopAddress', false);
+            $this->context->smarty->assign('cookieParcelshopId', false);
+        }
+    }    
+
+    /**
+     * Autoload's project files from /src directory ps > 1.7
+     */
+    private function autoLoad()
+    {
+        $autoLoadPath = $this->getLocalPath().'vendor/autoload.php';
+        require_once $autoLoadPath;
     }
 
     private function installDB()
@@ -81,8 +131,8 @@ class WuunderConnector extends Module
                             `label_tt_url` TEXT NULL,
                             PRIMARY KEY(`id`)
                         )
-                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
-            ');
+                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;'
+        );
 
         Db::getInstance()->execute('
                         CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (
@@ -91,8 +141,8 @@ class WuunderConnector extends Module
                             `parcelshop_id` VARCHAR(255),
                             PRIMARY KEY(`id`)
                         )
-                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;
- ');
+                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;'
+        );
 
         $this->addIndexToOrderId();
     }
@@ -102,23 +152,21 @@ class WuunderConnector extends Module
 
         Db::getInstance()->execute('
                     CREATE INDEX `shipment_order_id`
-                    ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);
-
-            ');
+                    ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);'
+        );
 
         Db::getInstance()->execute('
                     CREATE INDEX `parcelshop_order_id`
-                    ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);
-
-            ');
+                    ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);'
+        );
     }
 
     private function uninstallDB()
     {
         Db::getInstance()->execute('
                DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`;
-               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`
-            ');
+               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`'
+        );
     }
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
@@ -147,6 +195,7 @@ class WuunderConnector extends Module
             $tab = new Tab($id_tab);
             return $tab->delete();
         }
+        Logger::addLog('uninstallation failed 167.');
         return false;
     }
 
@@ -160,10 +209,23 @@ class WuunderConnector extends Module
 
         $this->parcelshopcarrier->install();
 
-        if (!parent::install() ||
-            !$this->installModuleTab('AdminWuunderConnector', 'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping')
+        if (!parent::install() 
+            || !$this->installModuleTab(
+                'AdminWuunderConnector', 
+                'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping'
+            )
         ) {
+            Logger::addLog('Installation failed 183.');
             return false;
+        }
+
+        if (_PS_VERSION_ >= '1.7') {
+            array_push(
+                $this->hooks,
+                'displayAfterBodyOpeningTag',
+                'actionDispatcherBefore',
+                'actionFrontControllerSetMedia'
+            );
         }
 
         foreach ($this->hooks as $hookName) {
@@ -187,6 +249,7 @@ class WuunderConnector extends Module
             !Configuration::deleteByName($this->name) ||
             !$this->uninstallModuleTab('AdminWuunderConnector')
         ) {
+            Logger::addLog('uninstallation failed 209.');
             return false;
         }
 
@@ -214,32 +277,49 @@ class WuunderConnector extends Module
 
     public function hookDisplayHeader($params)
     {
-        $this->context->controller->addCSS($this->_path . 'views/css/admin/parcelshop.css', 'all');
+        if (_PS_VERSION_ < '1.7') {
+            if ('order' === $this->context->controller->php_self) {
+                $this->context->controller->addCSS($this->_path . 'views/css/hook/parcelshop.css', 'all');
+                $this->context->controller->addJS($this->_path . 'views/js/hook/checkoutjavascript1.6.js', 'all');
+                $this->initJavascriptTemplate($params);
+                return $this->display(__FILE__, 'javascript_ini.tpl');
+            }
+        } else {
+            $this->context->controller->registerJavascript(
+                'wuunderconnector',
+                '/js/jquery/jquery-1.11.0.min.js',
+                array('position' => 'head', 'priority' => 1)
+            ); 
+            $this->context->controller->registerStylesheet(
+                'wuunderconnector',
+                'modules/'.$this->name.'/views/css/hook/parcelshop.css',
+                [
+                  'media' => 'all',
+                  'priority' => 200,
+                ]
+            );
+
+        }
     }
 
-    public function hookDisplayFooter($params)
-    {
-        $pickerData = $this->parcelshop_urls();
-
-        $this->context->smarty->assign(
-            array(
-                'carrier_id' => Configuration::get('MYCARRIER1_CARRIER_ID'),
-                'baseApiUrl' => $pickerData['baseApiUrl'],
-                'availableCarriers' => 'dpd', //$pickerData['availableCarriers']
-                'baseUrl' => $pickerData['baseUrl'],
-                'addressId' => $params['cart']->id_address_delivery,
-                'jsFile' => _MODULE_DIR_ . 'wuunderconnector/views/js/hook/checkoutjavascript.js'
-            )
-        );
-
-        if ($this->context->cookie->parcelId) {
-            $this->context->smarty->assign('cookieParcelshopId', $this->context->cookie->parcelId);
-            $this->context->smarty->assign('cookieParcelshopAddress', $this->context->cookie->parcelAddress);
-        } else {
-            $this->context->smarty->assign('cookieParcelshopAddress', false);
-            $this->context->smarty->assign('cookieParcelshopId', false);
+    public function hookActionFrontControllerSetMedia($params)
+    {   
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        if (_PS_VERSION_ > '1.7') {
+        //if ('order' === $this->context->controller->php_self) {
+            $this->context->controller->registerJavascript(
+                'wuunderconnector',
+                'modules/wuunderconnector/views/js/hook/checkoutjavascript1.7.js',
+                [
+                'position' => 'bottom',
+                'media' => 'all',
+                'priority' => 0,
+                'attributes' =>'sync'
+                ]
+            );
+        //}
         }
-        return $this->display(__FILE__, 'checkoutjavascript.tpl');
     }
 
     public function hookActionValidateOrder($params)
@@ -268,7 +348,7 @@ class WuunderConnector extends Module
 
         return $pickerData = array(
             'baseApiUrl' => $baseApiUrl,
-            'availableCarriers' => null, //$availableCarriers
+            'availableCarriers' => preg_replace('/\s+/', '', Configuration::get('available_carriers_locator')),
             'baseUrl' => _PS_BASE_URL_ . __PS_BASE_URI__,
         );
     }
@@ -291,6 +371,7 @@ class WuunderConnector extends Module
             "city",
             "country",
             "postbookingstatus",
+            "available_carriers_locator",
             "wuunderfilter1carrier",
             "wuunderfilter1filter",
             "wuunderfilter2carrier",
@@ -340,7 +421,7 @@ class WuunderConnector extends Module
         } elseif ($field == "zipcode") {
             return Validate::isPostCode($field_name);
         } elseif ($field == "country") {
-            return Validate::isCountryName($field_name);
+            return Validate::isLanguageIsoCode($field_name);
         } elseif ($field == "city") {
             return Validate::isCityName($field_name);
         } elseif ($field == "email") {
@@ -457,6 +538,7 @@ class WuunderConnector extends Module
                     'label' => $this->l('Country code'),
                     'name' => "country",
                     'required' => true,
+                    'placeholder' => $this->l("e.g. NL"),
                 ),
 
                 array(
@@ -469,6 +551,14 @@ class WuunderConnector extends Module
                         'name' => 'name',
                     ),
                     'required' => true,
+                ),
+
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('Set carriers for parcelshop locator'),
+                    'name' => 'available_carriers_locator',
+                    'required' => false,
+                    'placeholder' => $this->l('carriers for the parcelshop locator. e.g. dpd, postnl')
                 ),
 
                 array(
@@ -593,6 +683,7 @@ class WuunderConnector extends Module
             "city",
             "country",
             "postbookingstatus",
+            "available_carriers_locator",
             "wuunderfilter1carrier",
             "wuunderfilter1filter",
             "wuunderfilter2carrier",

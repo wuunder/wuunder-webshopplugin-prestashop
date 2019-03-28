@@ -92,13 +92,13 @@ class WuunderCarrier extends CarrierModule
 
         $carrierConfig = array(
             0 => array(
-                'name' => 'Wuunder parcelshop locator',
+                'name' => $this->l('Wuunder parcelshop'),
                 'id_tax_rules_group' => 0,
                 'active' => true,
                 'deleted' => 0,
                 'shipping_handling' => false,
                 'range_behavior' => 0,
-                'delay' => array('nl' => 'Breng uw pakket naar een pakketpunt', 'en' => 'Take your package to a parcelshop.', Language::getIsoById(Configuration::get('PS_LANG_DEFAULT')) => 'Take your package to a parcelshop.'),
+                'delay' => array('nl' => 'Haal uw pakket op bij een pakketpunt in de buurt!', 'en' => 'Collect your package at a nearby parcelshop!', Language::getIsoById(Configuration::get('PS_LANG_DEFAULT')) => 'Collect your package at a nearby parcelshop!'),
                 'id_zone' => 1,
                 'is_module' => true,
                 'shipping_external' => true,
@@ -193,8 +193,14 @@ class WuunderCarrier extends CarrierModule
         }
         if ($carrier->add()) {
             $groups = Group::getGroups(true);
-            foreach ($groups as $group) {
-                Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_group', array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])), 'INSERT');
+            if (_PS_VERSION_ < '1.7') {
+                foreach ($groups as $group) {
+                    Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_group', array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])), 'INSERT');
+                }
+            } else {
+                foreach ($groups as $group) {
+                    Db::getInstance()->insert('carrier_group', array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])));
+                }    
             }
 
             $rangePrice = new RangePrice();
@@ -210,10 +216,18 @@ class WuunderCarrier extends CarrierModule
             $rangeWeight->add();
 
             $zones = Zone::getZones(true);
-            foreach ($zones as $zone) {
-                Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_zone', array('id_carrier' => (int)($carrier->id), 'id_zone' => (int)($zone['id_zone'])), 'INSERT');
-                Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')), 'INSERT');
-                Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => pSQL(null), 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')), 'INSERT');
+            if (_PS_VERSION_ < '1.7') {
+                foreach ($zones as $zone) {
+                    Db::getInstance()->autoExecute(_DB_PREFIX_ . 'carrier_zone', array('id_carrier' => (int)($carrier->id), 'id_zone' => (int)($zone['id_zone'])), 'INSERT');
+                    Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')), 'INSERT');
+                    Db::getInstance()->autoExecuteWithNullValues(_DB_PREFIX_ . 'delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => pSQL(null), 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')), 'INSERT');
+                }
+            } else {
+                foreach ($zones as $zone) {
+                    Db::getInstance()->insert('carrier_zone', array('id_carrier' => (int)($carrier->id), 'id_zone' => (int)($zone['id_zone'])));
+                    Db::getInstance()->update('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
+                    Db::getInstance()->update('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => pSQL(null), 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
+                }    
             }
 
             // Copy Logo

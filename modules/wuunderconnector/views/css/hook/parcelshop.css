@@ -1,0 +1,39 @@
+.parcelshopPickerIframeContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 2147483;
+    background-color: rgba(133, 133, 133, 0.64);
+}
+
+.parcelshopPickerIframe {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.parcelshopPickerIframe > iframe {
+    border: none;
+}
+
+div#parcelshopsSelectedContainer17 {
+    margin-bottom: 10px;
+    padding: 5px;
+    background-color: #f1f1f1;
+    color: #94d600;
+}
+
+div#parcelshopsSelectedContainer16 {
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #d6d4d4;
+    background-color: white;
+    color: #94d600;
+}
+
+
+
+#selectParcelshop {
+    color: #94d600;
+}

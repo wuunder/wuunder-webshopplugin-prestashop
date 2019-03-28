@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 - Added 1.7 translations  (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/7)
+- Added 1.7 support (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/11)
 
 
 
