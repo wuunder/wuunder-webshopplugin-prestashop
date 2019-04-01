@@ -6,7 +6,9 @@ Please file changes under `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed` o
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
 
-## Unreleased
+## Released
+
+## [1.3.0](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.0)
 
 ### Fixed
 - hardcoded carrier list single place in code [#9](https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/9)
