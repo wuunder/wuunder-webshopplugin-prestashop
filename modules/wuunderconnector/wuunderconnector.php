@@ -384,6 +384,16 @@ class WuunderConnector extends Module
 
         $success = true;
 
+        $ignoredFields = array(
+            "live_api_key",
+            "test_api_key",
+            "testmode",
+            "wuunderfilter1filter",
+            "wuunderfilter2filter",
+            "wuunderfilter3filter",
+            "wuunderfilter4filter",
+        );
+
         if (Tools::isSubmit('submit' . $this->name)) {
             foreach ($fields as $field) {
                 $field_name = (string)Tools::getValue($field);
@@ -393,16 +403,13 @@ class WuunderConnector extends Module
                 } elseif ((!$field_name
                     || empty($field_name)
                     || !Validate::isGenericName($field_name))
-                    && ($field !== "live_api_key"
-                    && $field !== "test_api_key"
-                    && $field !== "testmode"
-                    && $field !== "wuunderfilter1filter"
-                    && $field !== "wuunderfilter2filter"
-                    && $field !== "wuunderfilter3filter"
-                    && $field !== "wuunderfilter4filter")
+                    && (!in_array($field, $ignoredFields, false))
                 ) {
                     $output .= $this->displayError($this->l('Invalid Configuration value: ' . $field));
                     $success = false;
+                } elseif ($field === "available_carriers_locator" && !Configuration::get('available_carriers_locator')) {
+                    //Set default if empty string
+                    Configuration::updateValue('available_carriers_locator','dpd,dhl,postnl');
                 } else {
                     Configuration::updateValue($field, $field_name);
                 }
@@ -667,7 +674,6 @@ class WuunderConnector extends Module
         );
 
         // Load current value
-
         $fields = array(
             "testmode",
             "live_api_key",
