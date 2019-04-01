@@ -8,16 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
 
 ### Fixed
-- hardcoded carrier list single place in code  (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/9)
+- hardcoded carrier list single place in code [#9](https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/9)
+- Default carriers in config [#12](https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/12)
 
 ### Changed
 
-- Prestashop guidelines (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/8)
-- New folder structure and coding standards (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/10)
+- Prestashop guidelines [#8](https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/8)
+- New folder structure and coding standards [#10](https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/10)
 
 ### Added
-- Added 1.7 translations  (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/7)
-- Added 1.7 support (https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/11)
+- Added 1.7 translations [#7](https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/7)
+- Added 1.7 support [#11](https://github.com/kabisa/wuunder-webshopplugin-prestashop/pull/11)
 
 
 
