@@ -46,8 +46,8 @@ class ParcelshopsConfig extends Config
             }
         }
 
-        if (substr($parameterString, 0 ,1) == "&") {
-            $parameterString = "?" . substr($parameterString, 1);
+        if (Tools::substr($parameterString, 0 ,1) == "&") {
+            $parameterString = "?" . Tools::substr($parameterString, 1);
         }
         return $parameterString;
     }

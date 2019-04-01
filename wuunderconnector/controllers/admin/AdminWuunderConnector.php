@@ -1,8 +1,32 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-if (!defined('_PS_VERSION_'))
+/**
+
+ * NOTICE OF LICENSE
+
+ *
+
+ * This file is licenced under the Software License Agreement.
+
+ * With the purchase or the installation of the software in your application
+
+ * you accept the licence agreement.
+
+ *
+
+ * You must not modify, adapt or create derivative works of this source code
+
+ *
+
+ *  @author    Wuunder Nederland BV
+
+ *  @copyright 2015-2019 Wuunder Holding B.V.
+
+ *  @license   LICENSE.txt
+
+ */
+if (!defined('_PS_VERSION_')) {
     exit;
+}
 
 //use AdminTab;
 
@@ -23,24 +47,25 @@ class AdminWuunderConnectorController extends ModuleAdminController
     private function setBookingToken($order_id, $booking_url, $booking_token)
     {
         $sql = 'INSERT INTO ' . _DB_PREFIX_ . 'wuunder_shipments (order_id, booking_url, booking_token)
-                    VALUES (' . $order_id . ', "' . $booking_url . '", "' . $booking_token . '")';
-        if (Db::getInstance()->insert('wuunder_shipments', array(
-                'order_id'      => $order_id,
-                'booking_url'   => $booking_url,
-                'booking_token' => $booking_token,
-                ))
-            ) {
+                    VALUES (' . (int)$order_id . ', "' . pSQL($booking_url) . '", "' . pSQL($booking_token) . '")';
+        if (Db::getInstance()->insert(
+            'wuunder_shipments',
+            array(
+                'order_id' => (int)$order_id,
+                'booking_url' => pSQL($booking_url),
+                'booking_token' => pSQL($booking_token),
+            )
+        )
+        ) {
             return true;
         } else {
             $this->logger->logDebug(Db::getInstance()->getMsgError());
         }
-
-
     }
 
     private function getBookingUrlForOrder($order_id)
     {
-        $sql = 'SELECT booking_url FROM ' . _DB_PREFIX_ . 'wuunder_shipments WHERE order_id = ' . $order_id;
+        $sql = 'SELECT booking_url FROM ' . _DB_PREFIX_ . 'wuunder_shipments WHERE order_id = ' . (int)$order_id;
         $result = Db::getInstance()->getValue($sql);
         if ($result) {
             return $result;
@@ -50,7 +75,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getParcelshopIdForOrder($order_id)
     {
-        $sql = 'SELECT parcelshop_id FROM ' . _DB_PREFIX_ . 'wuunder_order_parcelshop WHERE order_id = ' . $order_id;
+        $sql = 'SELECT parcelshop_id FROM ' . _DB_PREFIX_ . 'wuunder_order_parcelshop WHERE order_id = ' . (int)$order_id;
         $result = Db::getInstance()->getValue($sql);
         if ($result) {
             return $result;
@@ -60,18 +85,20 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getOrdersInfo()
     {
-//        $fieldlist = array('O.`id_order`', 'O.`id_cart`', 'AD.`lastname`', 'AD.`firstname`', 'AD.`postcode`', 'AD.`city`', 'CL.`iso_code`', 'C.`email`', 'CA.`name`');
-        $fieldlist = array('O.*', 'AD.*', 'CL.iso_code', 'WS.label_url', 'WS.booking_url', 'WS.label_tt_url');
+        $fieldlist = array(
+            'O.*', 'AD.*', 'CL.iso_code', 'WS.label_url', 'WS.booking_url',
+            'WS.label_tt_url'
+        );
 
-        $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
-                    FROM    ' . _DB_PREFIX_ . 'orders AS O LEFT JOIN ' . _DB_PREFIX_ . 'wuunder_shipments AS WS ON O.id_order = WS.order_id, 
-                            ' . _DB_PREFIX_ . 'carrier AS CA, 
-                            ' . _DB_PREFIX_ . 'customer AS C, 
-                            ' . _DB_PREFIX_ . 'address AS AD, 
+        $sql = 'SELECT  ' . ((_PS_VERSION_ < "1.7") ? pSQL(implode(', ', $fieldlist)) : implode(', ', $fieldlist)) . '
+                    FROM    ' . _DB_PREFIX_ . 'orders AS O LEFT JOIN ' . _DB_PREFIX_ . 'wuunder_shipments AS WS ON O.id_order = WS.order_id,
+                            ' . _DB_PREFIX_ . 'carrier AS CA,
+                            ' . _DB_PREFIX_ . 'customer AS C,
+                            ' . _DB_PREFIX_ . 'address AS AD,
                             ' . _DB_PREFIX_ . 'country AS CL
                     WHERE   O.id_address_delivery=AD.id_address AND
-                            C.id_customer=O.id_customer AND 
-                            CL.id_country=AD.id_country AND 
+                            C.id_customer=O.id_customer AND
+                            CL.id_country=AD.id_country AND
                             CA.id_carrier=O.id_carrier
                     GROUP BY O.id_order
                     ORDER BY id_order DESC';
@@ -80,21 +107,19 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getOrderInfo($order_id)
     {
-        $fieldlist = array('O.*', 'AD.*', 'CL.iso_code', 'C.email', 'SUM(OD.product_weight) as weight', 'MIN(OD.product_id) as id_product', 'GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description');
-
-        $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
-                    FROM    ' . _DB_PREFIX_ . 'orders AS O, 
-                            ' . _DB_PREFIX_ . 'carrier AS CA, 
-                            ' . _DB_PREFIX_ . 'customer AS C, 
-                            ' . _DB_PREFIX_ . 'address AS AD, 
+        $sql = 'SELECT  O.*, AD.*, CL.iso_code, C.email, SUM(OD.product_weight) as weight, MIN(OD.product_id) as id_product, GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description
+                    FROM    ' . _DB_PREFIX_ . 'orders AS O,
+                            ' . _DB_PREFIX_ . 'carrier AS CA,
+                            ' . _DB_PREFIX_ . 'customer AS C,
+                            ' . _DB_PREFIX_ . 'address AS AD,
                             ' . _DB_PREFIX_ . 'country AS CL,
                             ' . _DB_PREFIX_ . 'order_detail AS OD
                     WHERE   O.id_address_delivery=AD.id_address AND
-                            C.id_customer=O.id_customer AND 
-                            CL.id_country=AD.id_country AND 
+                            C.id_customer=O.id_customer AND
+                            CL.id_country=AD.id_country AND
                             CA.id_carrier=O.id_carrier AND
                             O.id_order=OD.id_order AND
-                            O.id_order=' . $order_id . '
+                            O.id_order=' . (int)$order_id . '
                     LIMIT 1';
         return Db::getInstance()->ExecuteS($sql)[0];
     }
@@ -103,36 +128,35 @@ class AdminWuunderConnectorController extends ModuleAdminController
     {
         $fieldlist = array('width, height, depth');
 
-        $sql = 'SELECT  ' . implode(', ', $fieldlist) . '
+        $sql = 'SELECT  ' . ((_PS_VERSION_ < "1.7") ? pSQL(implode(', ', $fieldlist)) : implode(', ', $fieldlist)) . '
                     FROM    ' . _DB_PREFIX_ . 'product
-                    WHERE   id_product=' . $product_id;
+                    WHERE   id_product=' . (int)$product_id;
         return Db::getInstance()->ExecuteS($sql)[0];
     }
 
     public function getOrderState($params, $_)
     {
         $order_state_id = $params['state_id'];
-        if (!$order_state_id)
+        if (!$order_state_id) {
             return false;
+        }
+
         // else, returns an OrderState object
         return (new OrderState($order_state_id, Configuration::get('PS_LANG_DEFAULT')))->name;
     }
 
     private function addressSplitter($address, $address2 = null, $address3 = null)
     {
-
+        $result = array();
         if (!isset($address)) {
             return false;
         }
 
         if (isset($address2) && $address2 != '' && isset($address3) && $address3 != '') {
-
             $result['streetName'] = $address;
             $result['houseNumber'] = $address2;
             $result['houseNumberSuffix'] = $address3;
-
         } else if (isset($address2) && $address2 != '') {
-
             $result['streetName'] = $address;
 
             // Pregmatch pattern, dutch addresses
@@ -142,9 +166,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
             $result['houseNumber'] = $houseNumbers[1];
             $result['houseNumberSuffix'] = (isset($houseNumbers[2])) ? $houseNumbers[2] : '';
-
         } else {
-
             // Pregmatch pattern, dutch addresses
             $pattern = '#^([a-z0-9 [:punct:]\']*) ([0-9]{1,5})([a-z0-9 \-/]{0,})$#i';
 
@@ -155,17 +177,12 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $result['houseNumberSuffix'] = (isset($addressParts[3])) ? $addressParts[3] : '';
         }
 
-        //$this->log('After split => 1) '.$result['streetName'].' / 2) '.$result['houseNumber'].' / 3) '.$result['houseNumberSuffix']);
         return $result;
     }
 
     private function buildWuunderData($order_info)
     {
-//        echo "<pre>";
-//        var_dump($order_info);
-//        echo "</pre>";
-//        exit;
-        $shippingAddress = new Address(intval($order_info['id_address_delivery']));
+        $shippingAddress = new Address((int)$order_info['id_address_delivery']);
 
         // Get full address, strip enters/newlines etc
         $addressLine = trim(preg_replace('/\s+/', ' ', $shippingAddress->address1));
@@ -174,7 +191,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $addressParts = $this->addressSplitter($addressLine);
         $streetName = $addressParts['streetName'];
         $houseNumber = $addressParts['houseNumber'] . $addressParts['houseNumberSuffix'];
-
 
         $customerAdr = new \Wuunder\Api\Config\AddressConfig();
 
@@ -201,14 +217,13 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $webshopAdr->setCountry(Configuration::get('country'));
         $webshopAdr->setBusiness(Configuration::get('company_name'));
 
-        $orderAmountExclVat = intval($order_info['total_products'] * 100);
+        $orderAmountExclVat = (int)$order_info['total_products'] * 100;
 
         // Load product image for first ordered item
         $image = null;
         if (file_exists('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg')) {
-            $image = base64_encode(file_get_contents('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg'));
+            $image = base64_encode(Tools::file_get_contents('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home_default.jpg'));
         }
-
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
         $length = round($product_data['depth']);
         $width = round($product_data['width']);
@@ -234,7 +249,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
         $product_length = ($length > 0) ? round($length * $dimension_product_factor) : null;
         $product_width = ($width > 0) ? round($width * $dimension_product_factor) : null;
-        $product_height = ($height > 0) ? round($height *$dimension_product_factor) : null;
+        $product_height = ($height > 0) ? round($height * $dimension_product_factor) : null;
 
         $preferredServiceLevel = "";
 
@@ -256,16 +271,15 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $bookingConfig->setLength($product_length);
         $bookingConfig->setWidth($product_width);
         $bookingConfig->setHeight($product_height);
-        $bookingConfig->setWeight(intval($order_info['weight']));
+        $bookingConfig->setWeight((int)$order_info['weight']);
         $bookingConfig->setCustomerReference($order_info['id_order']);
         $bookingConfig->setPreferredServiceLevel($preferredServiceLevel);
-        $bookingConfig->setSource($this->sourceObj); 
+        $bookingConfig->setSource($this->sourceObj);
         $bookingConfig->setDeliveryAddress($customerAdr);
         $bookingConfig->setPickupAddress($webshopAdr);
         if ($parcelshop_id) {
             $bookingConfig->setParcelshopId($parcelshop_id);
         }
-        Logger::addLog('testboeking', 1);
         return $bookingConfig;
     }
 
@@ -275,7 +289,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
         if (!$booking_url || empty($booking_url)) {
             // Fetch order
             $order = $this->getOrderInfo($order_id);
-//        echo Db::getInstance()->getMsgError();
 
             // Get configuration
             $test_mode = Configuration::get('testmode');
@@ -291,7 +304,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
                 $apiKey = Configuration::get('live_api_key');
             }
 
-
             // Combine wuunder info and order data
             $bookingConfig = $this->buildWuunderData($order);
             $bookingConfig->setWebhookUrl($webhook_url);
@@ -300,7 +312,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $connector = new Wuunder\Connector($apiKey, $test_mode == 1);
             $booking = $connector->createBooking();
             //$booking->setBookingConfig($bookingConfig);
-            $this->logger->logDebug($apiKey." ".$test_mode);
+            $this->logger->logDebug($apiKey . " " . $test_mode);
             if ($bookingConfig->validate()) {
                 $booking->setConfig($bookingConfig);
                 $this->logger->logDebug("Going to fire for bookingurl");
@@ -316,7 +328,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
             $this->setBookingToken($order_id, $url, $booking_token);
             Tools::redirect($url);
         } else {
-            $this->logger->logDebug("I'm in the else".$booking_url);
+            $this->logger->logDebug("I'm in the else" . $booking_url);
             Tools::redirect($booking_url);
         }
     }
@@ -353,10 +365,12 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $link = new Link();
         $path = explode('/', _PS_ADMIN_DIR_);
         Context::getContext()->smarty->registerPlugin("function", "order_state", array($this, 'getOrderState'));
-        Context::getContext()->smarty->assign(array(
+        Context::getContext()->smarty->assign(
+            array(
+            'version' => floatval(_PS_VERSION_),
             'order_info' => $order_info,
-            'admin_url' => ((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true),
-        ));
+            'admin_url' => ((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true),)
+        );
         $this->setTemplate('AdminWuunderConnector.tpl');
         parent::initContent();
     }
