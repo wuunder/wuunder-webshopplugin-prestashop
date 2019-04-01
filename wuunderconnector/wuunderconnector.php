@@ -49,7 +49,7 @@ class WuunderConnector extends Module
     {
         $this->name = 'wuunderconnector';
         $this->tab = 'shipping_logistics';
-        $this->version = '1.2.7';
+        $this->version = '1.3.0';
         $this->author = 'Wuunder';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
