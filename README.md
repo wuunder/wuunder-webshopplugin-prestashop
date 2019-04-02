@@ -1,6 +1,6 @@
 # Wuunder Prestashop plugin
 
-This plugin is meant to function with __version 1.6.X.X___ and __1.7.X.X___.
+This plugin is meant to function with __version 1.6.X.X__ and __1.7.X.X__.
 
 ## Hello, we are [Wuunder](https://wearewuunder.com/) ##
 We make shipping any parcel, pallet and document easy, personal and efficient. As a business owner, you can book your shipment using your mobile, tablet or computer. We select the best price and pick up your parcel wherever you want. You and the receiver can both track and trace the shipment. You can also stay in contact with each other via our Wuunder chat. Everything without a contract. Why complicate things?
