@@ -200,7 +200,7 @@ class WuunderCarrier extends CarrierModule
             } else {
                 foreach ($groups as $group) {
                     Db::getInstance()->insert('carrier_group', array('id_carrier' => (int)($carrier->id), 'id_group' => (int)($group['id_group'])));
-                }    
+                }
             }
 
             $rangePrice = new RangePrice();
@@ -227,7 +227,7 @@ class WuunderCarrier extends CarrierModule
                     Db::getInstance()->insert('carrier_zone', array('id_carrier' => (int)($carrier->id), 'id_zone' => (int)($zone['id_zone'])));
                     Db::getInstance()->update('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
                     Db::getInstance()->update('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => pSQL(null), 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
-                }    
+                }
             }
 
             // Copy Logo
