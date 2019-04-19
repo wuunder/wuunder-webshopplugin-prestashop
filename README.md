@@ -15,6 +15,10 @@ More info regarding the installation: https://wearewuunder.com/eenvoudig-prestas
 * Fill in the form.
 * Scroll down and click "save", The Wuunder tab had been added to __Shipping__->Wuunder and is ready for use!
 
+## Support ##
+For technical suport you can reach us at:
+* info@wearewuunder.com
+
 ## Changelog ##
 Changelog can be found [here](CHANGELOG.md)
 
