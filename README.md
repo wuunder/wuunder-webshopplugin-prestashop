@@ -16,5 +16,5 @@ More info regarding the installation: https://wearewuunder.com/eenvoudig-prestas
 * Scroll down and click "save", The Wuunder tab had been added to __Shipping__->Wuunder and is ready for use!
 
 ## Changelog ##
-Changelog can be found [here](https://github.com/kabisa/wuunder-webshopplugin-prestashop/blob/master/CHANGELOG.md)
+Changelog can be found [here](CHANGELOG.md)
 
