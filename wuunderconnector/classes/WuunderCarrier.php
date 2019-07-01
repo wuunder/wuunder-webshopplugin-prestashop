@@ -1,28 +1,16 @@
 <?php
 /**
-
  * NOTICE OF LICENSE
-
  *
-
  * This file is licenced under the Software License Agreement.
-
  * With the purchase or the installation of the software in your application
-
  * you accept the licence agreement.
-
  *
-
  * You must not modify, adapt or create derivative works of this source code
-
  *
-
- *  @author    Wuunder Nederland BV
-
- *  @copyright 2015-2019 Wuunder Holding B.V.
-
- *  @license   LICENSE.txt
-
+ * @author    Wuunder Nederland BV
+ * @copyright 2015-2019 Wuunder Holding B.V.
+ * @license   LICENSE.txt
  */
 
 // Avoid direct access to the file
@@ -247,19 +235,48 @@ class WuunderCarrier extends CarrierModule
 
     public function getContent()
     {
-        $this->_html .= '<h2>' . $this->l('My Carrier') . '</h2>';
+        $postResponse = "";
         if (!empty($_POST) and Tools::isSubmit('submitSave')) {
             $this->_postValidation();
             if (!sizeof($this->_postErrors)) {
-                $this->_postProcess();
-            } else {
-                foreach ($this->_postErrors as $err) {
-                    $this->_html .= '<div class="alert error"><img src="' . _PS_IMG_ . 'admin/forbbiden.gif" alt="nok" />&nbsp;' . $err . '</div>';
-                }
+                $postResponse = $this->_postProcess();
             }
         }
-        $this->_displayForm();
-        return $this->_html;
+
+        $alert = false;
+        if (!Configuration::get('MYCARRIER1_OVERCOST') || Configuration::get('MYCARRIER1_OVERCOST') == '') {
+            $alert = true;
+        }
+
+        Context::getContext()->smarty->assign(
+            array(
+                'title' => $this->l('My Carrier'),
+                'errors' => $this->_postErrors,
+                'postResponse' => $postResponse,
+                'psimg' => _PS_IMG_,
+                'path' => self . _path,
+                'carrierStatus' => $this->l('My Carrier Module Status'),
+                'alert' => $alert,
+                'isConfigured' => $this->l('My Carrier is configured and online!'),
+                'isNotConfigured' => $this->l('My Carrier is not configured yet, please:'),
+                'pleaseConfigure' => $this->l('Configure the carrier 1 overcost'),
+                'formAction' => "index.php?tab=" . Tools::getValue('tab') . '&configure=' . Tools::getValue('configure') . '&token=' . Tools::getValue('token') . '&tab_module=' . Tools::getValue('tab_module') . '&module_name=' . Tools::getValue('module_name') . "&id_tab=1&section=general",
+                'generalConf' => $this->l('General configuration'),
+                'mycarrier1' => $this->l('My Carrier1 overcost'),
+                'mycarrier2' => $this->l('My Carrier2 overcost'),
+                'mycarrier1value' => Tools::getValue('mycarrier1_overcost', Configuration::get('MYCARRIER1_OVERCOST')),
+                'mycarrier2value' => Tools::getValue('mycarrier2_overcost', Configuration::get('MYCARRIER2_OVERCOST')),
+
+
+
+            )
+        );
+//        Context::getContext()->smarty->display('WuunderCarrierContent.tpl');
+
+//        $this->_html .= '<h2>' . $this->l('My Carrier') . '</h2>';
+//
+//        $this->_displayForm();
+//        return $this->_html;
     }
 
     private function _displayForm()
@@ -324,11 +341,12 @@ class WuunderCarrier extends CarrierModule
     {
         // Saving new configurations
         if (Configuration::updateValue('MYCARRIER1_OVERCOST', Tools::getValue('mycarrier1_overcost'))) {
-            $this->_html .= $this->displayConfirmation($this->l('Settings updated'));
+            return $this->displayConfirmation($this->l('Settings updated'));
         } else {
-            $this->_html .= $this->displayErrors($this->l('Settings failed'));
+            return $this->displayErrors($this->l('Settings failed'));
         }
     }
+
     /*
      ** Front Methods
      **
