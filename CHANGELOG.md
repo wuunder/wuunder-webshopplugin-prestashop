@@ -6,6 +6,10 @@ Please file changes under `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed` o
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
 
+### Changed
+- Moved html from php to template [#24](https://github.com/wuunder/wuunder-webshopplugin-prestashop/pull/24)
+
+
 ## Released
 
 ## [1.3.0](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.0)

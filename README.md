@@ -8,9 +8,9 @@ We make shipping any parcel, pallet and document easy, personal and efficient. A
 
 ## Install ##
 * Download the .zip from this repository.
-* Use FTP to transfer the .zip to the module folder located inside the installation folder of your prestashop web install and unpack.
+* Use FTP to transfer the .zip to the modules folder located inside the installation folder of your prestashop web install and unpack.
 * Navigate to __Modules and Services__->__Modules and Services__ and scroll down until you find __Wuunder shipping module__.
-* To enable and edit __ Wuunder shipping module__ click on install to the right.
+* To enable and edit __Wuunder shipping module__ click on install to the right.
 * Fill in the form.
 * Scroll down and click "save", The Wuunder tab had been added to __Shipping__->Wuunder and is ready for use!
 
