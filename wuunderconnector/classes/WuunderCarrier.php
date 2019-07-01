@@ -266,15 +266,10 @@ class WuunderCarrier extends CarrierModule
                 'mycarrier2' => $this->l('My Carrier2 overcost'),
                 'mycarrier1value' => Tools::getValue('mycarrier1_overcost', Configuration::get('MYCARRIER1_OVERCOST')),
                 'mycarrier2value' => Tools::getValue('mycarrier2_overcost', Configuration::get('MYCARRIER2_OVERCOST')),
-
-
-
             )
         );
 //        Context::getContext()->smarty->display('WuunderCarrierContent.tpl');
-
     }
-
 
 
     private function _postValidation()
