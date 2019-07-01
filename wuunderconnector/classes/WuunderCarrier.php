@@ -273,59 +273,9 @@ class WuunderCarrier extends CarrierModule
         );
 //        Context::getContext()->smarty->display('WuunderCarrierContent.tpl');
 
-//        $this->_html .= '<h2>' . $this->l('My Carrier') . '</h2>';
-//
-//        $this->_displayForm();
-//        return $this->_html;
     }
 
-    private function _displayForm()
-    {
-        $this->_html .= '<fieldset>
-		<legend><img src="' . $this->_path . 'logo.gif" alt="" /> ' . $this->l('My Carrier Module Status') . '</legend>';
-
-        $alert = array();
-        if (!Configuration::get('MYCARRIER1_OVERCOST') || Configuration::get('MYCARRIER1_OVERCOST') == '') {
-            $alert['carrier1'] = 1;
-        }
-
-
-        if (!count($alert)) {
-            $this->_html .= '<img src="' . _PS_IMG_ . 'admin/module_install.png" /><strong>' . $this->l('My Carrier is configured and online!') . '</strong>';
-        } else {
-            $this->_html .= '<img src="' . _PS_IMG_ . 'admin/warn2.png" /><strong>' . $this->l('My Carrier is not configured yet, please:') . '</strong>';
-            $this->_html .= '<br />' . (isset($alert['carrier1']) ? '<img src="' . _PS_IMG_ . 'admin/warn2.png" />' : '<img src="' . _PS_IMG_ . 'admin/module_install.png" />') . ' 1) ' . $this->l('Configure the carrier 1 overcost');
-        }
-
-        $this->_html .= '</fieldset><div class="clear">&nbsp;</div>
-			<style>
-				#tabList { clear: left; }
-                .tabItem { display: block; 
-                    background: #FFFFF0; border: 1px solid #CCCCCC;
-                    padding: 10px; padding-top: 20px; }
-			</style>
-			<div id="tabList">
-				<div class="tabItem">
-					<form action="index.php?tab=' . Tools::getValue('tab') . '&configure=' . Tools::getValue('configure') . '&token=' . Tools::getValue('token') . '&tab_module=' . Tools::getValue('tab_module') . '&module_name=' . Tools::getValue('module_name') . '&id_tab=1&section=general" method="post" class="form" id="configForm">
-
-					<fieldset style="border: 0px;">
-						<h4>' . $this->l('General configuration') . ' :</h4>
-						<label>' . $this->l('My Carrier1 overcost') . ' : </label>
-                        <div class="margin-form">
-                            <input type="text" size="20" name="mycarrier1_overcost" value="' . Tools::getValue('mycarrier1_overcost', Configuration::get('MYCARRIER1_OVERCOST')) . '" /></div>
-						    <label>' . $this->l('My Carrier2 overcost') . ' : </label>
-                        <div class="margin-form">
-                            <input type="text" size="20" name="mycarrier2_overcost" value="' . Tools::getValue('mycarrier2_overcost', Configuration::get('MYCARRIER2_OVERCOST')) . '" />
-                        </div>
-					</div>
-					<br /><br />
-				</fieldset>
-                <div class="margin-form">
-                    <input class="button" name="submitSave" type="submit">
-                </div>
-			</form>
-		</div></div>';
-    }
+    
 
     private function _postValidation()
     {
