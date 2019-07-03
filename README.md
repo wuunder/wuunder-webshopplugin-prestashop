@@ -13,8 +13,10 @@ More info regarding the installation: https://wearewuunder.com/eenvoudig-prestas
 * With this module you connect your Prestashop store to your Wuunder account.
 
 ## Install ##
+
 * Download a release .zip from this repository. If you are not familiar with composer, download the -composer-installed.zip version.
 * Use FTP to transfer the .zip to the module folder located inside the installation folder of your prestashop web install and unpack.
+
 * Navigate to __Modules and Services__->__Modules and Services__ and scroll down until you find __Wuunder shipping module__.
 * To enable and edit __Wuunder shipping module__ click on install to the right.
 * Fill in the form.

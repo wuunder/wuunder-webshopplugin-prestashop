@@ -32,7 +32,8 @@ if (!defined('_PS_VERSION_')) {
 if (_PS_VERSION_ < '1.7') {
     require_once 'vendor/autoload.php';
 }
-require_once 'classes/WuunderCarrier.php';
+$modulePath = _PS_MODULE_DIR_ . '/wuunderconnector/';
+require_once $modulePath . 'classes/WuunderCarrier.php';
 
 class WuunderConnector extends Module
 {
@@ -49,7 +50,9 @@ class WuunderConnector extends Module
     {
         $this->name = 'wuunderconnector';
         $this->tab = 'shipping_logistics';
-        $this->version = '1.3.0';
+
+        $this->version = '1.3.1';
+
         $this->author = 'Wuunder';
         $this->need_instance = 0;
         $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
