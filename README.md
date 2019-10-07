@@ -8,7 +8,7 @@ We make shipping any parcel, pallet and document easy, personal and efficient. A
 More info regarding the installation: https://wearewuunder.com/eenvoudig-prestashop-koppelen/
 
 ## Before you start ##
-* You need to create a free Wuunder account: https://app.wearewuunder.com and request an API-key to use the module: https://wearewuunder.com/en/contact/ 
+* You need to create a free Wuunder account: https://my.wearewuunder.com/account/login and request an API-key to use the module: https://wearewuunder.com/en/contact/ 
 * You can download and install the latest release before you sign-up: https://github.com/wuunder/wuunder-webshopplugin-prestashop/releases/latest
 * With this module you connect your Prestashop store to your Wuunder account.
 
