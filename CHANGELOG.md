@@ -5,6 +5,8 @@ Please file changes under `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed` o
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
+### Fixed
+- Added required index.php files
 
 ## Released
 
