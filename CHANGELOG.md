@@ -5,7 +5,8 @@ Please file changes under `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed` o
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
-
+### fixed
+- Removed logging from parcelshop script
 
 ## Released
 
