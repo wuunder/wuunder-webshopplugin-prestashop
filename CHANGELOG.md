@@ -8,13 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Released
 
-## [1.3.2.2](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.2.2)
+## [1.3.3](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.3)
 
 ### Fixed
-- Removed logging from parcelshop script
 - Added required index.php files
 - Removed composer.lock file
 - Versioning
+
+## [1.3.2](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.2)
+
+### Fixed
+- Removed logging from parcelshop script
 
 ## [1.3.1](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.1)
 
