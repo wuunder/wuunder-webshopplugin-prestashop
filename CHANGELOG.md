@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
 ### Fixed
 - Added required index.php files
+- Removed composer.lock file
 
 ## Released
 
