@@ -138,7 +138,6 @@ $(window).on("load", function() {
             }
             else {
                 data = JSON.parse(parcelshopData);
-                console.log(data);
                 var parcelshopInfoHtml = _capFirst(data.company_name) + "<br>" + _capFirst(data.address.street_name) +
                 " " + data.address.house_number + "<br>" + data.address.city;
                 parcelshopInfoHtml = parcelshopInfoHtml.replace(/"/g, '\\"').replace(/'/g, "\\'");
