@@ -5,10 +5,13 @@ Please file changes under `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed` o
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
-### fixed
-- Removed logging from parcelshop script
 
 ## Released
+
+## [1.3.2](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.2)
+
+### Fixed
+- Removed logging from parcelshop script
 
 ## [1.3.1](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.1)
 
