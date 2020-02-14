@@ -272,7 +272,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $bookingConfig->setLength($product_length);
         $bookingConfig->setWidth($product_width);
         $bookingConfig->setHeight($product_height);
-        $bookingConfig->setWeight((int)$order_info['weight']);
+        $bookingConfig->setWeight((int)$order_info['weight'] * 1000);
         $bookingConfig->setCustomerReference($order_info['id_order']);
         $bookingConfig->setPreferredServiceLevel($preferredServiceLevel);
         $bookingConfig->setSource($this->sourceObj);
