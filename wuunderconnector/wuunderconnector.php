@@ -40,6 +40,7 @@ class WuunderConnector extends Module
     private $parcelshopcarrier;
 
     private $hooks = array(
+        'actionValidateStepComplete',
         'actionValidateOrder',
         'displayHeader',
         'displayFooter',
@@ -341,6 +342,20 @@ class WuunderConnector extends Module
         }
         unset($this->context->cookie->parcelId);
         $this->context->smarty->clearAssign('cookieParcelshopId');
+    }
+
+    public function hookActionValidateStepComplete($params) {
+        if ($params['step_name'] === 'delivery') {
+            $carrier_id = $params['cart']->id_carrier;
+            if (Configuration::get('MYCARRIER1_CARRIER_ID') == $carrier_id) {
+                if(empty($this->context->cookie->parcelId)){
+                    $controller           = $this->context->controller;
+                    $controller->errors[] = $this->l('Please select a parcelshop');
+                    $params['completed']  = false;
+                }
+            }
+        }
+        return;
     }
 
     public function parcelshop_urls()

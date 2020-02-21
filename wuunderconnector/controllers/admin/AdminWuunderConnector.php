@@ -42,7 +42,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
-        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.2.6", "plugin" => "1.0"));
+        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.3.4", "plugin" => "1.0"));
     }
 
     private function setBookingToken($order_id, $booking_url, $booking_token)

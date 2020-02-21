@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Released
 
+## [1.3.3](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.3)
+
+### Added
+- Validation check if a parcelshop is selected whenever the wuunder parcelshop method is used.
+
 ## [1.3.2](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.2)
 
 ### Fixed
