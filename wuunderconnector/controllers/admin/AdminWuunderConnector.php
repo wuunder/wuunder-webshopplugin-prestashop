@@ -42,7 +42,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
-        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.2.6", "plugin" => "1.0"));
+        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.3.4", "plugin" => "1.0"));
     }
 
     private function setBookingToken($order_id, $booking_url, $booking_token)
@@ -272,7 +272,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $bookingConfig->setLength($product_length);
         $bookingConfig->setWidth($product_width);
         $bookingConfig->setHeight($product_height);
-        $bookingConfig->setWeight((int)$order_info['weight']);
+        $bookingConfig->setWeight((int)($order_info['weight'] * 1000));
         $bookingConfig->setCustomerReference($order_info['id_order']);
         $bookingConfig->setPreferredServiceLevel($preferredServiceLevel);
         $bookingConfig->setSource($this->sourceObj);
