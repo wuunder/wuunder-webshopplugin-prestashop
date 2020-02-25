@@ -490,70 +490,60 @@ class WuunderConnector extends Module
                     'type' => 'text',
                     'label' => $this->l('Company'),
                     'name' => "company_name",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Firstname'),
                     'name' => "firstname",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Lastname'),
                     'name' => "lastname",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Email'),
                     'name' => "email",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Phonenumber'),
                     'name' => "phonenumber",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Streetname'),
                     'name' => "streetname",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Housenumber'),
                     'name' => "housenumber",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Zipcode'),
                     'name' => "zipcode",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('City'),
                     'name' => "city",
-                    'required' => true,
                 ),
 
                 array(
                     'type' => 'text',
                     'label' => $this->l('Country code'),
                     'name' => "country",
-                    'required' => true,
                     'placeholder' => $this->l("e.g. NL"),
                 ),
 
