@@ -52,7 +52,7 @@ class WuunderConnector extends Module
         $this->name = 'wuunderconnector';
         $this->tab = 'shipping_logistics';
 
-        $this->version = '1.3.1';
+        $this->version = '1.3.4';
 
         $this->author = 'Wuunder';
         $this->need_instance = 0;
@@ -81,17 +81,17 @@ class WuunderConnector extends Module
     public function hookActionDispatcherBefore()
     {
         $this->autoLoad();
-    }  
+    }
     
     public function hookDisplayAfterBodyOpeningTag($params)
-    {    
+    {
         $this->initJavascriptTemplate($params);
         return $this->display(__FILE__, 'javascript_ini.tpl');
     }
 
     private function initJavascriptTemplate($params)
     {
-        $pickerData = $this->parcelshop_urls();
+        $pickerData = $this->parcelShopUrls();
 
         $this->context->smarty->assign(
             array(
@@ -100,7 +100,7 @@ class WuunderConnector extends Module
                 'availableCarriers' => $pickerData['availableCarriers'],
                 'baseUrl' => $pickerData['baseUrl'],
                 'addressId' => $params['cart']->id_address_delivery,
-                'version' => floatval(_PS_VERSION_),
+                'version' => (float)_PS_VERSION_,
             )
         );
 
@@ -111,7 +111,7 @@ class WuunderConnector extends Module
             $this->context->smarty->assign('cookieParcelshopAddress', false);
             $this->context->smarty->assign('cookieParcelshopId', false);
         }
-    }    
+    }
 
     /**
      * Autoload's project files from /src directory ps > 1.7
@@ -124,8 +124,7 @@ class WuunderConnector extends Module
 
     private function installDB()
     {
-        Db::getInstance()->execute('
-                       CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments` (
+        Db::getInstance()->execute('CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`(
                             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                             `order_id` INT(11) UNSIGNED NOT NULL,
                             `booking_url` TEXT NULL,
@@ -135,18 +134,15 @@ class WuunderConnector extends Module
                             `label_tt_url` TEXT NULL,
                             PRIMARY KEY(`id`)
                         )
-                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;'
-        );
+                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;');
 
-        Db::getInstance()->execute('
-                        CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (
+        Db::getInstance()->execute('CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`(
                             `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
                             `order_id` INT(11) UNSIGNED NOT NULL,
                             `parcelshop_id` VARCHAR(255),
                             PRIMARY KEY(`id`)
                         )
-                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;'
-        );
+                        ENGINE = ' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET = utf8;');
 
         $this->addIndexToOrderId();
     }
@@ -154,23 +150,17 @@ class WuunderConnector extends Module
     private function addIndexToOrderId()
     {
 
-        Db::getInstance()->execute('
-                    CREATE INDEX `shipment_order_id`
-                    ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);'
-        );
+        Db::getInstance()->execute('CREATE INDEX `shipment_order_id`
+                    ON `' . _DB_PREFIX_ . 'wuunder_shipments` (`order_id`);');
 
-        Db::getInstance()->execute('
-                    CREATE INDEX `parcelshop_order_id`
-                    ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);'
-        );
+        Db::getInstance()->execute('CREATE INDEX `parcelshop_order_id`
+                    ON `' . _DB_PREFIX_ . 'wuunder_order_parcelshop` (`order_id`);');
     }
 
     private function uninstallDB()
     {
-        Db::getInstance()->execute('
-               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`;
-               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`'
-        );
+        Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_shipments`;
+               DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'wuunder_order_parcelshop`');
     }
 
     private function installModuleTab($tab_class, $tab_name, $id_tab_parent)
@@ -213,10 +203,11 @@ class WuunderConnector extends Module
 
         $this->parcelshopcarrier->install();
 
-        if (!parent::install() 
+        if (!parent::install()
             || !$this->installModuleTab(
-                'AdminWuunderConnector', 
-                'Wuunder', (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping'
+                'AdminWuunderConnector',
+                'Wuunder',
+                (_PS_VERSION_ < '1.7') ? 'AdminShipping' : 'AdminParentShipping'
             )
         ) {
             Logger::addLog('Installation failed 183.');
@@ -293,7 +284,7 @@ class WuunderConnector extends Module
                 'wuunderconnector',
                 '/js/jquery/jquery-1.11.0.min.js',
                 array('position' => 'head', 'priority' => 1)
-            ); 
+            );
             $this->context->controller->registerStylesheet(
                 'wuunderconnector',
                 'modules/'.$this->name.'/views/css/hook/parcelshop.css',
@@ -302,12 +293,11 @@ class WuunderConnector extends Module
                   'priority' => 200,
                 ]
             );
-
         }
     }
 
     public function hookActionFrontControllerSetMedia($params)
-    {   
+    {
         error_reporting(E_ALL);
         ini_set('display_errors', 1);
         if (_PS_VERSION_ > '1.7') {
@@ -344,11 +334,12 @@ class WuunderConnector extends Module
         $this->context->smarty->clearAssign('cookieParcelshopId');
     }
 
-    public function hookActionValidateStepComplete($params) {
+    public function hookActionValidateStepComplete($params)
+    {
         if ($params['step_name'] === 'delivery') {
             $carrier_id = $params['cart']->id_carrier;
             if (Configuration::get('MYCARRIER1_CARRIER_ID') == $carrier_id) {
-                if(empty($this->context->cookie->parcelId)){
+                if (empty($this->context->cookie->parcelId)) {
                     $controller           = $this->context->controller;
                     $controller->errors[] = $this->l('Please select a parcelshop');
                     $params['completed']  = false;
@@ -358,7 +349,7 @@ class WuunderConnector extends Module
         return;
     }
 
-    public function parcelshop_urls()
+    public function parcelShopUrls()
     {
         $tmpEnvironment = new \Wuunder\Api\Environment((int) Configuration::get('testmode') === 1 ? 'staging' : 'production');
 
@@ -427,7 +418,7 @@ class WuunderConnector extends Module
                     $success = false;
                 } elseif ($field === "available_carriers_locator" && !Configuration::get('available_carriers_locator')) {
                     //Set default if empty string
-                    Configuration::updateValue('available_carriers_locator','dpd,dhl,postnl');
+                    Configuration::updateValue('available_carriers_locator', 'dpd,dhl,postnl');
                 } else {
                     Configuration::updateValue($field, $field_name);
                 }
@@ -439,7 +430,7 @@ class WuunderConnector extends Module
         return $output . $this->displayForm();
     }
 
-    private function validateForm($field, $field_name) 
+    private function validateForm($field, $field_name)
     {
         if ($field == "phonenumber") {
             return Validate::isPhoneNumber($field_name);
@@ -454,7 +445,7 @@ class WuunderConnector extends Module
         } else {
             return true;
         }
-        return $output . $this->displayForm();
+        return $this->displayForm();
     }
 
     public function displayForm()
