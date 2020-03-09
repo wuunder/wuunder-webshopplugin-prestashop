@@ -222,9 +222,14 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
         // Load product image for first ordered item
         $image = null;
-        if (file_exists(getFormatedName('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home'))) {
-            $image = base64_encode(Tools::file_get_contents(ImageType::getFormatedName('../img/p/' . $order_info['id_product'] . '/' . $order_info['id_product'] . '-home')));
+        $image= Image::getCover($order_info['id_product']);
+        $product = new Product(($order_info['id_product']));
+        $protocol = array_key_exists('HTTPS', $_SERVER) && $_SERVER['HTTPS'] == "on"? 'https://' : 'http://';
+        $imagePath = $protocol . Link::getImageLink($product->link_rewrite[Context::getContext()->language->id], $image['id_image'], 'home_default');
+        if ($imagePath) {
+            $image = base64_encode(Tools::file_get_contents($imagePath));
         }
+
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
         $length = round($product_data['depth']);
         $width = round($product_data['width']);
