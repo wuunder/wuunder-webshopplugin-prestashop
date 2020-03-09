@@ -444,6 +444,9 @@ class WuunderConnector extends Module
 
     private function validateForm($field, $field_name)
     {
+        if (empty($field_name)) {
+            return true;
+        }
         if ($field == "phonenumber") {
             return Validate::isPhoneNumber($field_name);
         } elseif ($field == "zipcode") {
