@@ -401,6 +401,18 @@ class WuunderConnector extends Module
             "wuunderfilter2filter",
             "wuunderfilter3filter",
             "wuunderfilter4filter",
+            "company_name",
+            "firstname",
+            "lastname",
+            "email",
+            "phonenumber",
+            "streetname",
+            "housenumber",
+            "zipcode",
+            "city",
+            "country",
+            "available_carriers_locator",
+            
         );
 
         if (Tools::isSubmit('submit' . $this->name)) {
