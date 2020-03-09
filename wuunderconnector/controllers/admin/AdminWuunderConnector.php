@@ -229,7 +229,6 @@ class AdminWuunderConnectorController extends ModuleAdminController
         if ($imagePath) {
             $image = base64_encode(Tools::file_get_contents($imagePath));
         }
-
         $product_data = $this->getOrderProductDetails($order_info['id_product']);
         $length = round($product_data['depth']);
         $width = round($product_data['width']);
@@ -373,9 +372,9 @@ class AdminWuunderConnectorController extends ModuleAdminController
         Context::getContext()->smarty->registerPlugin("function", "order_state", array($this, 'getOrderState'));
         Context::getContext()->smarty->assign(
             array(
-            'version' => (float)_PS_VERSION_,
-            'order_info' => $order_info,
-            'admin_url' => ((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true),)
+                'version' => (float)_PS_VERSION_,
+                'order_info' => $order_info,
+                'admin_url' => ((_PS_VERSION_ < '1.7') ? _PS_BASE_URL_ . __PS_BASE_URI__ . end($path) . "/" : "") . $link->getAdminLink('AdminWuunderConnector', true),)
         );
         $this->setTemplate('AdminWuunderConnector.tpl');
         parent::initContent();
