@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
  *  @author    Wuunder Nederland BV
- *  @copyright 2015-2019 Wuunder Holding B.V.
+ *  @copyright 2015-2020 Wuunder Holding B.V.
  *  @license   LICENSE.txt
  *}
 <script type="text/javascript">
@@ -26,7 +26,7 @@
     {literal}
     var shippingCarrierId = "{/literal}{$carrier_id}{literal}";
     // Get the modal
-    var parcelshopAddress = {/literal}{$cookieParcelshopAddress|@json_encode nofilter}{literal};
+    var parcelshopAddress = {/literal}{$cookieParcelshopAddress|@json_encode}{literal};
     if (parcelshopAddress !== "") {
         var parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
     }

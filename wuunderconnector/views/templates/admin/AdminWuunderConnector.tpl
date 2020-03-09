@@ -18,7 +18,7 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
  *  @author    Wuunder Nederland BV
- *  @copyright 2015-2019 Wuunder Holding B.V.
+ *  @copyright 2015-2020 Wuunder Holding B.V.
  *  @license   LICENSE.txt
  *}
 
