@@ -42,7 +42,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
-        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.3.4", "plugin" => "1.0"));
+        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.3.5", "plugin" => "1.0"));
     }
 
     private function setBookingToken($order_id, $booking_url, $booking_token)
@@ -204,6 +204,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $customerAdr->setZipCode($shippingAddress->postcode);
         $customerAdr->setPhoneNumber($shippingAddress->phone);
         $customerAdr->setCountry($order_info['iso_code']);
+        $customerAdr->setBusiness($shippingAddress->company);
 
         $webshopAdr = new \Wuunder\Api\Config\AddressConfig();
 
@@ -225,7 +226,8 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $image= Image::getCover($order_info['id_product']);
         $product = new Product(($order_info['id_product']));
         $protocol = array_key_exists('HTTPS', $_SERVER) && $_SERVER['HTTPS'] == "on"? 'https://' : 'http://';
-        $imagePath = $protocol . Link::getImageLink($product->link_rewrite[Context::getContext()->language->id], $image['id_image'], 'home_default');
+        $link = new Link();
+        $imagePath = $protocol . $link->getImageLink($product->link_rewrite[Context::getContext()->language->id], $image['id_image'], 'home_default');
         if ($imagePath) {
             $image = base64_encode(Tools::file_get_contents($imagePath));
         }
