@@ -204,6 +204,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $customerAdr->setZipCode($shippingAddress->postcode);
         $customerAdr->setPhoneNumber($shippingAddress->phone);
         $customerAdr->setCountry($order_info['iso_code']);
+        $customerAdr->setBusiness($shippingAddress->company);
 
         $webshopAdr = new \Wuunder\Api\Config\AddressConfig();
 

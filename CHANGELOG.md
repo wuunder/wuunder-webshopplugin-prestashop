@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 - Changed Link to instance to access getImageLink correctly
+- Added business name to receiver address in booking
 
 ## [1.3.3](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.3)
 
