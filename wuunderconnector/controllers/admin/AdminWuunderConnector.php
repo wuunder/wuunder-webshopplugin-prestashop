@@ -132,7 +132,16 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $sql = 'SELECT  ' . ((_PS_VERSION_ < "1.7") ? pSQL(implode(', ', $fieldlist)) : implode(', ', $fieldlist)) . '
                     FROM    ' . _DB_PREFIX_ . 'product
                     WHERE   id_product=' . (int)$product_id;
-        return Db::getInstance()->ExecuteS($sql)[0];
+        $res = Db::getInstance()->ExecuteS($sql);
+        if($res && !empty($res) && isset($res[0])){
+            return $res[0];
+        }
+        return array(
+            'depth' => 0,
+            'width' => 0,
+            'height' => 0
+        );
+
     }
 
     public function getOrderState($params, $_)
