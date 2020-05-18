@@ -52,7 +52,7 @@ class WuunderConnector extends Module
         $this->name = 'wuunderconnector';
         $this->tab = 'shipping_logistics';
 
-        $this->version = '1.3.5';
+        $this->version = '1.3.6';
 
         $this->author = 'Wuunder';
         $this->need_instance = 0;
