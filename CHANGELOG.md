@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Released
 
+## [1.3.6](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.6)
+
+### Fixed
+- Parcelshop carrier install settings
+- No longer overwrite default carrier's rates
+
 ## [1.3.5](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.5)
 
 ### Fixed
