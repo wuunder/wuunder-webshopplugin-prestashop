@@ -81,15 +81,13 @@ class WuunderCarrier extends CarrierModule
         $carrierConfig = array(
             0 => array(
                 'name' => $this->l('Wuunder parcelshop'),
-                'id_tax_rules_group' => 0,
                 'active' => true,
                 'deleted' => 0,
                 'shipping_handling' => false,
                 'range_behavior' => 0,
                 'delay' => array('nl' => 'Haal uw pakket op bij een pakketpunt in de buurt!', 'en' => 'Collect your package at a nearby parcelshop!', Language::getIsoById(Configuration::get('PS_LANG_DEFAULT')) => 'Collect your package at a nearby parcelshop!'),
-                'id_zone' => 1,
-                'is_module' => true,
-                'shipping_external' => true,
+                'is_module' => false,
+                'shipping_external' => false,
                 'external_module_name' => 'Wuunder_parcelshop_locator',
                 'need_range' => true,
             ),
@@ -213,8 +211,8 @@ class WuunderCarrier extends CarrierModule
             } else {
                 foreach ($zones as $zone) {
                     Db::getInstance()->insert('carrier_zone', array('id_carrier' => (int)($carrier->id), 'id_zone' => (int)($zone['id_zone'])));
-                    Db::getInstance()->update('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
-                    Db::getInstance()->update('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => pSQL(null), 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
+                    Db::getInstance()->insert('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => (int)($rangePrice->id), 'id_range_weight' => null, 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
+                    Db::getInstance()->insert('delivery', array('id_carrier' => (int)($carrier->id), 'id_range_price' => pSQL(null), 'id_range_weight' => (int)($rangeWeight->id), 'id_zone' => (int)($zone['id_zone']), 'price' => pSQL('0')));
                 }
             }
 
