@@ -21,7 +21,9 @@ $(window).on("load", function() {
     // Get the modal
     var selectParcelshopLink = '<div id="parcelshopsSelectedContainer16"><a href="#/" id="selectParcelshop">' + innerHtml + '</a></div>';
     var parcelshopShippingMethodElemRadio = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio');
-    var parcelshopDescriptionElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio').parents()[3].children[2];
+    if (parcelshopShippingMethodElemRadio.length > 0){
+        var parcelshopDescriptionElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio').parents()[3].children[2];
+    }
     var shippingMethodElems = jQuery('input.delivery_option_radio');
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
