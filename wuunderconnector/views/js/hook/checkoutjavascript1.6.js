@@ -16,55 +16,61 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-    // Get the modal
+// Get the modal
 $(window).on("load", function() {
+    console.log('load');
     // Get the modal
     var selectParcelshopLink = '<div id="parcelshopsSelectedContainer16"><a href="#/" id="selectParcelshop">' + innerHtml + '</a></div>';
-    var parcelshopShippingMethodElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio');
+    var parcelshopShippingMethodElemRadio = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio');
+    var parcelshopDescriptionElem = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio').parents()[3].children[2];
     var shippingMethodElems = jQuery('input.delivery_option_radio');
     var shippingAddress;
     var getAddressUrl = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&getAddress=1";
     var setParcelshopId = "index.php?fc=module&module=wuunderconnector&controller=parcelshop&setParcelshopId=1";
+    var container = document.createElement('div');
+    container.className += "chooseParcelshop";
+    container.innerHTML = selectParcelshopLink;
+
 
     initParcelshopLocator(baseUrl, baseApiUrl, availableCarriers);
 
     function initParcelshopLocator(url, apiUrl, carrierList) {
+        console.log('init');
         baseUrl = url;
         baseUrlApi = apiUrl;
         availableCarrierList = carrierList;
         parcelshopAddress = _markupParcelshopAddress(parcelshopAddress);
         
-        jQuery('.delivery_options').append('<div class="delivery_option alternate_item parcelshop_container"></div>');
-        if (parcelshopShippingMethodElem) {
-            //parcelshopShippingMethodElem.onchange = _onShippingMethodChange;
+        if (parcelshopShippingMethodElemRadio) {
+            parcelshopShippingMethodElemRadio.onchange = _onShippingMethodChange;
             if (parcelshopAddress !== "") {
                 parcelshopId = "{/literal}{$cookieParcelshopId}{literal}";
             }
-            //jQuery(shippingMethodElems).change(_onShippingMethodChange);
-            jQuery(shippingMethodElems).on('change', _onShippingMethodChange);
+            jQuery(shippingMethodElems).change(_onShippingMethodChange);
             _onShippingMethodChange();
         }
     }
     function _onShippingMethodChange() {
-        if (parcelshopShippingMethodElem.is(':checked')) {  
-            var container = document.createElement('div');
-            container.className += "chooseParcelshop";
-            container.innerHTML = selectParcelshopLink;
-            // window.parent.document.getElementsByClassName('shipping')[0].appendChild(container);
-            jQuery(jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio')).parentsUntil('#form > div > div.delivery_options_address > div.delivery_options > div:nth-child(1)').last().append(container);
+        console.log('method change');
+
+        if ($("#parcelshopsSelectedContainer16").is(":hidden") && parcelshopShippingMethodElemRadio.is(':checked')) {  
+            $("#parcelshopsSelectedContainer16").show();
+        } else if (parcelshopShippingMethodElemRadio.is(':checked')) {
+            console.log('checked');
+            parcelshopLink = parcelshopShippingMethodElemRadio.parents()[4].append(container);
+            parcelshopDescriptionElem.append(container);
             jQuery("#selectParcelshop").on('click',_showParcelshopLocator);
             _printParcelshopAddress();
+
         } else {
-            var containerElems = window.parent.document.getElementsByClassName('chooseParcelshop');
-            if (containerElems.length) {
-                containerElems[0].remove();
-            }
-        }
+            $("#parcelshopsSelectedContainer16").hide();            }
     }
     // add selected parcelshop to page
     function _printParcelshopAddress() {
+        console.log('print');
         if (parcelshopAddress) {
             if (window.parent.document.getElementsByClassName("parcelshopInfo").length) {
+                console.log('remove');
                 window.parent.document.getElementsByClassName("parcelshopInfo")[0].remove();
             }
             var currentParcelshop = document.createElement('div');
