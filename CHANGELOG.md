@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Released
 
+## [1.3.7](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.7)
+
+### Fixed
+- Checkout JS ver 1.6
+
+
 ## [1.3.6](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.6)
 
 ### Fixed

@@ -18,7 +18,6 @@
  */
 // Get the modal
 $(window).on("load", function() {
-    console.log('load');
     // Get the modal
     var selectParcelshopLink = '<div id="parcelshopsSelectedContainer16"><a href="#/" id="selectParcelshop">' + innerHtml + '</a></div>';
     var parcelshopShippingMethodElemRadio = jQuery('[value="' + shippingCarrierId + ',"].delivery_option_radio');
@@ -35,7 +34,6 @@ $(window).on("load", function() {
     initParcelshopLocator(baseUrl, baseApiUrl, availableCarriers);
 
     function initParcelshopLocator(url, apiUrl, carrierList) {
-        console.log('init');
         baseUrl = url;
         baseUrlApi = apiUrl;
         availableCarrierList = carrierList;
@@ -51,12 +49,9 @@ $(window).on("load", function() {
         }
     }
     function _onShippingMethodChange() {
-        console.log('method change');
-
         if ($("#parcelshopsSelectedContainer16").is(":hidden") && parcelshopShippingMethodElemRadio.is(':checked')) {  
             $("#parcelshopsSelectedContainer16").show();
         } else if (parcelshopShippingMethodElemRadio.is(':checked')) {
-            console.log('checked');
             parcelshopLink = parcelshopShippingMethodElemRadio.parents()[4].append(container);
             parcelshopDescriptionElem.append(container);
             jQuery("#selectParcelshop").on('click',_showParcelshopLocator);
@@ -67,10 +62,8 @@ $(window).on("load", function() {
     }
     // add selected parcelshop to page
     function _printParcelshopAddress() {
-        console.log('print');
         if (parcelshopAddress) {
             if (window.parent.document.getElementsByClassName("parcelshopInfo").length) {
-                console.log('remove');
                 window.parent.document.getElementsByClassName("parcelshopInfo")[0].remove();
             }
             var currentParcelshop = document.createElement('div');
