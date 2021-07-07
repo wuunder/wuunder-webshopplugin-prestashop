@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## Unreleased
 
 ## Released
+## [1.3.4](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.4)
+
+### Added
+- Support for default shipping address (Leave address info blank in plugin config)
+
 
 ## [1.3.7](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.7)
 
