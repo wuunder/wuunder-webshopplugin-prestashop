@@ -108,7 +108,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getOrderInfo($order_id)
     {
-        $sql = 'SELECT  O.*, AD.*, CL.iso_code, C.email, SUM(OD.product_weight) as weight, MIN(OD.product_id) as id_product, GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description
+        $sql = 'SELECT  O.*, AD.*, CL.iso_code, C.email, SUM(OD.product_quantity * OD.product_weight) as weight, MIN(OD.product_id) as id_product, GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description
                     FROM    ' . _DB_PREFIX_ . 'orders AS O,
                             ' . _DB_PREFIX_ . 'carrier AS CA,
                             ' . _DB_PREFIX_ . 'customer AS C,
