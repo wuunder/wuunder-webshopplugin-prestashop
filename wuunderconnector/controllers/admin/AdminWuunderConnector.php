@@ -42,7 +42,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
-        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.3.7", "plugin" => "1.0"));
+        $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.3.8", "plugin" => "1.0"));
     }
 
     private function setBookingToken($order_id, $booking_url, $booking_token)
@@ -108,7 +108,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
 
     private function getOrderInfo($order_id)
     {
-        $sql = 'SELECT  O.*, AD.*, CL.iso_code, C.email, SUM(OD.product_weight) as weight, MIN(OD.product_id) as id_product, GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description
+        $sql = 'SELECT  O.*, AD.*, CL.iso_code, C.email, SUM(OD.product_quantity * OD.product_weight) as weight, MIN(OD.product_id) as id_product, GROUP_CONCAT(OD.product_name SEPARATOR ". ") as description
                     FROM    ' . _DB_PREFIX_ . 'orders AS O,
                             ' . _DB_PREFIX_ . 'carrier AS CA,
                             ' . _DB_PREFIX_ . 'customer AS C,

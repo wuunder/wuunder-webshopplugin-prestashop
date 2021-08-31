@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## Released
 
+## [1.3.8](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.8)
+
+### Fixed
+- Fixed weight calculation for orders. Added quantity per line for calculation of total weight, not just the lines itself
+
 ## [1.3.7](https://github.com/kabisa/wuunder-webshopplugin-prestashop/releases/tag/1.3.7)
 
 ### Fixed
