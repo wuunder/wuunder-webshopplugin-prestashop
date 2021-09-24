@@ -39,7 +39,7 @@ class AdminWuunderConnectorController extends ModuleAdminController
         parent::__construct();
         $this->name = 'wuunder';
         $this->logger = new FileLogger(0); //0 == debug level, logDebug() won’t work without this.
-        $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/app/logs/wuunder.log"));
+        $this->logger->setFilename(_PS_ROOT_DIR_ . ((_PS_VERSION_ < '1.7') ? "/log/wuunder.log" : "/var/logs/wuunder.log"));
         $this->bootstrap = true;
         $this->override_folder = "";
         $this->sourceObj = array("product" => "Prestashop extension", "version" => array("build" => "1.3.8", "plugin" => "1.0"));
